@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { navItems, contact } from "@/lib/site-data"
-import { Monogram } from "@/components/brand"
+import { Wordmark, Monogram } from "@/components/brand"
 
 const groups = navItems.filter((n) => n.children)
 
@@ -11,14 +11,8 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1440px] px-6 py-20 md:px-10 md:py-28">
         <div className="grid grid-cols-1 gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <Link href="/" aria-label="Millan Experiences home" className="inline-block text-[var(--color-sand)]">
-              <Image
-                src="/logo/logo-large.png"
-                alt="Millan Experiences"
-                width={300}
-                height={150}
-                className="object-contain"
-              />
+            <Link href="/" aria-label="Millan Experiences home" className="text-[var(--color-sand)]">
+              <Wordmark />
             </Link>
             <p className="mt-8 max-w-sm font-serif text-2xl italic leading-snug text-[var(--color-warm-white)]/90">
               Seamless. From the first plan to the final detail.
@@ -115,7 +109,15 @@ export function SiteFooter() {
               </svg>
             </a>
           </div>
-          <Monogram className="h-7 w-7 text-[var(--color-sand)]" />
+          <Link href="/" aria-label="Millan Experiences home" className="inline-block">
+            <Image
+              src="/logo/logo-large.png"
+              alt="Millan Experiences"
+              width={160}
+              height={80}
+              className="object-contain"
+            />
+          </Link>
         </div>
       </div>
     </footer>
