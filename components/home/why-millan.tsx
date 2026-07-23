@@ -12,10 +12,10 @@ export function WhyMillan() {
           <div className="relative lg:col-span-5">
             <Reveal variant="clip" className="relative aspect-[3/4] w-full overflow-hidden">
               <Image
-                src="/millan/cartagena-street.png"
-                alt="A colonial street in old town Cartagena, warm afternoon light."
+                src="/fotos/concierge-ai.webp"
+                alt="Cobblestone streets of Cartagena."
                 fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
+                sizes="(max-width: 768px) 100vw, 35vw"
                 className="object-cover"
               />
             </Reveal>
@@ -26,10 +26,10 @@ export function WhyMillan() {
             >
               <div className="relative h-full w-full">
                 <Image
-                  src="/millan/rosario-islands.png"
-                  alt="Aerial view of a private island near Cartagena."
+                  src="/fotos/Playa.webp"
+                  alt="A tranquil scene in the Rosario Islands."
                   fill
-                  sizes="30vw"
+                  sizes="(max-width: 768px) 100vw, 25vw"
                   className="object-cover"
                 />
               </div>

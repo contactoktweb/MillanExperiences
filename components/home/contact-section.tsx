@@ -80,7 +80,7 @@ export function ContactSection() {
         {/* Editorial imagery */}
         <div className="relative hidden min-h-[520px] overflow-hidden lg:flex items-center justify-center p-8">
           <Image
-            src="/millan/yacht-mangrove.jpg"
+            src="/fotos/whatsapp-image.webp"
             alt="A guest relaxing on a Millan Experiences yacht by the mangroves."
             fill
             sizes="50vw"

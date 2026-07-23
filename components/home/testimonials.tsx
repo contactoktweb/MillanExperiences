@@ -95,8 +95,8 @@ export function Testimonials() {
         <div className="lg:col-span-5">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <Image
-              src="/millan/rosario-islands.png"
-              alt="A private island surrounded by turquoise water near Cartagena."
+              src="/fotos/events-people.webp"
+              alt="People celebrating in an event."
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"
               className="object-cover"
