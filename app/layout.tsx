@@ -1,25 +1,62 @@
 import type { Metadata, Viewport } from "next"
-import { Playfair_Display, Jost } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import localFont from "next/font/local"
 
-// Playfair Display — a high-contrast Didone serif used as the web-licensed
-// stand-in for the brand's primary typeface (Didot).
-const playfair = Playfair_Display({
-  subsets: ["latin"],
+// Didot — primary serif typeface
+const didot = localFont({
+  src: [
+    {
+      path: "../public/fonts/didot-2/Didot.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/didot-2/Didot Italic.otf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/didot-2/Didot Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-serif",
   display: "swap",
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
 })
 
-// Jost — a geometric sans used as the web-licensed stand-in for the brand's
-// secondary typeface (Futura PT).
-const jost = Jost({
-  subsets: ["latin"],
+// Futura PT — secondary sans-serif typeface
+const futura = localFont({
+  src: [
+    {
+      path: "../public/fonts/futura-pt/FuturaCyrillicLight.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/futura-pt/FuturaCyrillicBook.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/futura-pt/FuturaCyrillicMedium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/futura-pt/FuturaCyrillicDemi.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/futura-pt/FuturaCyrillicBold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-sans",
   display: "swap",
-  weight: ["300", "400", "500", "600"],
 })
 
 export const metadata: Metadata = {
@@ -66,7 +103,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${jost.variable} bg-background`}>
+    <html lang="en" className={`${didot.variable} ${futura.variable} bg-background`}>
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === "production" && <Analytics />}

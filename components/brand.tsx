@@ -4,7 +4,7 @@ import Image from "next/image"
 export function Monogram({ className }: { className?: string }) {
   return (
     <Image 
-      src="/logo/logo-arena.png" 
+      src="/logo/logo-header.png" 
       alt="Millan Experiences"
       width={40}
       height={40}
@@ -25,7 +25,7 @@ export function Wordmark({
   return (
     <div className={cn("inline-flex items-center", className)}>
       <Image 
-        src="/logo/logo-arena.png" 
+        src="/logo/logo-header.png" 
         alt="Millan Experiences"
         width={160}
         height={60}
