@@ -52,7 +52,6 @@ export function SiteHeader() {
           scrolled
             ? "bg-[color:rgba(19,39,47,0.82)] py-4 backdrop-blur-md"
             : "bg-transparent py-7",
-          hidden && !openMenu ? "-translate-y-full" : "translate-y-0",
         )}
       >
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-8 px-6 md:px-10">

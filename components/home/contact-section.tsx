@@ -78,15 +78,15 @@ export function ContactSection() {
     <section id="contact" className="bg-[var(--color-blue-gray)] py-24 md:py-40">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-0 px-0 lg:grid-cols-2">
         {/* Editorial imagery */}
-        <div className="relative hidden min-h-[520px] overflow-hidden lg:block">
+        <div className="relative hidden min-h-[520px] overflow-hidden lg:flex items-center justify-center p-8">
           <Image
             src="/millan/yacht-mangrove.jpg"
             alt="A guest relaxing on a Millan Experiences yacht by the mangroves."
             fill
             sizes="50vw"
-            className="object-cover"
+            className="object-contain"
           />
-          <div className="absolute inset-0 bg-[var(--color-deep-sea)]/25" />
+          <div className="absolute inset-0 bg-[var(--color-deep-sea)]/10" />
         </div>
 
         {/* Form panel */}
