@@ -1,0 +1,90 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { Monogram } from "@/components/brand"
+import { cn } from "@/lib/utils"
+
+export function Preloader() {
+  const [mounted, setMounted] = useState(false)
+  const [show, setShow] = useState(true)
+  const [progress, setProgress] = useState(0)
+  const [leaving, setLeaving] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const seen =
+      typeof sessionStorage !== "undefined" && sessionStorage.getItem("millan-preloaded")
+
+    if (seen || reduce) {
+      setShow(false)
+      return
+    }
+
+    document.body.style.overflow = "hidden"
+
+    const start = performance.now()
+    const duration = 1600
+    let raf = 0
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / duration)
+      setProgress(p)
+      if (p < 1) {
+        raf = requestAnimationFrame(tick)
+      } else {
+        setLeaving(true)
+        sessionStorage.setItem("millan-preloaded", "1")
+        window.setTimeout(() => {
+          setShow(false)
+          document.body.style.overflow = ""
+        }, 900)
+      }
+    }
+    raf = requestAnimationFrame(tick)
+    return () => {
+      cancelAnimationFrame(raf)
+      document.body.style.overflow = ""
+    }
+  }, [])
+
+  if (!mounted || !show) return null
+
+  return (
+    <div className="fixed inset-0 z-[200] flex" aria-hidden>
+      {/* Two panels reveal the hero */}
+      <div
+        className={cn(
+          "absolute inset-0 flex items-center justify-center bg-[var(--color-deep-sea)] transition-transform duration-[900ms] ease-[var(--ease-editorial)]",
+          leaving && "-translate-y-full",
+        )}
+      >
+        <div className="flex flex-col items-center">
+          <div className="overflow-hidden">
+            <Monogram
+              className={cn(
+                "h-16 w-16 text-[var(--color-sand)] transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
+                progress > 0.05 ? "translate-y-0" : "translate-y-full",
+              )}
+            />
+          </div>
+          <p
+            className={cn(
+              "mt-6 font-sans text-[0.7rem] uppercase tracking-[0.5em] text-[var(--color-warm-white)] transition-opacity duration-700",
+              progress > 0.25 ? "opacity-100" : "opacity-0",
+            )}
+          >
+            Millan Experiences
+          </p>
+          <div className="mt-8 h-px w-40 overflow-hidden bg-[color:var(--color-border-dark)]">
+            <div
+              className="h-full bg-[var(--color-sand)]"
+              style={{ width: `${progress * 100}%` }}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
