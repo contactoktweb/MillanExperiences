@@ -96,14 +96,7 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 pb-24 pt-40 md:px-10 md:pb-28">
         <div className={cn("max-w-[720px]", "text-[var(--color-warm-white)]")}>
-          <p
-            className={cn(
-              "eyebrow text-[var(--color-sand)] transition-all duration-1000 ease-[var(--ease-editorial)]",
-              entered ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
-            )}
-          >
-            Millan Experiences
-          </p>
+          
 
           <h1 className="display mt-6 text-[clamp(3rem,8vw,8rem)]">
             <span className="block overflow-hidden">
@@ -119,7 +112,7 @@ export function Hero() {
             <span className="block overflow-hidden">
               <span
                 className={cn(
-                  "block italic text-[var(--color-sand)] transition-transform delay-100 duration-[1100ms] ease-[var(--ease-editorial)]",
+                  "block italic transition-transform delay-100 duration-[1100ms] ease-[var(--ease-editorial)]",
                   entered ? "translate-y-0" : "translate-y-full",
                 )}
               >

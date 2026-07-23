@@ -119,7 +119,7 @@ export const coreServices = [
       "Reservations, transfers, chefs and access — the quiet work that lets a journey feel effortless.",
     href: "/services/concierge",
     cta: "Speak with our concierge",
-    image: "/fotos/concierge-ai.webp",
+    image: "/fotos/events-people.webp",
     imageAlt: "A private chef preparing a refined meal aboard a yacht.",
   },
   {
@@ -129,7 +129,7 @@ export const coreServices = [
       "Weddings, milestones and corporate gatherings, produced with precision and a distinctly Colombian warmth.",
     href: "/groups-and-events",
     cta: "Plan your event",
-    image: "/fotos/events-people.webp",
+    image: "/fotos/concierge-ai.webp",
     imageAlt: "An elegant celebration on a Caribbean beach at golden hour.",
   },
 ] as const

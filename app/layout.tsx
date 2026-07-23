@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import localFont from "next/font/local"
+import { WhatsAppButton } from "@/components/whatsapp-button"
 
 // Didot — primary serif typeface
 const didot = localFont({
@@ -106,6 +107,7 @@ export default function RootLayout({
     <html lang="en" className={`${didot.variable} ${futura.variable} bg-background`}>
       <body className="font-sans antialiased">
         {children}
+        <WhatsAppButton />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
