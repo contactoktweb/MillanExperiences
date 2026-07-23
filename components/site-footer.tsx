@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Instagram, Facebook, Linkedin } from "lucide-react"
 import { navItems, contact } from "@/lib/site-data"
 import { Wordmark, Monogram } from "@/components/brand"
 
@@ -17,10 +18,18 @@ export function SiteFooter() {
               Seamless. From the first plan to the final detail.
             </p>
             <div className="mt-8 flex items-center gap-4">
-              <FooterSocial href={contact.instagram} label="Instagram">Ig</FooterSocial>
-              <FooterSocial href={contact.facebook} label="Facebook">Fb</FooterSocial>
-              <FooterSocial href={contact.linkedin} label="LinkedIn">In</FooterSocial>
-              <FooterSocial href={contact.tiktok} label="TikTok">Tt</FooterSocial>
+              <FooterSocial href={contact.instagram} label="Instagram">
+                <Instagram className="h-4 w-4" />
+              </FooterSocial>
+              <FooterSocial href={contact.facebook} label="Facebook">
+                <Facebook className="h-4 w-4" />
+              </FooterSocial>
+              <FooterSocial href={contact.linkedin} label="LinkedIn">
+                <Linkedin className="h-4 w-4" />
+              </FooterSocial>
+              <FooterSocial href={contact.tiktok} label="TikTok">
+                <TikTokIcon className="h-4 w-4" />
+              </FooterSocial>
             </div>
           </div>
 
@@ -126,5 +135,24 @@ function FooterSocial({
     >
       {children}
     </a>
+  )
+}
+
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M9 12a4 4 0 1 0 4 4V2.05h3a2.5 2.5 0 0 0 2.5 2.5v3a5.5 5.5 0 0 1-5.5-5.5H9v11z" />
+    </svg>
   )
 }
