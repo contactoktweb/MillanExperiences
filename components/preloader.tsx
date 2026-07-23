@@ -5,13 +5,11 @@ import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 export function Preloader() {
-  const [mounted, setMounted] = useState(false)
   const [show, setShow] = useState(true)
   const [progress, setProgress] = useState(0)
   const [leaving, setLeaving] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
@@ -51,7 +49,7 @@ export function Preloader() {
     }
   }, [])
 
-  if (!mounted || !show) return null
+  if (!show) return null
 
   return (
     <div className="fixed inset-0 z-[200] flex" aria-hidden>
