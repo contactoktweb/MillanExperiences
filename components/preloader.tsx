@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Monogram } from "@/components/brand"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 export function Preloader() {
@@ -15,10 +15,12 @@ export function Preloader() {
     const reduce =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const seen =
-      typeof sessionStorage !== "undefined" && sessionStorage.getItem("millan-preloaded")
+      
+    // Temporarily disabled so you can always see the loading animation
+    // const seen =
+    //   typeof sessionStorage !== "undefined" && sessionStorage.getItem("millan-preloaded")
 
-    if (seen || reduce) {
+    if (reduce) {
       setShow(false)
       return
     }
@@ -35,7 +37,7 @@ export function Preloader() {
         raf = requestAnimationFrame(tick)
       } else {
         setLeaving(true)
-        sessionStorage.setItem("millan-preloaded", "1")
+        // sessionStorage.setItem("millan-preloaded", "1")
         window.setTimeout(() => {
           setShow(false)
           document.body.style.overflow = ""
@@ -62,21 +64,17 @@ export function Preloader() {
       >
         <div className="flex flex-col items-center">
           <div className="overflow-hidden">
-            <Monogram
+            <Image
+              src="/logo/logo-large.png"
+              alt="Millan Experiences"
+              width={260}
+              height={130}
               className={cn(
-                "h-16 w-16 text-[var(--color-sand)] transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
+                "object-contain transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
                 progress > 0.05 ? "translate-y-0" : "translate-y-full",
               )}
             />
           </div>
-          <p
-            className={cn(
-              "mt-6 font-sans text-[0.7rem] uppercase tracking-[0.5em] text-[var(--color-warm-white)] transition-opacity duration-700",
-              progress > 0.25 ? "opacity-100" : "opacity-0",
-            )}
-          >
-            Millan Experiences
-          </p>
           <div className="mt-8 h-px w-40 overflow-hidden bg-[color:var(--color-border-dark)]">
             <div
               className="h-full bg-[var(--color-sand)]"
