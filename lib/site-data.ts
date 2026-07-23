@@ -6,16 +6,14 @@
 */
 
 export const contact = {
-  // NOTE: placeholder contact values — replace with the client-approved
-  // single phone/email before publishing (do not publish contradictory ones).
-  phone: "+57 300 000 0000",
-  phoneHref: "tel:+573000000000",
-  email: "concierge@millan-experiences.com",
-  whatsapp: "https://wa.me/573000000000",
-  instagram: "https://instagram.com/millanexperiences",
-  facebook: "https://facebook.com/millanexperiences",
-  linkedin: "https://linkedin.com/company/millanexperiences",
-  tiktok: "https://tiktok.com/@millanexperiences",
+  phone: "+57 310 710 2651",
+  phoneHref: "tel:+573107102651",
+  email: "millanexperiences@gmail.com",
+  whatsapp: "https://wa.me/573107102651",
+  instagram: "https://www.instagram.com/millan.experiences/",
+  facebook: "https://www.facebook.com/people/Millan-Experiences/pfbid0wdvdm5ZjBxc5ndju2qKW9PvkGpx1c9AwMdBNoLxyneVQrmVA75QX8CmrCfoW2JrGl/",
+  linkedin: "https://www.linkedin.com/company/millan-experiences/",
+  tiktok: "https://www.tiktok.com/@millanexperiences?_r=1&_t=ZS-94dBXwgCca4",
 } as const
 
 export type NavChild = { label: string; href: string }
