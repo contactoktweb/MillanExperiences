@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils"
 
 function ServiceCard({
   service,
-  large = false,
+  variant = "standard",
   tone = "sand",
 }: {
   service: (typeof coreServices)[number]
-  large?: boolean
+  variant?: "standard" | "featured" | "wide"
   tone?: "sand" | "sea" | "water"
 }) {
   const surface =
@@ -21,23 +21,27 @@ function ServiceCard({
         ? "bg-[var(--color-crystal-water)]/20 text-[var(--color-deep-sea)]"
         : "bg-[var(--color-warm-white)] text-[var(--color-deep-sea)]"
 
+  const imageClasses = cn(
+    "relative w-full overflow-hidden",
+    variant === "featured" ? "flex-1 min-h-[300px] md:min-h-0" : "",
+    variant === "wide" ? "aspect-[4/5] md:aspect-[21/9]" : "",
+    variant === "standard" ? "aspect-[4/3]" : ""
+  )
+
+  const isLargeText = variant === "featured" || variant === "wide"
+
   return (
     <Link
       href={service.href}
       className={cn("group flex h-full flex-col", surface)}
     >
-      <div
-        className={cn(
-          "relative w-full overflow-hidden",
-          large ? "aspect-[4/5] md:aspect-[16/13]" : "aspect-[4/3]",
-        )}
-      >
+      <div className={imageClasses}>
         <Reveal variant="clip" className="absolute inset-0">
           <Image
             src={service.image || "/placeholder.svg"}
             alt={service.imageAlt}
             fill
-            sizes={large ? "60vw" : "40vw"}
+            sizes={variant === "wide" ? "100vw" : variant === "featured" ? "60vw" : "40vw"}
             className="object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-105"
           />
         </Reveal>
@@ -50,8 +54,8 @@ function ServiceCard({
         </span>
       </div>
 
-      <div className={cn("flex flex-1 flex-col p-6 md:p-8", large && "md:p-10")}>
-        <h3 className={cn("font-serif", large ? "text-3xl md:text-4xl" : "text-2xl")}>
+      <div className={cn("flex flex-col p-6 md:p-8", isLargeText && "md:p-10")}>
+        <h3 className={cn("font-serif", isLargeText ? "text-3xl md:text-4xl" : "text-2xl")}>
           {service.title}
         </h3>
         <p className="mt-3 max-w-md font-sans text-sm font-light leading-relaxed opacity-80">
@@ -98,19 +102,15 @@ export function CoreServices() {
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-12">
-          <div className="md:col-span-7">
-            <ServiceCard service={first} large />
+          <div className="md:col-span-7 flex flex-col">
+            <ServiceCard service={first} variant="featured" />
           </div>
           <div className="flex flex-col gap-6 md:col-span-5">
             <ServiceCard service={second} tone="sea" />
             <ServiceCard service={third} tone="water" />
           </div>
           <div className="md:col-span-12">
-            <div className="grid grid-cols-1 md:grid-cols-12">
-              <div className="md:col-span-12">
-                <ServiceCard service={fourth} large />
-              </div>
-            </div>
+            <ServiceCard service={fourth} variant="wide" />
           </div>
         </div>
       </div>
