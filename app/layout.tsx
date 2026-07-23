@@ -62,7 +62,7 @@ const futura = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.millan-experiences.com"),
   title: {
-    default: "Millan Experiences — Colombia, Designed for you",
+    default: "Millan Experiences",
     template: "%s — Millan Experiences",
   },
   description:
