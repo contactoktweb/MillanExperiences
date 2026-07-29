@@ -38,12 +38,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[120] focus:bg-[var(--color-deep-sea)] focus:px-4 focus:py-2 focus:text-[var(--color-warm-white)]"
-      >
-        Skip to content
-      </a>
+
 
       <header
         onMouseLeave={() => setOpenMenu(null)}
@@ -138,7 +133,7 @@ export function SiteHeader() {
                 <div className="mx-auto grid max-w-[1440px] grid-cols-[1.1fr_1fr] gap-16 px-10 py-14">
                   <div className="flex flex-col">
                     <p className="eyebrow text-[var(--color-sand)]">{item.label}</p>
-                    <p className="mt-5 max-w-sm font-serif text-2xl leading-snug text-[var(--color-warm-white)]">
+                    <p className="mt-5 max-w-sm font-sans text-lg font-light leading-relaxed text-[var(--color-warm-white)]/85">
                       {item.description}
                     </p>
                     <ul className="mt-10 flex flex-col gap-1">
@@ -156,7 +151,7 @@ export function SiteHeader() {
                           <Link
                             href={child.href}
                             onClick={() => setOpenMenu(null)}
-                            className="link-underline inline-block py-2 font-serif text-xl text-[var(--color-warm-white)]/85 transition-colors hover:text-[var(--color-sand)]"
+                            className="link-underline inline-block py-2 font-sans text-base font-medium tracking-wide text-[var(--color-warm-white)] transition-colors hover:text-[var(--color-sand)]"
                           >
                             {child.label}
                           </Link>
