@@ -9,7 +9,7 @@ import { Wordmark, Monogram } from "@/components/brand"
 import { Cta } from "@/components/cta"
 import { cn } from "@/lib/utils"
 
-export function SiteHeader() {
+export function SiteHeader({ forceSolid = false }: { forceSolid?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
@@ -44,9 +44,10 @@ export function SiteHeader() {
         onMouseLeave={() => setOpenMenu(null)}
         className={cn(
           "fixed inset-x-0 top-0 z-[100] transition-[transform,background-color,backdrop-filter,height] duration-[450ms] ease-[var(--ease-editorial)]",
-          scrolled
-            ? "bg-[color:rgba(19,39,47,0.82)] py-4 backdrop-blur-md"
-            : "bg-transparent py-7",
+          (scrolled || forceSolid)
+            ? "bg-[color:rgba(19,39,47,0.82)] backdrop-blur-md"
+            : "bg-transparent",
+          scrolled ? "py-4" : "py-7",
         )}
       >
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-8 px-6 md:px-10">

@@ -14,7 +14,7 @@ export default function ContactPage() {
   return (
     <>
       <Preloader />
-      <SiteHeader />
+      <SiteHeader forceSolid />
       <main id="main" className="pt-20 lg:pt-28 bg-[var(--color-blue-gray)]">
         <ContactSection />
       </main>

@@ -180,7 +180,7 @@ export default function PrivateToursPage() {
                   <p className="mt-3 font-sans text-sm font-light text-white/80 line-clamp-3 mb-6">
                     Private yachts, catamarans and speedboats carefully selected for your days in the islands.
                   </p>
-                  <Link href="/boats-and-yachts" className="inline-block border border-white/30 rounded-full px-6 py-2.5 text-xs tracking-widest uppercase transition-colors hover:bg-white hover:text-black w-fit font-medium">
+                  <Link href="/speedboats" className="inline-block border border-white/30 rounded-full px-6 py-2.5 text-xs tracking-widest uppercase transition-colors hover:bg-white hover:text-black w-fit font-medium">
                     Discover Our Fleet
                   </Link>
                 </div>

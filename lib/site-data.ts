@@ -32,7 +32,7 @@ export const navItems: NavItem[] = [
   { label: "About", href: "/about" },
   {
     label: "Services",
-    href: "/services",
+    href: "/services/concierge",
     description:
       "A private concierge for Colombia — every reservation, transfer and detail, quietly handled.",
     image: "/millan/concierge.png",
@@ -47,7 +47,7 @@ export const navItems: NavItem[] = [
   },
   {
     label: "Villas & Islands",
-    href: "/villas-and-islands",
+    href: "/luxury-villas",
     description:
       "Hand-picked private villas and islands across the Colombian Caribbean.",
     image: "/millan/villa-island.png",
@@ -56,11 +56,11 @@ export const navItems: NavItem[] = [
       { label: "Private Villas", href: "/luxury-villas" },
       { label: "Private Islands", href: "/private-islands" },
     ],
-    cta: { label: "Explore our villas", href: "/villas-and-islands" },
+    cta: { label: "Explore our villas", href: "/luxury-villas" },
   },
   {
     label: "Boats & Yachts",
-    href: "/boats-and-yachts",
+    href: "/speedboats",
     description:
       "A curated fleet of speedboats, yachts and catamarans, crew included.",
     image: "/millan/boat-turquoise.jpg",
@@ -69,11 +69,11 @@ export const navItems: NavItem[] = [
       { label: "Speedboats", href: "/speedboats" },
       { label: "Yachts & Catamarans", href: "/yachts-catamarans" },
     ],
-    cta: { label: "Discover our fleet", href: "/boats-and-yachts" },
+    cta: { label: "Discover our fleet", href: "/speedboats" },
   },
   {
     label: "Groups & Events",
-    href: "/groups-and-events",
+    href: "/bachelor-bachelorette-parties",
     description:
       "Weddings, celebrations and corporate journeys — orchestrated end to end.",
     image: "/millan/events.png",
