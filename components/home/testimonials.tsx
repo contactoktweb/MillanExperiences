@@ -3,21 +3,35 @@
 import { useState } from "react"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
-import { testimonials } from "@/lib/site-data"
+
 import { cn } from "@/lib/utils"
 
-export function Testimonials() {
+interface TestimonialsData {
+  eyebrow?: string;
+  headline?: string;
+  sideImageUrl?: string;
+  list?: Array<{ quote?: string; name?: string; context?: string }>;
+}
+
+export function Testimonials({ data }: { data?: TestimonialsData }) {
+  const testimonials = data?.list || []
   const [active, setActive] = useState(0)
-  const go = (i: number) => setActive((i + testimonials.length) % testimonials.length)
+  const go = (i: number) => {
+    if (testimonials.length) {
+      setActive((i + testimonials.length) % testimonials.length)
+    }
+  }
   const current = testimonials[active]
+
+  if (!testimonials.length) return null;
 
   return (
     <section className="bg-[var(--color-deep-sea)] py-24 text-[var(--color-warm-white)] md:py-40">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-12 px-6 md:px-10 lg:grid-cols-12 lg:gap-20">
         <div className="lg:col-span-7">
-          <p className="eyebrow text-[var(--color-sand)]">Guest Stories</p>
+          <p className="eyebrow text-[var(--color-sand)]">{data?.eyebrow || "Guest Stories"}</p>
           <h2 className="mt-5 font-serif text-[clamp(2.25rem,4.5vw,4.5rem)] leading-[1.05]">
-            Felt, not just experienced.
+            {data?.headline || "Felt, not just experienced."}
           </h2>
 
           <div className="mt-12 min-h-[220px]">
@@ -85,7 +99,7 @@ export function Testimonials() {
         <div className="lg:col-span-5">
           <div className="relative aspect-[4/5] w-full overflow-hidden">
             <Image
-              src="/fotos/events-people.webp"
+              src={data?.sideImageUrl || "/fotos/events-people.webp"}
               alt="People celebrating in an event."
               fill
               sizes="(max-width: 1024px) 100vw, 40vw"

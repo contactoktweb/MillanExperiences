@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
-export function WhatsAppButton() {
+export function WhatsAppButton({ whatsappUrl }: { whatsappUrl?: string }) {
   const [isVisible, setIsVisible] = useState(false)
 
   // Only show after scrolling down a bit to avoid covering footer/initial content, or just show after mount
@@ -20,13 +20,14 @@ export function WhatsAppButton() {
     return () => window.removeEventListener("scroll", toggleVisibility)
   }, [])
 
-  const phoneNumber = "573107102651"
-  const message = "Hello, I would like more information."
-  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
+  const defaultPhoneNumber = "573107102651"
+  const defaultMessage = "Hello, I would like more information."
+  const finalWhatsappUrl = whatsappUrl || `https://wa.me/${defaultPhoneNumber}?text=${encodeURIComponent(defaultMessage)}`
+
 
   return (
     <a
-      href={whatsappUrl}
+      href={finalWhatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

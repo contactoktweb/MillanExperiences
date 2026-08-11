@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
-import { coreServices } from "@/lib/site-data"
+
 import { Reveal } from "@/components/reveal"
 import { cn } from "@/lib/utils"
 
@@ -10,7 +10,7 @@ function ServiceCard({
   variant = "standard",
   tone = "sand",
 }: {
-  service: (typeof coreServices)[number]
+  service: any
   variant?: "standard" | "featured" | "wide"
   tone?: "sand" | "sea" | "water"
 }) {
@@ -38,8 +38,8 @@ function ServiceCard({
       <div className={imageClasses}>
         <Reveal variant="clip" className="absolute inset-0">
           <Image
-            src={service.image || "/placeholder.svg"}
-            alt={service.imageAlt}
+            src={service?.imageUrl || service?.image || "/placeholder.svg"}
+            alt={service?.imageAlt || service?.title || "Service image"}
             fill
             sizes={variant === "wide" ? "100vw" : variant === "featured" ? "60vw" : "40vw"}
             className="object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-105"
@@ -77,26 +77,37 @@ function ServiceCard({
   )
 }
 
-export function CoreServices() {
-  const [first, second, third, fourth] = coreServices
+interface CoreServicesData {
+  eyebrow?: string;
+  headline?: string;
+  description?: string;
+  services?: any[];
+}
+
+export function CoreServices({ data }: { data?: CoreServicesData }) {
+  // If data doesn't exist, we fallback to an empty array so it doesn't crash
+  const services = data?.services || []
+  const [first, second, third, fourth] = services
+  
+  if (!services.length) return null;
+
   return (
     <section id="services" className="bg-[var(--color-muted)] py-24 md:py-40">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <Reveal>
-              <p className="eyebrow text-[var(--color-dark-sand)]">Core Services</p>
+              <p className="eyebrow text-[var(--color-dark-sand)]">{data?.eyebrow || "Core Services"}</p>
             </Reveal>
             <Reveal delay={80}>
               <h2 className="mt-5 font-serif text-[clamp(2.5rem,5vw,5rem)] leading-[1.02]">
-                Choose a voyage
+                {data?.headline || "Choose a voyage"}
               </h2>
             </Reveal>
           </div>
           <Reveal delay={160}>
             <p className="max-w-sm font-sans text-sm font-light leading-relaxed text-[var(--color-muted-foreground)]">
-              Four ways into Colombia — each one composed by hand, each one handled
-              from the first plan to the final detail.
+              {data?.description || "Four ways into Colombia — each one composed by hand, each one handled from the first plan to the final detail."}
             </p>
           </Reveal>
         </div>

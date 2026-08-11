@@ -16,77 +16,87 @@ export const contact = {
   tiktok: "https://www.tiktok.com/@millanexperiences?_r=1&_t=ZS-94dBXwgCca4",
 } as const
 
-export type NavChild = { label: string; href: string }
+export type LocalizedString = { en: string; es: string }
+
+export type NavChild = { label: LocalizedString; href: string }
 
 export type NavItem = {
-  label: string
+  label: LocalizedString
   href: string
-  description?: string
+  description?: LocalizedString
   image?: string
   imageAlt?: string
   children?: NavChild[]
-  cta?: { label: string; href: string }
+  cta?: { label: LocalizedString; href: string }
 }
 
 export const navItems: NavItem[] = [
-  { label: "About", href: "/about" },
+  { label: { en: "About", es: "Nosotros" }, href: "/about" },
   {
-    label: "Services",
+    label: { en: "Services", es: "Servicios" },
     href: "/services/concierge",
-    description:
-      "A private concierge for Colombia — every reservation, transfer and detail, quietly handled.",
+    description: {
+      en: "A private concierge for Colombia — every reservation, transfer and detail, quietly handled.",
+      es: "Un concierge privado para Colombia — cada reserva, traslado y detalle, manejado silenciosamente."
+    },
     image: "/millan/concierge.png",
     imageAlt: "A private chef plating gourmet seafood aboard a luxury yacht.",
     children: [
-      { label: "Concierge", href: "/services/concierge" },
-      { label: "Private Tours", href: "/services/private-tours" },
-      { label: "Private Chef", href: "/services/private-chef" },
-      { label: "Private Aviation", href: "/services/private-aviation" },
+      { label: { en: "Concierge", es: "Concierge" }, href: "/services/concierge" },
+      { label: { en: "Private Tours", es: "Tours Privados" }, href: "/services/private-tours" },
+      { label: { en: "Private Chef", es: "Chef Privado" }, href: "/services/private-chef" },
+      { label: { en: "Private Aviation", es: "Aviación Privada" }, href: "/services/private-aviation" },
     ],
-    cta: { label: "Speak with our concierge", href: "/contact" },
+    cta: { label: { en: "Speak with our concierge", es: "Habla con nuestro concierge" }, href: "/contact" },
   },
   {
-    label: "Villas & Islands",
+    label: { en: "Villas & Islands", es: "Villas e Islas" },
     href: "/luxury-villas",
-    description:
-      "Hand-picked private villas and islands across the Colombian Caribbean.",
+    description: {
+      en: "Hand-picked private villas and islands across the Colombian Caribbean.",
+      es: "Villas e islas privadas seleccionadas a mano en el Caribe Colombiano."
+    },
     image: "/millan/villa-island.png",
     imageAlt: "A private villa with an infinity pool over the turquoise Caribbean.",
     children: [
-      { label: "Private Villas", href: "/luxury-villas" },
-      { label: "Private Islands", href: "/private-islands" },
+      { label: { en: "Private Villas", es: "Villas Privadas" }, href: "/luxury-villas" },
+      { label: { en: "Private Islands", es: "Islas Privadas" }, href: "/private-islands" },
     ],
-    cta: { label: "Explore our villas", href: "/luxury-villas" },
+    cta: { label: { en: "Explore our villas", es: "Explorar nuestras villas" }, href: "/luxury-villas" },
   },
   {
-    label: "Boats & Yachts",
+    label: { en: "Boats & Yachts", es: "Yates y Lanchas" },
     href: "/speedboats",
-    description:
-      "A curated fleet of speedboats, yachts and catamarans, crew included.",
+    description: {
+      en: "A curated fleet of speedboats, yachts and catamarans, crew included.",
+      es: "Una flota cuidadosamente seleccionada de lanchas, yates y catamaranes, con tripulación incluida."
+    },
     image: "/millan/boat-turquoise.jpg",
     imageAlt: "A luxury speedboat moored on clear turquoise Caribbean water.",
     children: [
-      { label: "Speedboats", href: "/speedboats" },
-      { label: "Yachts & Catamarans", href: "/yachts-catamarans" },
+      { label: { en: "Speedboats", es: "Lanchas" }, href: "/speedboats" },
+      { label: { en: "Yachts & Catamarans", es: "Yates y Catamaranes" }, href: "/yachts-catamarans" },
     ],
-    cta: { label: "Discover our fleet", href: "/speedboats" },
+    cta: { label: { en: "Discover our fleet", es: "Descubre nuestra flota" }, href: "/speedboats" },
   },
   {
-    label: "Groups & Events",
+    label: { en: "Groups & Events", es: "Grupos y Eventos" },
     href: "/bachelor-bachelorette-parties",
-    description:
-      "Weddings, celebrations and corporate journeys — orchestrated end to end.",
+    description: {
+      en: "Weddings, celebrations and corporate journeys — orchestrated end to end.",
+      es: "Bodas, celebraciones y viajes corporativos — orquestados de principio a fin."
+    },
     image: "/millan/events.png",
     imageAlt: "An elegant celebration table set on a Caribbean beach at sunset.",
     children: [
-      { label: "Bachelor & Bachelorette Parties", href: "/bachelor-bachelorette-parties" },
-      { label: "Corporate Groups", href: "/corporate-groups" },
-      { label: "Celebrations", href: "/birthdays-and-celebrations" },
-      { label: "Weddings", href: "/weddings" },
+      { label: { en: "Bachelor & Bachelorette Parties", es: "Despedidas de Soltero(a)" }, href: "/bachelor-bachelorette-parties" },
+      { label: { en: "Corporate Groups", es: "Grupos Corporativos" }, href: "/corporate-groups" },
+      { label: { en: "Celebrations", es: "Celebraciones" }, href: "/birthdays-and-celebrations" },
+      { label: { en: "Weddings", es: "Bodas" }, href: "/weddings" },
     ],
-    cta: { label: "Plan your event", href: "/contact" },
+    cta: { label: { en: "Plan your event", es: "Planea tu evento" }, href: "/contact" },
   },
-  { label: "Contact", href: "/contact" },
+  { label: { en: "Contact", es: "Contacto" }, href: "/contact" },
 ]
 
 export const coreServices = [

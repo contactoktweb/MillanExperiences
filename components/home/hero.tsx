@@ -6,24 +6,18 @@ import { ArrowRight } from "lucide-react"
 import { Cta } from "@/components/cta"
 import { cn } from "@/lib/utils"
 
-const slides = [
-  {
-    src: "/millan/boat-turquoise.jpg",
-    alt: "A luxury speedboat moored on the clear turquoise water of the Colombian Caribbean.",
-  },
-  {
-    src: "/millan/villa-island.png",
-    alt: "A private villa with an infinity pool overlooking the sea near Cartagena.",
-  },
-  {
-    src: "/millan/cartagena-night.png",
-    alt: "A private dinner set on a colonial balcony in old town Cartagena at dusk.",
-  },
-]
-
 const DURATION = 7000
 
-export function Hero() {
+interface HeroData {
+  slides?: Array<{ imageUrl?: string; alt?: string }>;
+  headlinePart1?: string;
+  headlinePart2?: string;
+  description?: string;
+  primaryCta?: { label?: string; href?: string };
+  secondaryCta?: { label?: string; href?: string };
+}
+
+export function Hero({ data }: { data?: HeroData }) {
   const [active, setActive] = useState(0)
   const [entered, setEntered] = useState(false)
   const timer = useRef<number | null>(null)
@@ -37,7 +31,7 @@ export function Hero() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     if (reduce) return
 
-    const advance = () => setActive((i) => (i + 1) % slides.length)
+    const advance = () => setActive((i) => (i + 1) % (data?.slides?.length || 1))
     const run = () => {
       timer.current = window.setTimeout(advance, DURATION)
     }
@@ -56,7 +50,7 @@ export function Hero() {
     }
   }, [active])
 
-  const go = (i: number) => setActive((i + slides.length) % slides.length)
+  const go = (i: number) => setActive((i + (data?.slides?.length || 1)) % (data?.slides?.length || 1))
 
   return (
     <section
@@ -64,9 +58,9 @@ export function Hero() {
       aria-label="Introduction"
     >
       {/* Slides */}
-      {slides.map((slide, i) => (
+      {data?.slides?.map((slide, i) => (
         <div
-          key={slide.src}
+          key={i}
           aria-hidden={i !== active}
           className={cn(
             "absolute inset-0 transition-opacity duration-[1400ms] ease-[var(--ease-editorial)]",
@@ -74,8 +68,8 @@ export function Hero() {
           )}
         >
           <Image
-            src={slide.src || "/placeholder.svg"}
-            alt={slide.alt}
+            src={slide.imageUrl || "/placeholder.svg"}
+            alt={slide.alt || ""}
             fill
             priority={i === 0}
             sizes="100vw"
@@ -106,7 +100,7 @@ export function Hero() {
                   entered ? "translate-y-0" : "translate-y-full",
                 )}
               >
-                Colombia,
+                {data?.headlinePart1 || "Colombia,"}
               </span>
             </span>
             <span className="block overflow-hidden">
@@ -116,7 +110,7 @@ export function Hero() {
                   entered ? "translate-y-0" : "translate-y-full",
                 )}
               >
-                Designed for you.
+                {data?.headlinePart2 || "Designed for you."}
               </span>
             </span>
           </h1>
@@ -127,8 +121,7 @@ export function Hero() {
               entered ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
             )}
           >
-            Private stays, hand-picked boats and customized travel — guided by refined
-            local knowledge and personal attention from the first call to the last sunset.
+            {data?.description || "Private stays, hand-picked boats and customized travel — guided by refined local knowledge and personal attention from the first call to the last sunset."}
           </p>
 
           <div
@@ -137,12 +130,16 @@ export function Hero() {
               entered ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
             )}
           >
-            <Cta href="/contact" tone="sand">
-              Start Planning
-            </Cta>
-            <Cta href="/services" variant="outline" tone="light">
-              Explore Experiences
-            </Cta>
+            {data?.primaryCta?.label && data?.primaryCta?.href && (
+              <Cta href={data.primaryCta.href} tone="sand">
+                {data.primaryCta.label}
+              </Cta>
+            )}
+            {data?.secondaryCta?.label && data?.secondaryCta?.href && (
+              <Cta href={data.secondaryCta.href} variant="outline" tone="light">
+                {data.secondaryCta.label}
+              </Cta>
+            )}
           </div>
         </div>
 
@@ -153,7 +150,7 @@ export function Hero() {
               <span className="text-[var(--color-sand)]">
                 0{active + 1}
               </span>
-              <span className="text-[var(--color-warm-white)]/50"> / 0{slides.length}</span>
+              <span className="text-[var(--color-warm-white)]/50"> / 0{data?.slides?.length || 1}</span>
             </span>
             <div className="h-px w-28 overflow-hidden bg-[color:var(--color-border-dark)] md:w-44">
               <div

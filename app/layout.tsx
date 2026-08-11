@@ -3,6 +3,8 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import localFont from "next/font/local"
 import { WhatsAppButton } from "@/components/whatsapp-button"
+import { client } from "@/sanity/lib/client"
+import { globalConfigQuery } from "@/sanity/lib/queries"
 
 // Didot — primary serif typeface
 const didot = localFont({
@@ -60,37 +62,46 @@ const futura = localFont({
   display: "swap",
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://www.millan-experiences.com"),
-  title: {
-    default: "Millan Experiences",
-    template: "%s — Millan Experiences",
-  },
-  description:
-    "Private stays, hand-picked boats and customized travel across Colombia — guided by refined local knowledge and personal attention from the first call to the last sunset.",
-  keywords: [
-    "luxury travel Colombia",
-    "luxury concierge Cartagena",
-    "private villas Cartagena",
-    "private islands near Cartagena",
-    "yachts Cartagena",
-    "destination weddings Cartagena",
-  ],
-  openGraph: {
-    type: "website",
-    title: "Millan Experiences — Colombia, Designed for you",
+export async function generateMetadata(): Promise<Metadata> {
+  const globalConfig = await client.fetch(globalConfigQuery)
+  
+  return {
+    metadataBase: new URL("https://www.millan-experiences.com"),
+    title: {
+      default: "Millan Experiences",
+      template: "%s — Millan Experiences",
+    },
     description:
-      "A private concierge and privileged gateway to Colombia. Villas, islands, yachts and bespoke travel, handled end to end.",
-    siteName: "Millan Experiences",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Millan Experiences — Colombia, Designed for you",
-    description:
-      "A private concierge and privileged gateway to Colombia. Handled, end to end.",
-  },
-  generator: "v0.app",
+      "Private stays, hand-picked boats and customized travel across Colombia — guided by refined local knowledge and personal attention from the first call to the last sunset.",
+    keywords: [
+      "luxury travel Colombia",
+      "luxury concierge Cartagena",
+      "private villas Cartagena",
+      "private islands near Cartagena",
+      "yachts Cartagena",
+      "destination weddings Cartagena",
+    ],
+    openGraph: {
+      type: "website",
+      title: "Millan Experiences — Colombia, Designed for you",
+      description:
+        "A private concierge and privileged gateway to Colombia. Villas, islands, yachts and bespoke travel, handled end to end.",
+      siteName: "Millan Experiences",
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Millan Experiences — Colombia, Designed for you",
+      description:
+        "A private concierge and privileged gateway to Colombia. Handled, end to end.",
+    },
+    generator: "v0.app",
+    icons: globalConfig?.faviconUrl ? {
+      icon: globalConfig.faviconUrl,
+      shortcut: globalConfig.faviconUrl,
+      apple: globalConfig.faviconUrl,
+    } : undefined,
+  }
 }
 
 export const viewport: Viewport = {
@@ -98,16 +109,18 @@ export const viewport: Viewport = {
   themeColor: "#13272F",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const globalConfig = await client.fetch(globalConfigQuery)
+  
   return (
     <html lang="en" className={`${didot.variable} ${futura.variable} bg-background`}>
       <body className="font-sans antialiased">
         {children}
-        <WhatsAppButton />
+        <WhatsAppButton whatsappUrl={globalConfig?.whatsapp} />
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>

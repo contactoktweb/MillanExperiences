@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils"
 import Image from "next/image"
 
-export function Monogram({ className }: { className?: string }) {
+export function Monogram({ className, logoUrl }: { className?: string, logoUrl?: string }) {
   return (
     <Image 
-      src="/logo/logo-header.png" 
+      src={logoUrl || "/logo/logo-header.png"} 
       alt="Millan Experiences"
       width={40}
       height={40}
@@ -17,15 +17,17 @@ export function Wordmark({
   className,
   monogramClassName,
   stacked = false,
+  logoUrl,
 }: {
   className?: string
   monogramClassName?: string
   stacked?: boolean
+  logoUrl?: string
 }) {
   return (
     <div className={cn("inline-flex items-center", className)}>
       <Image 
-        src="/logo/logo-header.png" 
+        src={logoUrl || "/logo/logo-header.png"} 
         alt="Millan Experiences"
         width={160}
         height={60}

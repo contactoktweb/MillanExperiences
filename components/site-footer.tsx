@@ -1,21 +1,56 @@
 import Link from "next/link"
 import Image from "next/image"
-import { navItems, contact } from "@/lib/site-data"
+import { navItems, contact as staticContact } from "@/lib/site-data"
 import { Wordmark, Monogram } from "@/components/brand"
+import { client } from "@/sanity/lib/client"
+import { globalConfigQuery } from "@/sanity/lib/queries"
+import { cookies } from "next/headers"
 
 const groups = navItems.filter((n) => n.children)
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const globalConfig = await client.fetch(globalConfigQuery)
+  const cookieStore = await cookies()
+  const loc = cookieStore.get("NEXT_LOCALE")?.value === "es" ? "es" : "en"
+
+  const footerT = {
+    en: {
+      tagline: "Seamless. From the first plan to the final detail.",
+      basedIn: "Based in",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions",
+    },
+    es: {
+      tagline: "Impecable. Desde el primer plan hasta el último detalle.",
+      basedIn: "Basado en",
+      privacy: "Política de Privacidad",
+      terms: "Términos y Condiciones",
+    }
+  }
+
+  const t = footerT[loc]
+  
+  // Use Sanity config if available, otherwise fallback to static data
+  const contact = {
+    phone: globalConfig?.phone || staticContact.phone,
+    phoneHref: globalConfig?.phone ? `tel:${globalConfig.phone.replace(/[^0-9+]/g, '')}` : staticContact.phoneHref,
+    email: globalConfig?.email || staticContact.email,
+    instagram: globalConfig?.instagram || staticContact.instagram,
+    facebook: globalConfig?.facebook || staticContact.facebook,
+    linkedin: globalConfig?.linkedin || staticContact.linkedin,
+    tiktok: globalConfig?.tiktok || staticContact.tiktok,
+  }
+
   return (
     <footer className="bg-[var(--color-deep-sea)] text-[var(--color-warm-white)]">
       <div className="mx-auto max-w-[1440px] px-6 py-20 md:px-10 md:py-28">
         <div className="grid grid-cols-1 gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Link href="/" aria-label="Millan Experiences home" className="text-[var(--color-sand)]">
-              <Wordmark />
+              <Wordmark logoUrl={globalConfig?.logoUrl} />
             </Link>
             <p className="mt-8 max-w-sm font-serif text-2xl italic leading-snug text-[var(--color-warm-white)]/90">
-              Seamless. From the first plan to the final detail.
+              {t.tagline}
             </p>
             <div className="mt-8 flex items-center gap-4">
               <FooterSocial href={contact.instagram} label="Instagram">
@@ -35,9 +70,9 @@ export function SiteFooter() {
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:col-span-7">
             {groups.map((group) => (
-              <div key={group.label}>
+              <div key={group.label.en}>
                 <h3 className="font-sans text-[0.66rem] font-medium uppercase tracking-[0.2em] text-[var(--color-crystal-water)]">
-                  {group.label}
+                  {group.label[loc]}
                 </h3>
                 <ul className="mt-5 flex flex-col gap-3">
                   {group.children!.map((child) => (
@@ -46,7 +81,7 @@ export function SiteFooter() {
                         href={child.href}
                         className="link-underline font-sans text-sm font-light text-[var(--color-warm-white)]/80 hover:text-[var(--color-sand)]"
                       >
-                        {child.label}
+                        {child.label[loc]}
                       </Link>
                     </li>
                   ))}
@@ -70,7 +105,7 @@ export function SiteFooter() {
           </div>
           <div className="sm:text-center">
             <p className="font-sans text-[0.62rem] uppercase tracking-[0.2em] text-[var(--color-warm-white)]/50">
-              Based in
+              {t.basedIn}
             </p>
             <p className="mt-2 font-sans text-sm">Cartagena de Indias, Colombia</p>
           </div>
@@ -87,11 +122,11 @@ export function SiteFooter() {
           <div className="flex flex-col gap-3 font-sans text-xs font-light text-[var(--color-warm-white)]/60 text-center md:text-left">
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-start items-center">
               <Link href="/privacy-policy" className="hover:text-[var(--color-sand)] transition-colors">
-                Privacy Policy
+                {t.privacy}
               </Link>
               <span className="hidden md:inline text-white/20">|</span>
               <Link href="/terms-and-conditions" className="hover:text-[var(--color-sand)] transition-colors">
-                Terms &amp; Conditions
+                {t.terms}
               </Link>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-x-2 gap-y-1 md:justify-start">
