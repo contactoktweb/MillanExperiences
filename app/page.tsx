@@ -7,7 +7,7 @@ import { WhyMillan } from "@/components/home/why-millan"
 import { Testimonials } from "@/components/home/testimonials"
 import { ContactSection } from "@/components/home/contact-section"
 import { client } from "@/sanity/lib/client"
-import { homePageQuery } from "@/sanity/lib/queries"
+import { homePageQuery, approvedReviewsQuery } from "@/sanity/lib/queries"
 import { cookies } from "next/headers"
 
 const orgSchema = {
@@ -21,10 +21,21 @@ const orgSchema = {
 }
 
 export default async function HomePage() {
-  const homePageData = await client.fetch(homePageQuery)
+  const [homePageData, approvedReviews] = await Promise.all([
+    client.fetch(homePageQuery),
+    client.fetch(approvedReviewsQuery)
+  ])
   const cookieStore = await cookies()
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en"
   const content = locale === "es" ? homePageData?.contentEs : homePageData?.contentEn
+
+  // Combina o usa directamente los reviews dinámicos
+  const testimonialsData = {
+    ...content?.testimonialsSection,
+    list: approvedReviews && approvedReviews.length > 0 
+      ? approvedReviews 
+      : content?.testimonialsSection?.list
+  }
 
   return (
     <>
@@ -34,7 +45,7 @@ export default async function HomePage() {
         <Hero data={content?.hero} />
         <CoreServices data={content?.coreServices} />
         <WhyMillan data={content?.whyMillan} />
-        <Testimonials data={content?.testimonialsSection} />
+        <Testimonials data={testimonialsData} />
         <ContactSection />
       </main>
       <SiteFooter />

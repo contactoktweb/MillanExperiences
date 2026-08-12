@@ -85,9 +85,7 @@ interface CoreServicesData {
 }
 
 export function CoreServices({ data }: { data?: CoreServicesData }) {
-  // If data doesn't exist, we fallback to an empty array so it doesn't crash
   const services = data?.services || []
-  const [first, second, third, fourth] = services
   
   if (!services.length) return null;
 
@@ -112,17 +110,14 @@ export function CoreServices({ data }: { data?: CoreServicesData }) {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-12">
-          <div className="md:col-span-7 flex flex-col">
-            <ServiceCard service={first} variant="featured" />
-          </div>
-          <div className="flex flex-col gap-6 md:col-span-5">
-            <ServiceCard service={second} tone="sea" />
-            <ServiceCard service={third} tone="water" />
-          </div>
-          <div className="md:col-span-12">
-            <ServiceCard service={fourth} variant="wide" />
-          </div>
+        <div className="mt-14 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-2 lg:grid-cols-4">
+          {services.map((service, index) => (
+            <ServiceCard
+              key={index}
+              service={service}
+              tone={index % 4 === 1 ? "sea" : index % 4 === 2 ? "water" : "sand"}
+            />
+          ))}
         </div>
       </div>
     </section>

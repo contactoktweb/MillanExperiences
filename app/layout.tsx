@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import localFont from "next/font/local"
+import { Jost } from "next/font/google"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { client } from "@/sanity/lib/client"
 import { globalConfigQuery } from "@/sanity/lib/queries"
@@ -29,37 +30,12 @@ const didot = localFont({
   display: "swap",
 })
 
-// Futura PT — secondary sans-serif typeface
-const futura = localFont({
-  src: [
-    {
-      path: "../public/fonts/futura-pt/FuturaCyrillicLight.ttf",
-      weight: "300",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/futura-pt/FuturaCyrillicBook.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/futura-pt/FuturaCyrillicMedium.ttf",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/futura-pt/FuturaCyrillicDemi.ttf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/futura-pt/FuturaCyrillicBold.ttf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
+// Jost — secondary sans-serif typeface (Futura alternative with full Latin support)
+const jost = Jost({
+  subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -117,7 +93,7 @@ export default async function RootLayout({
   const globalConfig = await client.fetch(globalConfigQuery)
   
   return (
-    <html lang="en" className={`${didot.variable} ${futura.variable} bg-background`}>
+    <html lang="en" className={`${didot.variable} ${jost.variable} bg-background`}>
       <body className="font-sans antialiased">
         {children}
         <WhatsAppButton whatsappUrl={globalConfig?.whatsapp} />

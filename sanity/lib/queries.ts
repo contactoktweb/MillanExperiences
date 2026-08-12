@@ -17,6 +17,20 @@ export const globalConfigQuery = defineQuery(`
   }
 `)
 
+export const approvedReviewsQuery = defineQuery(`
+  *[_type == "review" && status == "approved"] | order(_createdAt desc) {
+    name,
+    quote,
+    rating,
+    context,
+    date,
+    isGoogleReview,
+    images[]{
+      asset->{url}
+    }
+  }
+`)
+
 export const homePageQuery = defineQuery(`
   *[_type == "homePage"][0]{
     contentEn {

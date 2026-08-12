@@ -150,7 +150,10 @@ const homePageContentFields = [
             fields: [
               defineField({ name: 'quote', type: 'text', title: 'Testimonio (Cita)' }),
               defineField({ name: 'name', type: 'string', title: 'Nombre del Cliente' }),
-              defineField({ name: 'context', type: 'string', title: 'Contexto / Nacionalidad' }),
+              defineField({ name: 'context', type: 'string', title: 'Contexto / Nacionalidad / Opcional' }),
+              defineField({ name: 'rating', type: 'number', title: 'Calificación (1-5)', initialValue: 5, validation: Rule => Rule.min(1).max(5) }),
+              defineField({ name: 'date', type: 'string', title: 'Fecha (ej. "Hace 5 meses")' }),
+              defineField({ name: 'isGoogleReview', type: 'boolean', title: '¿Es un Google Review?', initialValue: true }),
             ]
           }
         ]
