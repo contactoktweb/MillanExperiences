@@ -1,12 +1,13 @@
 const fs = require('fs');
 
-const html = fs.readFileSync('scratch/raw.html', 'utf8');
+const html = fs.readFileSync('./raw.html', 'utf8');
+const reviews = [];
 
 // We can use simple regex to extract blocks
 const reviewBlocks = html.split('aria-label="Photo of ');
 reviewBlocks.shift(); // remove first part
 
-const reviews = reviewBlocks.map(block => {
+const extractedReviews = reviewBlocks.map(block => {
   // Name
   const nameMatch = block.match(/^(.*?)"/);
   const name = nameMatch ? nameMatch[1] : 'Unknown';
@@ -34,5 +35,5 @@ const reviews = reviewBlocks.map(block => {
   return { name, rating, date, text, photos };
 });
 
-fs.writeFileSync('scratch/extracted-reviews.json', JSON.stringify(reviews, null, 2));
-console.log('Extracted', reviews.length, 'reviews.');
+fs.writeFileSync('scratch/extracted-reviews.json', JSON.stringify(extractedReviews, null, 2));
+console.log('Extracted', extractedReviews.length, 'reviews.');
