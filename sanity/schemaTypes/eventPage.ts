@@ -121,7 +121,7 @@ const eventPageContentFields = [
 
 export const eventPage = defineType({
   name: 'eventPage',
-  title: 'Páginas de Eventos',
+  title: 'Diseño: Páginas de Eventos',
   type: 'document',
   icon: PartyPopper,
   groups: [

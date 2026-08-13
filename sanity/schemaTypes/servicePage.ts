@@ -215,7 +215,7 @@ const servicePageContentFields = [
 
 export const servicePage = defineType({
   name: 'servicePage',
-  title: 'Páginas de Servicios',
+  title: 'Diseño: Páginas de Servicios',
   type: 'document',
   icon: Briefcase,
   groups: [

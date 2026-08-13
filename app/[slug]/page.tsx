@@ -67,7 +67,7 @@ export default async function DynamicSlugPage({
   }
 
   if (data._type === 'listingPage') {
-    return <ListingPageComponent content={content} locale={locale} />
+    return <ListingPageComponent content={data} locale={locale} />
   }
 
   if (data._type === 'eventPage') {

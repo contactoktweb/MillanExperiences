@@ -18,7 +18,7 @@ export const globalConfigQuery = defineQuery(`
 `)
 
 export const approvedReviewsQuery = defineQuery(`
-  *[_type == "review" && status == "approved"] | order(_createdAt desc) {
+  *[_type == "review" && status == "approved" && defined(quote) && quote != ""] | order(_createdAt desc) {
     name,
     quote,
     rating,
@@ -237,8 +237,32 @@ export const eventPageQuery = defineQuery(`
 export const pageBySlugQuery = defineQuery(`
   *[_type in ["listingPage", "eventPage"] && slug.current == $slug][0]{
     _type,
+    isHub,
+    "slug": slug.current,
+    "properties": *[_type == ^.slug.current]{
+      title,
+      "slug": slug.current,
+      "location": details.location,
+      "dimensions": details.dimensions,
+      "capacity": details.capacity,
+      "rooms": details.rooms,
+      "bathrooms": details.bathrooms,
+      "imageUrl": mainImage.asset->url
+    },
     contentEn {
       seo,
+      hubLeft {
+        title,
+        description,
+        "imageUrl": image.asset->url,
+        href
+      },
+      hubRight {
+        title,
+        description,
+        "imageUrl": image.asset->url,
+        href
+      },
       hero {
         ...,
         "backgroundImageUrl": backgroundImage.asset->url
@@ -246,12 +270,6 @@ export const pageBySlugQuery = defineQuery(`
       processSteps[]{
         ...,
         "imageUrl": image.asset->url
-      },
-      grid {
-        items[]{
-          ...,
-          "imageUrl": image.asset->url
-        }
       },
       bentoBanner {
         ...,
@@ -275,6 +293,18 @@ export const pageBySlugQuery = defineQuery(`
     },
     contentEs {
       seo,
+      hubLeft {
+        title,
+        description,
+        "imageUrl": image.asset->url,
+        href
+      },
+      hubRight {
+        title,
+        description,
+        "imageUrl": image.asset->url,
+        href
+      },
       hero {
         ...,
         "backgroundImageUrl": backgroundImage.asset->url
@@ -282,12 +312,6 @@ export const pageBySlugQuery = defineQuery(`
       processSteps[]{
         ...,
         "imageUrl": image.asset->url
-      },
-      grid {
-        items[]{
-          ...,
-          "imageUrl": image.asset->url
-        }
       },
       bentoBanner {
         ...,
@@ -310,4 +334,32 @@ export const pageBySlugQuery = defineQuery(`
       seoFaq
     }
   }
+`)
+
+export const propertyBySlugQuery = defineQuery(`
+  *[_type == $categorySlug && slug.current == $slug][0]{
+    _type,
+    title,
+    "slug": slug.current,
+    "categorySlug": _type,
+    "mainImageUrl": mainImage.asset->url,
+    gallery[]{
+      asset->{url}
+    },
+    descriptionEn,
+    descriptionEs,
+    details,
+    amenities,
+    price,
+    cancellationPolicyEn,
+    cancellationPolicyEs,
+    faqs,
+    complementaryExperiences[]{
+      ...,
+      image{
+        asset->{url}
+      }
+    }
+  }
+
 `)

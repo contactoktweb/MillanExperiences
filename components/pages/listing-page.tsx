@@ -12,6 +12,90 @@ interface ListingPageProps {
 }
 
 export function ListingPageComponent({ content, locale }: ListingPageProps) {
+  if (content.isHub) {
+    const left = content.contentEn?.hubLeft;
+    const right = content.contentEn?.hubRight;
+    
+    // In Spanish locale, we'd use content.contentEs if available, but since we usually pass 'content' containing the correct locale's data (because we did contentEn or contentEs depending on locale in the page.tsx), wait!
+    // The query returns both contentEn and contentEs! So we must select based on locale.
+    const localizedContent = locale === 'es' ? content.contentEs : content.contentEn;
+    const hubLeft = localizedContent?.hubLeft;
+    const hubRight = localizedContent?.hubRight;
+
+    return (
+      <>
+        <Preloader />
+        <SiteHeader />
+        
+        <main id="main" className="flex flex-col md:flex-row min-h-screen">
+          {/* LEFT HALF */}
+          <Link href={hubLeft?.href || "#"} className="relative group w-full md:w-1/2 min-h-[50vh] md:min-h-screen overflow-hidden flex items-center justify-center">
+            <div className="absolute inset-0 z-0 bg-[var(--color-deep-sea)]">
+              {hubLeft?.imageUrl && (
+                <Image
+                  src={hubLeft.imageUrl}
+                  alt={hubLeft?.title || ""}
+                  fill
+                  priority
+                  className="object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-deep-sea)] via-[var(--color-deep-sea)]/40 to-[var(--color-deep-sea)]/70 transition-colors duration-700 group-hover:via-[var(--color-deep-sea)]/50" />
+            </div>
+            <div className="relative z-10 flex flex-col items-center text-center px-6 md:px-8 max-w-lg transition-transform duration-700 md:group-hover:-translate-y-4">
+              <span className="font-sans text-[0.65rem] font-bold uppercase tracking-[0.3em] text-[var(--color-sand)] mb-3 md:mb-4 md:opacity-0 md:transform md:translate-y-4 transition-all duration-700 delay-100 md:group-hover:opacity-100 md:group-hover:translate-y-0">
+                {locale === 'es' ? 'Descubrir' : 'Discover'}
+              </span>
+              <h2 className="display text-4xl md:text-5xl lg:text-7xl text-white mb-4 md:mb-6 drop-shadow-lg">{hubLeft?.title}</h2>
+              {hubLeft?.description && (
+                <p className="font-sans text-sm md:text-base text-white/95 mb-6 md:mb-8 font-light leading-relaxed md:opacity-0 md:transform md:translate-y-4 transition-all duration-700 delay-200 md:group-hover:opacity-100 md:group-hover:translate-y-0 drop-shadow-md">
+                  {hubLeft.description}
+                </p>
+              )}
+              <span className="inline-flex items-center justify-center px-8 md:px-10 py-3 md:py-4 bg-transparent border border-white/40 text-white font-sans tracking-[0.2em] text-[0.65rem] md:text-xs uppercase transition-all duration-500 hover:bg-white hover:text-black hover:border-white">
+                {locale === 'es' ? 'Explorar' : 'Explore'}
+              </span>
+            </div>
+          </Link>
+
+          {/* RIGHT HALF */}
+          <Link href={hubRight?.href || "#"} className="relative group w-full md:w-1/2 min-h-[50vh] md:min-h-screen overflow-hidden flex items-center justify-center border-t md:border-t-0 md:border-l border-white/10">
+            <div className="absolute inset-0 z-0 bg-[var(--color-deep-sea)]">
+              {hubRight?.imageUrl && (
+                <Image
+                  src={hubRight.imageUrl}
+                  alt={hubRight?.title || ""}
+                  fill
+                  priority
+                  className="object-cover transition-transform duration-[1.5s] group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-deep-sea)] via-[var(--color-deep-sea)]/40 to-[var(--color-deep-sea)]/70 transition-colors duration-700 group-hover:via-[var(--color-deep-sea)]/50" />
+            </div>
+            <div className="relative z-10 flex flex-col items-center text-center px-6 md:px-8 max-w-lg transition-transform duration-700 md:group-hover:-translate-y-4">
+              <span className="font-sans text-[0.65rem] font-bold uppercase tracking-[0.3em] text-[var(--color-sand)] mb-3 md:mb-4 md:opacity-0 md:transform md:translate-y-4 transition-all duration-700 delay-100 md:group-hover:opacity-100 md:group-hover:translate-y-0">
+                {locale === 'es' ? 'Descubrir' : 'Discover'}
+              </span>
+              <h2 className="display text-4xl md:text-5xl lg:text-7xl text-white mb-4 md:mb-6 drop-shadow-lg">{hubRight?.title}</h2>
+              {hubRight?.description && (
+                <p className="font-sans text-sm md:text-base text-white/95 mb-6 md:mb-8 font-light leading-relaxed md:opacity-0 md:transform md:translate-y-4 transition-all duration-700 delay-200 md:group-hover:opacity-100 md:group-hover:translate-y-0 drop-shadow-md">
+                  {hubRight.description}
+                </p>
+              )}
+              <span className="inline-flex items-center justify-center px-8 md:px-10 py-3 md:py-4 bg-transparent border border-white/40 text-white font-sans tracking-[0.2em] text-[0.65rem] md:text-xs uppercase transition-all duration-500 hover:bg-white hover:text-black hover:border-white">
+                {locale === 'es' ? 'Explorar' : 'Explore'}
+              </span>
+            </div>
+          </Link>
+        </main>
+      </>
+    );
+  }
+
+  // --- STANDARD CATALOG LISTING PAGE ---
+  // Select the correct localized content for the rest of the page
+  const localizedContent = locale === 'es' ? content.contentEs : content.contentEn;
+
   return (
     <>
       <Preloader />
@@ -19,13 +103,13 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
       
       <main id="main">
         {/* HERO SECTION */}
-        {content.hero && (
+        {localizedContent?.hero && (
           <section className="relative flex min-h-[75svh] items-center overflow-hidden bg-[var(--color-deep-sea)] pt-32 pb-24 md:pb-32">
             <div className="absolute inset-0">
-               {content.hero.backgroundImageUrl && (
+               {localizedContent.hero.backgroundImageUrl && (
                  <Image
-                    src={content.hero.backgroundImageUrl}
-                    alt={content.hero.title || ""}
+                    src={localizedContent.hero.backgroundImageUrl}
+                    alt={localizedContent.hero.title || ""}
                     fill
                     priority
                     className="object-cover opacity-50"
@@ -35,18 +119,18 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
             </div>
             <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 text-[var(--color-warm-white)]">
                <div className="max-w-2xl">
-                 {content.hero.eyebrow && (
-                   <h2 className="eyebrow text-[var(--color-sand)]">{content.hero.eyebrow}</h2>
+                 {localizedContent.hero.eyebrow && (
+                   <h2 className="eyebrow text-[var(--color-sand)]">{localizedContent.hero.eyebrow}</h2>
                  )}
-                 <h1 className="display mt-6 text-[clamp(3rem,5vw,5rem)] leading-tight">{content.hero.title}</h1>
-                 {content.hero.description && (
+                 <h1 className="display mt-6 text-[clamp(3rem,5vw,5rem)] leading-tight">{localizedContent.hero.title}</h1>
+                 {localizedContent.hero.description && (
                    <p className="mt-8 font-sans text-lg font-light leading-relaxed text-[var(--color-warm-white)]/85">
-                     {content.hero.description}
+                     {localizedContent.hero.description}
                    </p>
                  )}
-                 {content.hero.cta && (
+                 {localizedContent.hero.cta && (
                    <div className="mt-10">
-                     <Cta href={content.hero.cta.href} tone="sand">{content.hero.cta.label}</Cta>
+                     <Cta href={localizedContent.hero.cta.href} tone="sand">{localizedContent.hero.cta.label}</Cta>
                    </div>
                  )}
                </div>
@@ -55,11 +139,11 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
         )}
 
         {/* PROCESS STEPS */}
-        {content.processSteps && content.processSteps.length > 0 && (
+        {localizedContent?.processSteps && localizedContent.processSteps.length > 0 && (
           <section className="bg-[var(--color-warm-white)] py-16 md:py-24 border-b border-[var(--color-border)]">
             <div className="mx-auto max-w-[1440px] px-6 md:px-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-10">
-                {content.processSteps.map((step: any, idx: number) => (
+                {localizedContent.processSteps.map((step: any, idx: number) => (
                   <div key={idx} className="flex flex-col items-center text-center group">
                     <div className="flex flex-col items-center w-full max-w-[200px]">
                       <span className="font-serif text-lg text-[var(--color-text-dark)]">{step.number}. {step.title}</span>
@@ -86,13 +170,15 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
         )}
 
         {/* GRID SECTION */}
-        {content.grid && content.grid.items && content.grid.items.length > 0 && (
+        {content.properties && content.properties.length > 0 && (
           <section className="bg-[var(--color-card)] py-24 md:py-32">
             <div className="mx-auto max-w-[1440px] px-6 md:px-10">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {content.grid.items.map((item: any, idx: number) => (
+                {content.properties.map((item: any, idx: number) => {
+                  const itemHref = `/${content.slug}/${item.slug}`;
+                  return (
                   <div key={idx} className="group flex flex-col overflow-hidden rounded-[min(var(--radius-lg),16px)] bg-[var(--color-warm-white)] shadow-sm transition-shadow hover:shadow-md">
-                    <Link href={item.href || "#"} className="relative aspect-[4/3] w-full overflow-hidden block">
+                    <Link href={itemHref} className="relative aspect-[4/3] w-full overflow-hidden block">
                       {item.imageUrl && (
                         <Image 
                           src={item.imageUrl} 
@@ -103,7 +189,7 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                       )}
                     </Link>
                     <div className="flex flex-col p-8">
-                      <Link href={item.href || "#"} className="inline-block hover:text-[var(--color-sand)] transition-colors">
+                      <Link href={itemHref} className="inline-block hover:text-[var(--color-sand)] transition-colors">
                         <h3 className="font-serif text-2xl text-[var(--color-text-dark)]">{item.title}</h3>
                       </Link>
                       <div className="mt-6 flex flex-col gap-2 font-sans text-sm font-light text-[var(--color-blue-gray)]">
@@ -115,20 +201,21 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>
         )}
 
         {/* BENTO BANNER */}
-        {content.bentoBanner && (
-          <section className="relative flex min-h-[50svh] items-center overflow-hidden bg-[var(--color-deep-sea)] py-24 md:py-32">
+        {localizedContent?.bentoBanner && (
+          <section className="relative flex flex-col items-center justify-center min-h-[500px] overflow-hidden bg-[var(--color-deep-sea)] px-6 py-24">
             <div className="absolute inset-0">
-               {content.bentoBanner.backgroundImageUrl && (
-                 <Image
-                    src={content.bentoBanner.backgroundImageUrl}
-                    alt={content.bentoBanner.title || ""}
+              {localizedContent.bentoBanner.backgroundImageUrl && (
+                <Image
+                   src={localizedContent.bentoBanner.backgroundImageUrl}
+                   alt={localizedContent.bentoBanner.title || ""}
                     fill
                     className="object-cover opacity-60"
                  />
@@ -136,38 +223,39 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                <div className="absolute inset-0 bg-black/40" />
             </div>
             <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 text-[var(--color-warm-white)] flex justify-center">
-               <div className="max-w-3xl text-center">
-                 <h2 className="display text-[clamp(2.5rem,4vw,3.5rem)] leading-tight">{content.bentoBanner.title}</h2>
-                 {content.bentoBanner.description && (
-                   <p className="mt-6 font-sans text-lg font-light leading-relaxed text-[var(--color-warm-white)]/85">
-                     {content.bentoBanner.description}
-                   </p>
-                 )}
-                 {content.bentoBanner.cta && (
-                   <div className="mt-10 flex justify-center">
-                     <Cta href={content.bentoBanner.cta.href} tone="sand">{content.bentoBanner.cta.label}</Cta>
-                   </div>
+               <div className="relative z-10 max-w-3xl mx-auto text-center text-[var(--color-warm-white)]">
+                <h2 className="display text-[clamp(2.5rem,4vw,3.5rem)] leading-tight">{localizedContent.bentoBanner.title}</h2>
+                {localizedContent.bentoBanner.description && (
+                  <p className="mt-6 font-sans text-lg font-light leading-relaxed text-[var(--color-warm-white)]/90">
+                    {localizedContent.bentoBanner.description}
+                  </p>
+                )}
+                {localizedContent.bentoBanner.cta && (
+                  <div className="mt-10">
+                    <Cta href={localizedContent.bentoBanner.cta.href} tone="sand">{localizedContent.bentoBanner.cta.label}</Cta>
+                  </div>
                  )}
                </div>
             </div>
           </section>
         )}
 
-        {/* SEO FAQ SECTION (e.g. for Islands) */}
-        {content.seoFaq && (
-          <section className="bg-[var(--color-warm-white)] py-24 md:py-32">
-            <div className="mx-auto max-w-[1440px] px-6 md:px-10">
-              <div className="mx-auto max-w-4xl">
-                <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-text-dark)]">{content.seoFaq.title}</h2>
-                {content.seoFaq.description && (
-                  <p className="mt-4 text-lg font-light text-[var(--color-blue-gray)]">
-                    {content.seoFaq.description}
+        {/* SEO FAQ SECTION */}
+        {localizedContent?.seoFaq && (
+          <section className="bg-[var(--color-sand)]/30 py-24 border-t border-[var(--color-border)]">
+            <div className="mx-auto max-w-[800px] px-6 md:px-10">
+              <div className="text-center mb-12">
+                <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-text-dark)]">{localizedContent.seoFaq.title}</h2>
+                {localizedContent.seoFaq.description && (
+                  <p className="mt-4 font-sans text-[var(--color-blue-gray)] text-lg font-light">
+                    {localizedContent.seoFaq.description}
                   </p>
                 )}
-                
-                {content.seoFaq.questions && content.seoFaq.questions.length > 0 && (
-                  <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                    {content.seoFaq.questions.map((item: any, idx: number) => (
+              </div>
+              <div className="space-y-4">
+                {localizedContent.seoFaq.questions && localizedContent.seoFaq.questions.length > 0 && (
+                  <div className="divide-y divide-[var(--color-border)]">
+                    {localizedContent.seoFaq.questions.map((item: any, idx: number) => (
                       <div key={idx} className="border-t border-[var(--color-border)] pt-6">
                         <h3 className="font-serif text-xl text-[var(--color-text-dark)]">{item.question}</h3>
                         <p className="mt-4 font-sans text-[var(--color-blue-gray)] font-light leading-relaxed">
@@ -178,10 +266,10 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                   </div>
                 )}
                 
-                {content.seoFaq.cta && (
-                  <div className="mt-12">
-                    <Cta href={content.seoFaq.cta.href} tone="sand" className="text-sm px-6 py-3" withArrow={false}>
-                      {content.seoFaq.cta.label}
+                {localizedContent.seoFaq.cta && (
+                  <div className="mt-12 text-center flex justify-center">
+                    <Cta href={localizedContent.seoFaq.cta.href} tone="sand" className="text-sm px-6 py-3" withArrow={false}>
+                      {localizedContent.seoFaq.cta.label}
                     </Cta>
                   </div>
                 )}

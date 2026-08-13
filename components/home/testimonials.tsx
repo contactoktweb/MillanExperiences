@@ -23,7 +23,7 @@ interface TestimonialsData {
 }
 
 export function Testimonials({ data }: { data?: TestimonialsData }) {
-  const testimonials = data?.list || []
+  const testimonials = (data?.list || []).filter((item) => item?.quote && item.quote.trim() !== "")
   const [active, setActive] = useState(0)
   const [activeImage, setActiveImage] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)

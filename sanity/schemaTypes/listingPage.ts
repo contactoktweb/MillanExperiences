@@ -13,6 +13,32 @@ const listingPageContentFields = [
       defineField({ name: 'description', title: 'Descripción SEO (Meta Description)', type: 'text' }),
     ]
   }),
+  
+  // --- HUB SPLIT SCREEN OPTIONS ---
+  defineField({
+    name: 'hubLeft',
+    title: 'Opción Izquierda (Split Hub)',
+    type: 'object',
+    hidden: ({ document }) => !document?.isHub,
+    fields: [
+      defineField({ name: 'title', title: 'Título', type: 'string' }),
+      defineField({ name: 'description', title: 'Descripción Corta', type: 'text', rows: 2 }),
+      defineField({ name: 'image', title: 'Imagen de Fondo', type: 'image' }),
+      defineField({ name: 'href', title: 'URL Destino', type: 'string', description: 'Ej: /luxury-villas' })
+    ]
+  }),
+  defineField({
+    name: 'hubRight',
+    title: 'Opción Derecha (Split Hub)',
+    type: 'object',
+    hidden: ({ document }) => !document?.isHub,
+    fields: [
+      defineField({ name: 'title', title: 'Título', type: 'string' }),
+      defineField({ name: 'description', title: 'Descripción Corta', type: 'text', rows: 2 }),
+      defineField({ name: 'image', title: 'Imagen de Fondo', type: 'image' }),
+      defineField({ name: 'href', title: 'URL Destino', type: 'string', description: 'Ej: /private-islands' })
+    ]
+  }),
 
   // --- HERO SECTION ---
   defineField({
@@ -37,35 +63,6 @@ const listingPageContentFields = [
     ]
   }),
 
-  // --- GRID SECTION (Properties) ---
-  defineField({
-    name: 'grid',
-    title: 'Cuadrícula de Propiedades (Villas/Islas)',
-    type: 'object',
-    options: { collapsible: true, collapsed: true },
-    fields: [
-      defineField({
-        name: 'items',
-        title: 'Propiedades',
-        type: 'array',
-        of: [
-          {
-            type: 'object',
-            fields: [
-              defineField({ name: 'image', title: 'Imagen', type: 'image' }),
-              defineField({ name: 'title', title: 'Nombre (ej: Casa Hilda)', type: 'string' }),
-              defineField({ name: 'location', title: 'Ubicación', type: 'string' }),
-              defineField({ name: 'dimensions', title: 'Dimensiones (ej: 32 feet)', type: 'string' }),
-              defineField({ name: 'capacity', title: 'Capacidad (pax)', type: 'number' }),
-              defineField({ name: 'rooms', title: 'Habitaciones', type: 'number' }),
-              defineField({ name: 'bathrooms', title: 'Baños', type: 'number' }),
-              defineField({ name: 'href', title: 'Enlace a página de detalles', type: 'string' })
-            ]
-          }
-        ]
-      })
-    ]
-  }),
 
   // --- BENTO BANNER ---
   defineField({
@@ -146,7 +143,7 @@ const listingPageContentFields = [
 
 export const listingPage = defineType({
   name: 'listingPage',
-  title: 'Catálogos (Villas, Islas)',
+  title: 'Diseño: Catálogos (Hero/SEO)',
   type: 'document',
   icon: LayoutGrid,
   groups: [
@@ -170,6 +167,13 @@ export const listingPage = defineType({
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'isHub',
+      title: 'Modo Distribuidor (Pantalla Dividida)',
+      description: 'Si se activa, la página no mostrará un catálogo normal, sino una pantalla dividida con 2 botones gigantes a otras colecciones (ej. mitad Villas, mitad Islas).',
+      type: 'boolean',
+      initialValue: false,
     }),
     defineField({
       name: 'contentEn',

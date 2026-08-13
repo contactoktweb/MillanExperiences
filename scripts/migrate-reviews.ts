@@ -1,12 +1,13 @@
 import { createClient } from '@sanity/client'
 import fs from 'fs'
 import path from 'path'
-import 'dotenv/config' // requires dotenv to be installed or use Node 20 --env-file
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.local' })
 
 // Ensure you run this with: npx tsx scripts/migrate-reviews.ts
 // And have SANITY_API_WRITE_TOKEN set in .env.local
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'y692aouu'
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'a94tk6u3'
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production'
 const token = process.env.SANITY_API_WRITE_TOKEN
 
