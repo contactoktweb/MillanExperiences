@@ -65,11 +65,7 @@ export function createProductSchema(name: string, title: string, icon: any = Lay
         type: 'array',
         of: [{ type: 'string' }]
       }),
-      defineField({
-        name: 'price',
-        title: 'Precio base (Opcional)',
-        type: 'string',
-      }),
+
       defineField({
         name: 'cancellationPolicyEn',
         title: 'Política de Cancelación (Inglés)',

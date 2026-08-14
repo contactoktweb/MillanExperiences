@@ -45,7 +45,7 @@ export default async function HomePage() {
         <Hero data={content?.hero} />
         <CoreServices data={content?.coreServices} />
         <WhyMillan data={content?.whyMillan} />
-        <Testimonials data={testimonialsData} />
+        <Testimonials data={testimonialsData} locale={locale} />
         <ContactSection />
       </main>
       <SiteFooter />

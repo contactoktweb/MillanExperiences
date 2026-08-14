@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 import { Cta } from "@/components/cta"
 import { cn } from "@/lib/utils"
+import { useSwipe } from "@/lib/use-swipe"
 
 const DURATION = 7000
 
@@ -52,10 +53,16 @@ export function Hero({ data }: { data?: HeroData }) {
 
   const go = (i: number) => setActive((i + (data?.slides?.length || 1)) % (data?.slides?.length || 1))
 
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: () => go(active + 1),
+    onSwipeRight: () => go(active - 1),
+  })
+
   return (
     <section
-      className="relative flex min-h-[100svh] items-end overflow-hidden bg-[var(--color-deep-sea)]"
+      className="relative flex min-h-[100svh] items-end overflow-hidden bg-[var(--color-deep-sea)] touch-pan-y"
       aria-label="Introduction"
+      {...swipeHandlers}
     >
       {/* Slides */}
       {data?.slides?.map((slide, i) => (

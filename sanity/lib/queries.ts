@@ -363,3 +363,20 @@ export const propertyBySlugQuery = defineQuery(`
   }
 
 `)
+
+export const propertyReviewsQuery = defineQuery(`
+  *[_type == "review" && status == "approved" && propertySlug == $slug] | order(_createdAt desc) {
+    _id,
+    name,
+    quote,
+    rating,
+    context,
+    date,
+    propertyName,
+    propertySlug,
+    isGoogleReview,
+    images[]{
+      asset->{url}
+    }
+  }
+`)

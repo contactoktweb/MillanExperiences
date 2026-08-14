@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { cookies } from "next/headers"
 import { client } from "@/sanity/lib/client"
-import { propertyBySlugQuery } from "@/sanity/lib/queries"
+import { propertyBySlugQuery, propertyReviewsQuery } from "@/sanity/lib/queries"
 import { PropertyPageComponent } from "@/components/pages/property-page"
 
 export async function generateMetadata({
@@ -31,7 +31,10 @@ export default async function PropertyDynamicPage({
   params: Promise<{ slug: string; propertySlug: string }>
 }) {
   const p = await params
-  const data = await client.fetch(propertyBySlugQuery, { slug: p.propertySlug, categorySlug: p.slug })
+  const [data, reviews] = await Promise.all([
+    client.fetch(propertyBySlugQuery, { slug: p.propertySlug, categorySlug: p.slug }),
+    client.fetch(propertyReviewsQuery, { slug: p.propertySlug })
+  ])
 
   if (!data) {
     notFound()
@@ -44,8 +47,9 @@ export default async function PropertyDynamicPage({
     <>
       <Preloader />
       <SiteHeader forceSolid={true} />
-      <PropertyPageComponent content={data} locale={locale} />
+      <PropertyPageComponent content={data} locale={locale} initialReviews={reviews || []} />
       <SiteFooter />
     </>
   )
 }
+

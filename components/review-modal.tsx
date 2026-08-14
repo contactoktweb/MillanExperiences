@@ -7,9 +7,13 @@ import { cn } from "@/lib/utils"
 interface ReviewModalProps {
   isOpen: boolean
   onClose: () => void
+  propertySlug?: string
+  propertyName?: string
+  locale?: string
+  onSuccess?: (review: any) => void
 }
 
-export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
+export function ReviewModal({ isOpen, onClose, propertySlug, propertyName, locale = "es", onSuccess }: ReviewModalProps) {
   const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(false)
 
@@ -21,12 +25,12 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
   
+  const isEs = locale === "es"
   const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (isOpen) {
       setMounted(true)
-      // Retraso mínimo para permitir que el DOM se pinte antes de animar
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setVisible(true))
       })
@@ -34,7 +38,6 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
       setVisible(false)
       const timer = setTimeout(() => {
         setMounted(false)
-        // Reset form state after exit animation
         setRating(5)
         setImages([])
         setImagePreviews([])
@@ -73,6 +76,8 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
 
     const formData = new FormData(e.currentTarget)
     formData.append("rating", rating.toString())
+    if (propertySlug) formData.append("propertySlug", propertySlug)
+    if (propertyName) formData.append("propertyName", propertyName)
     
     formData.delete("images")
     images.forEach(img => formData.append("images", img))
@@ -83,12 +88,14 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
         body: formData,
       })
 
+      const data = await res.json()
+
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || "Algo salió mal")
+        throw new Error(data.error || (isEs ? "Algo salió mal al enviar la reseña." : "Something went wrong."))
       }
 
       setSuccess(true)
+      onSuccess?.(data.review)
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -116,16 +123,20 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
           <button 
             onClick={onClose}
             className="absolute right-4 top-4 text-[var(--color-deep-sea)]/50 hover:text-[var(--color-deep-sea)] transition-colors p-2"
-            aria-label="Cerrar modal"
+            aria-label={isEs ? "Cerrar modal" : "Close modal"}
           >
             <X size={24} strokeWidth={1.5} />
           </button>
 
           <h2 className="font-serif text-3xl text-[var(--color-deep-sea)] mb-2 pr-6">
-            Comparte tu experiencia
+            {isEs 
+              ? `Comparte tu experiencia ${propertyName ? `en ${propertyName}` : ''}`
+              : `Share your experience ${propertyName ? `at ${propertyName}` : ''}`}
           </h2>
           <p className="font-sans text-sm font-light text-[var(--color-deep-sea)]/70">
-            Tu opinión es muy importante para nosotros. Escribe una reseña y adjunta fotos de tu viaje.
+            {isEs 
+              ? "Tu opinión es muy importante para nosotros. Escribe una reseña y adjunta fotos de tu experiencia."
+              : "Your feedback is very important to us. Write a review and upload photos of your journey."}
           </p>
         </div>
 
@@ -136,22 +147,24 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
               <div className="w-16 h-16 rounded-full bg-[#FBBC05]/20 flex items-center justify-center text-[#FBBC05] mb-4">
                 <Star size={32} fill="currentColor" />
               </div>
-              <h3 className="font-serif text-2xl text-[var(--color-deep-sea)] mb-2">¡Gracias por tu reseña!</h3>
+              <h3 className="font-serif text-2xl text-[var(--color-deep-sea)] mb-2">
+                {isEs ? "¡Gracias por tu reseña!" : "Thank you for your review!"}
+              </h3>
               <p className="font-sans text-sm font-light text-[var(--color-deep-sea)]/80">
-                Tu reseña ha sido enviada y está pendiente de aprobación.
+                {isEs ? "Tu reseña ha sido publicada con éxito." : "Your review has been successfully published."}
               </p>
               <button 
                 onClick={onClose}
                 className="mt-8 px-8 py-4 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] font-sans text-xs uppercase tracking-widest hover:bg-[var(--color-deep-sea)]/90 transition-colors"
               >
-                Cerrar
+                {isEs ? "Cerrar" : "Close"}
               </button>
             </div>
           ) : (
             <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-6">
               <div>
                 <label className="block font-sans text-xs uppercase tracking-widest text-[var(--color-deep-sea)]/80 mb-3">
-                  Calificación
+                  {isEs ? "Calificación" : "Rating"}
                 </label>
                 <div className="flex gap-1.5">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -161,7 +174,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                       onMouseEnter={() => setHoveredRating(star)}
                       onMouseLeave={() => setHoveredRating(0)}
                       onClick={() => setRating(star)}
-                      className="text-[#FBBC05] transition-transform hover:scale-110 focus:outline-none"
+                      className="text-[#FBBC05] transition-transform hover:scale-110 focus:outline-none cursor-pointer"
                     >
                       <Star 
                         size={32} 
@@ -176,35 +189,35 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
 
               <div>
                 <label htmlFor="name" className="block font-sans text-xs uppercase tracking-widest text-[var(--color-deep-sea)]/80 mb-2">
-                  Tu Nombre
+                  {isEs ? "Tu Nombre" : "Your Name"}
                 </label>
                 <input 
                   required
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Ej. María Pérez"
+                  placeholder={isEs ? "Ej. María Pérez" : "e.g. Sarah Jenkins"}
                   className="w-full border-b border-[var(--color-deep-sea)]/20 bg-transparent py-3 font-sans text-base text-[var(--color-deep-sea)] outline-none focus:border-[var(--color-sand)] transition-colors"
                 />
               </div>
 
               <div>
                 <label htmlFor="quote" className="block font-sans text-xs uppercase tracking-widest text-[var(--color-deep-sea)]/80 mb-2">
-                  Tu Reseña
+                  {isEs ? "Tu Reseña" : "Your Review"}
                 </label>
                 <textarea 
                   required
                   id="quote"
                   name="quote"
                   rows={4}
-                  placeholder="Cuéntanos cómo fue tu experiencia..."
+                  placeholder={isEs ? "Cuéntanos cómo fue tu experiencia..." : "Tell us about your experience..."}
                   className="w-full border border-[var(--color-deep-sea)]/20 bg-transparent p-3 font-sans text-base text-[var(--color-deep-sea)] outline-none focus:border-[var(--color-sand)] transition-colors resize-none"
                 />
               </div>
 
               <div>
                 <label className="block font-sans text-xs uppercase tracking-widest text-[var(--color-deep-sea)]/80 mb-2">
-                  Imágenes (Opcional)
+                  {isEs ? "Imágenes (Opcional)" : "Images (Optional)"}
                 </label>
                 
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-2">
@@ -214,7 +227,7 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                       <button 
                         type="button"
                         onClick={() => removeImage(i)}
-                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity"
+                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity cursor-pointer"
                       >
                         <X size={20} />
                       </button>
@@ -224,7 +237,9 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
                   {imagePreviews.length < 5 && (
                     <label className="aspect-square border-2 border-dashed border-[var(--color-deep-sea)]/20 flex flex-col items-center justify-center gap-2 text-[var(--color-deep-sea)]/50 hover:text-[var(--color-deep-sea)] hover:border-[var(--color-deep-sea)]/40 hover:bg-[var(--color-deep-sea)]/5 transition-all cursor-pointer rounded-sm">
                       <Upload size={20} strokeWidth={1.5} />
-                      <span className="font-sans text-[0.6rem] uppercase tracking-wider text-center px-2">Subir foto</span>
+                      <span className="font-sans text-[0.6rem] uppercase tracking-wider text-center px-2">
+                        {isEs ? "Subir foto" : "Upload photo"}
+                      </span>
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -246,15 +261,15 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-2 flex w-full items-center justify-center gap-2 bg-[var(--color-sand)] py-4 font-sans text-xs font-semibold uppercase tracking-widest text-[var(--color-warm-white)] transition-colors hover:bg-[var(--color-dark-sand)] disabled:opacity-70"
+                className="mt-2 flex w-full items-center justify-center gap-2 bg-[var(--color-sand)] py-4 font-sans text-xs font-semibold uppercase tracking-widest text-[var(--color-warm-white)] transition-colors hover:bg-[var(--color-dark-sand)] disabled:opacity-70 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
-                    Enviando...
+                    {isEs ? "Enviando..." : "Submitting..."}
                   </>
                 ) : (
-                  "Enviar Reseña"
+                  isEs ? "Enviar Reseña" : "Submit Review"
                 )}
               </button>
             </form>
@@ -264,3 +279,4 @@ export function ReviewModal({ isOpen, onClose }: ReviewModalProps) {
     </div>
   )
 }
+

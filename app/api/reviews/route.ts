@@ -48,15 +48,20 @@ export async function POST(req: Request) {
       }
     }
 
-    // Crear el documento de la reseña
+    const propertySlug = (formData.get('propertySlug') as string) || undefined
+    const propertyName = (formData.get('propertyName') as string) || undefined
+
+    // Crear el documento de la reseña (aprobado automáticamente)
     const reviewDoc = {
       _type: 'review',
       name,
       quote,
       rating,
+      propertySlug,
+      propertyName,
       date: new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }), // e.g. "agosto 2026"
       isGoogleReview: false,
-      status: 'pending',
+      status: 'approved', // Aprobada automáticamente
       images: uploadedImages.length > 0 ? uploadedImages : undefined,
     }
 

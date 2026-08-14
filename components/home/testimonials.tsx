@@ -6,6 +6,7 @@ import { ArrowRight, MessageSquarePlus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ReviewModal } from "@/components/review-modal"
+import { useSwipe } from "@/lib/use-swipe"
 
 interface TestimonialsData {
   eyebrow?: string;
@@ -22,7 +23,8 @@ interface TestimonialsData {
   }>;
 }
 
-export function Testimonials({ data }: { data?: TestimonialsData }) {
+export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData, locale?: string }) {
+  const isEs = locale === "es"
   const testimonials = (data?.list || []).filter((item) => item?.quote && item.quote.trim() !== "")
   const [active, setActive] = useState(0)
   const [activeImage, setActiveImage] = useState(0)
@@ -48,19 +50,43 @@ export function Testimonials({ data }: { data?: TestimonialsData }) {
     return () => clearInterval(interval)
   }, [current])
 
+  // Swipe for testimonials content
+  const testimonialSwipeHandlers = useSwipe({
+    onSwipeLeft: () => go(active + 1),
+    onSwipeRight: () => go(active - 1),
+  })
+
+  // Swipe for image container
+  const imageSwipeHandlers = useSwipe({
+    onSwipeLeft: () => {
+      if (current?.images && current.images.length > 1) {
+        setActiveImage((prev) => (prev + 1) % current.images!.length)
+      } else {
+        go(active + 1)
+      }
+    },
+    onSwipeRight: () => {
+      if (current?.images && current.images.length > 1) {
+        setActiveImage((prev) => (prev - 1 + current.images!.length) % current.images!.length)
+      } else {
+        go(active - 1)
+      }
+    },
+  })
+
   if (!testimonials.length) return null;
 
   return (
     <section className="bg-[var(--color-deep-sea)] py-24 text-[var(--color-warm-white)] md:py-40">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-12 px-6 md:px-10 lg:grid-cols-12 lg:gap-20">
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 touch-pan-y" {...testimonialSwipeHandlers}>
           <p className="eyebrow text-[var(--color-sand)]">{data?.eyebrow || "Guest Stories"}</p>
           <h2 className="mt-5 font-serif text-[clamp(2.25rem,4.5vw,4.5rem)] leading-[1.05]">
             {data?.headline || "Felt, not just experienced."}
           </h2>
 
           <div className="mt-12 min-h-[220px]">
-            <blockquote key={active} className="motion-safe:animate-[fade-up_0.9s_var(--ease-editorial)]">
+            <blockquote key={active} className="motion-safe:animate-[fade-up_0.9s_var(--ease-editorial)] select-none">
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <div className="flex text-[#FBBC05]">
                   {[...Array(current?.rating || 5)].map((_, i) => (
@@ -117,7 +143,7 @@ export function Testimonials({ data }: { data?: TestimonialsData }) {
                 <button
                   type="button"
                   onClick={() => go(active - 1)}
-                  aria-label="Previous testimonial"
+                  aria-label={isEs ? "Testimonio anterior" : "Previous testimonial"}
                   className="flex h-10 w-10 items-center justify-center border border-[color:var(--color-border-dark)] transition-colors hover:border-[var(--color-sand)] hover:text-[var(--color-sand)]"
                 >
                   <ArrowRight className="h-4 w-4 rotate-180" strokeWidth={1.5} />
@@ -125,7 +151,7 @@ export function Testimonials({ data }: { data?: TestimonialsData }) {
                 <button
                   type="button"
                   onClick={() => go(active + 1)}
-                  aria-label="Next testimonial"
+                  aria-label={isEs ? "Siguiente testimonio" : "Next testimonial"}
                   className="flex h-10 w-10 items-center justify-center border border-[color:var(--color-border-dark)] transition-colors hover:border-[var(--color-sand)] hover:text-[var(--color-sand)]"
                 >
                   <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
@@ -135,16 +161,19 @@ export function Testimonials({ data }: { data?: TestimonialsData }) {
             
             <button
               onClick={() => setIsModalOpen(true)}
-              className="ml-auto md:ml-6 flex items-center gap-2 border border-[var(--color-sand)] px-5 py-2.5 font-sans text-[0.65rem] font-medium uppercase tracking-[0.15em] text-[var(--color-sand)] transition-colors hover:bg-[var(--color-sand)] hover:text-[var(--color-deep-sea)]"
+              className="ml-auto md:ml-6 flex items-center gap-2 border border-[var(--color-sand)] px-5 py-2.5 font-sans text-[0.65rem] font-medium uppercase tracking-[0.15em] text-[var(--color-sand)] transition-colors hover:bg-[var(--color-sand)] hover:text-[var(--color-deep-sea)] cursor-pointer"
             >
               <MessageSquarePlus size={14} />
-              Dejar reseña
+              {isEs ? "Dejar reseña" : "Leave a review"}
             </button>
           </div>
         </div>
 
         <div className="lg:col-span-5">
-          <div className="relative aspect-[4/5] w-full overflow-hidden">
+          <div 
+            className="relative aspect-[4/5] w-full overflow-hidden touch-pan-y select-none"
+            {...imageSwipeHandlers}
+          >
             {current?.images && current.images.length > 0 ? (
               // Autoplaying Carousel for multiple images or just single image
               <>
@@ -191,7 +220,11 @@ export function Testimonials({ data }: { data?: TestimonialsData }) {
         </div>
       </div>
 
-      <ReviewModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ReviewModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        locale={locale}
+      />
 
       <style jsx>{`
         @keyframes fade-up {

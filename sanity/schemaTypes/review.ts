@@ -43,6 +43,16 @@ export const review = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'propertySlug',
+      title: 'Slug de la Propiedad (Opcional)',
+      type: 'string',
+    }),
+    defineField({
+      name: 'propertyName',
+      title: 'Nombre de la Propiedad (Opcional)',
+      type: 'string',
+    }),
+    defineField({
       name: 'images',
       title: 'Imágenes Adjuntas',
       type: 'array',
@@ -54,27 +64,30 @@ export const review = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Pendiente', value: 'pending' },
           { title: 'Aprobado', value: 'approved' },
+          { title: 'Pendiente', value: 'pending' },
           { title: 'Rechazado', value: 'rejected' },
         ],
         layout: 'radio',
       },
-      initialValue: 'pending',
+      initialValue: 'approved',
       validation: Rule => Rule.required(),
     }),
   ],
   preview: {
     select: {
       title: 'name',
-      subtitle: 'status',
+      subtitle: 'propertyName',
+      status: 'status',
       rating: 'rating',
     },
-    prepare({ title, subtitle, rating }) {
+    prepare({ title, subtitle, status, rating }) {
       const stars = '⭐️'.repeat(rating || 0)
+      const propText = subtitle ? ` [${subtitle}]` : ''
+      const statusIcon = status === 'approved' ? '✅' : status === 'rejected' ? '❌' : '⏳'
       return {
-        title: `${title} - ${stars}`,
-        subtitle: subtitle === 'approved' ? '✅ Aprobado' : subtitle === 'rejected' ? '❌ Rechazado' : '⏳ Pendiente',
+        title: `${title} - ${stars}${propText}`,
+        subtitle: `${statusIcon} ${status === 'approved' ? 'Aprobado' : status === 'rejected' ? 'Rechazado' : 'Pendiente'}`,
       }
     }
   }

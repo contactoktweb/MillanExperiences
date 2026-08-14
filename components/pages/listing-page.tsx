@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactSection } from "@/components/home/contact-section"
 import { Cta } from "@/components/cta"
+import { FaqAccordion } from "@/components/faq-accordion"
 
 interface ListingPageProps {
   content: any;
@@ -242,40 +243,13 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
 
         {/* SEO FAQ SECTION */}
         {localizedContent?.seoFaq && (
-          <section className="bg-[var(--color-sand)]/30 py-24 border-t border-[var(--color-border)]">
-            <div className="mx-auto max-w-[800px] px-6 md:px-10">
-              <div className="text-center mb-12">
-                <h2 className="font-serif text-3xl md:text-4xl text-[var(--color-text-dark)]">{localizedContent.seoFaq.title}</h2>
-                {localizedContent.seoFaq.description && (
-                  <p className="mt-4 font-sans text-[var(--color-blue-gray)] text-lg font-light">
-                    {localizedContent.seoFaq.description}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-4">
-                {localizedContent.seoFaq.questions && localizedContent.seoFaq.questions.length > 0 && (
-                  <div className="divide-y divide-[var(--color-border)]">
-                    {localizedContent.seoFaq.questions.map((item: any, idx: number) => (
-                      <div key={idx} className="border-t border-[var(--color-border)] pt-6">
-                        <h3 className="font-serif text-xl text-[var(--color-text-dark)]">{item.question}</h3>
-                        <p className="mt-4 font-sans text-[var(--color-blue-gray)] font-light leading-relaxed">
-                          {item.answer}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {localizedContent.seoFaq.cta && (
-                  <div className="mt-12 text-center flex justify-center">
-                    <Cta href={localizedContent.seoFaq.cta.href} tone="sand" className="text-sm px-6 py-3" withArrow={false}>
-                      {localizedContent.seoFaq.cta.label}
-                    </Cta>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
+          <FaqAccordion
+            title={localizedContent.seoFaq.title}
+            description={localizedContent.seoFaq.description}
+            eyebrow={locale === 'es' ? 'PREGUNTAS FRECUENTES' : 'FREQUENTLY ASKED QUESTIONS'}
+            questions={localizedContent.seoFaq.questions}
+            cta={localizedContent.seoFaq.cta}
+          />
         )}
 
         {/* CONTACT SECTION */}
