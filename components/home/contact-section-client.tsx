@@ -25,8 +25,12 @@ const translations = {
     step2: "Step 02 — Your Details",
     serviceOfInterest: "Service of interest *",
     selectServiceError: "Select at least one service.",
-    startDate: "Travel start date",
-    endDate: "Travel end date",
+    startDate: "Travel start date *",
+    endDate: "Travel end date *",
+    selectStartDateError: "Please select a start date.",
+    selectEndDateError: "Please select an end date.",
+    invalidDateRangeError: "End date must be on or after start date.",
+    invalidPastDateError: "Start date cannot be in the past.",
     continue: "Continue",
     name: "Name *",
     lastName: "Last Name *",
@@ -56,8 +60,12 @@ const translations = {
     step2: "Paso 02 — Tus Datos",
     serviceOfInterest: "Servicio de interés *",
     selectServiceError: "Selecciona al menos un servicio.",
-    startDate: "Fecha de inicio del viaje",
-    endDate: "Fecha de fin del viaje",
+    startDate: "Fecha de inicio del viaje *",
+    endDate: "Fecha de fin del viaje *",
+    selectStartDateError: "Por favor selecciona la fecha de inicio.",
+    selectEndDateError: "Por favor selecciona la fecha de fin.",
+    invalidDateRangeError: "La fecha de fin debe ser igual o posterior a la fecha de inicio.",
+    invalidPastDateError: "La fecha de inicio no puede ser anterior a hoy.",
     continue: "Continuar",
     name: "Nombre *",
     lastName: "Apellido *",
@@ -71,6 +79,14 @@ const translations = {
   }
 }
 
+function getTodayString() {
+  const now = new Date()
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  const d = String(now.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 const inputBase =
   "w-full border-0 border-b border-[color:var(--color-border-dark)] bg-transparent py-3 font-sans text-sm text-[var(--color-warm-white)] placeholder:text-[var(--color-warm-white)]/40 focus:border-[var(--color-sand)] focus:outline-none focus:ring-0 transition-colors"
 const labelBase =
@@ -79,6 +95,7 @@ const fieldGap = "flex flex-col gap-2"
 
 export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappUrl?: string, locale?: "en" | "es" }) {
   const t = translations[locale]
+  const todayStr = getTodayString()
   const [step, setStep] = useState<1 | 2>(1)
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -101,6 +118,22 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
     setErrors((e) => ({ ...e, [key]: "" }))
   }
 
+  const handleStartDateChange = (val: string) => {
+    setForm((prev) => {
+      const next = { ...prev, startDate: val }
+      if (prev.endDate && prev.endDate < val) {
+        next.endDate = val
+      }
+      return next
+    })
+    setErrors((e) => ({ ...e, startDate: "", endDate: "" }))
+  }
+
+  const handleEndDateChange = (val: string) => {
+    setForm((prev) => ({ ...prev, endDate: val }))
+    setErrors((e) => ({ ...e, endDate: "" }))
+  }
+
   const toggleService = (service: string) => {
     setForm((f) => ({
       ...f,
@@ -113,7 +146,21 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
 
   const validateStep1 = () => {
     const next: Record<string, string> = {}
-    if (form.services.length === 0) next.services = t.selectServiceError
+    if (form.services.length === 0) {
+      next.services = t.selectServiceError
+    }
+    if (!form.startDate) {
+      next.startDate = t.selectStartDateError
+    } else if (form.startDate < todayStr) {
+      next.startDate = t.invalidPastDateError
+    }
+
+    if (!form.endDate) {
+      next.endDate = t.selectEndDateError
+    } else if (form.startDate && form.endDate < form.startDate) {
+      next.endDate = t.invalidDateRangeError
+    }
+
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -239,10 +286,13 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
                       <input
                         id="startDate"
                         type="date"
+                        min={todayStr}
                         value={form.startDate}
-                        onChange={(e) => set("startDate", e.target.value)}
-                        className={cn(inputBase, "[color-scheme:dark]")}
+                        onChange={(e) => handleStartDateChange(e.target.value)}
+                        className={cn(inputBase, "[color-scheme:dark]", errors.startDate && "border-b border-[#EA4335]")}
+                        aria-invalid={!!errors.startDate}
                       />
+                      {errors.startDate && <FieldError id="startDate" message={errors.startDate} />}
                     </div>
 
                     <div className={fieldGap}>
@@ -250,17 +300,20 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
                       <input
                         id="endDate"
                         type="date"
+                        min={form.startDate || todayStr}
                         value={form.endDate}
-                        onChange={(e) => set("endDate", e.target.value)}
-                        className={cn(inputBase, "[color-scheme:dark]")}
+                        onChange={(e) => handleEndDateChange(e.target.value)}
+                        className={cn(inputBase, "[color-scheme:dark]", errors.endDate && "border-b border-[#EA4335]")}
+                        aria-invalid={!!errors.endDate}
                       />
+                      {errors.endDate && <FieldError id="endDate" message={errors.endDate} />}
                     </div>
 
                     <div className="sm:col-span-2 mt-4">
                       <button
                         type="button"
                         onClick={() => validateStep1() && setStep(2)}
-                        className="group/next inline-flex items-center gap-2.5 bg-[var(--color-sand)] px-7 py-3.5 font-sans text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[var(--color-deep-sea)] transition-colors hover:bg-[var(--color-warm-white)]"
+                        className="group/next inline-flex items-center gap-2.5 bg-[var(--color-sand)] px-7 py-3.5 font-sans text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[var(--color-deep-sea)] transition-colors hover:bg-[var(--color-warm-white)] cursor-pointer"
                       >
                         {t.continue}
                         <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/next:translate-x-1" strokeWidth={1.5} />
