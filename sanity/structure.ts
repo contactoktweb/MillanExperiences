@@ -16,7 +16,6 @@ import {
   Ship,
   Star,
   MessageSquareHeart,
-  Edit,
   UserCheck,
 } from 'lucide-react'
 import type { StructureResolver } from 'sanity/structure'
@@ -28,38 +27,13 @@ const createPropertyListItem = (
   icon: any
 ) =>
   S.listItem()
+    .id(schemaType)
     .title(title)
     .icon(icon)
+    .schemaType(schemaType)
     .child(
       S.documentTypeList(schemaType)
         .title(title)
-        .child((documentId: string) =>
-          S.list()
-            .title(`Gestión: ${title}`)
-            .items([
-              S.listItem()
-                .title('Editar Información')
-                .icon(Edit)
-                .child(
-                  S.document()
-                    .title('Editar Propiedad')
-                    .schemaType(schemaType)
-                    .documentId(documentId)
-                ),
-              S.listItem()
-                .title('Reseñas de esta Propiedad')
-                .icon(Star)
-                .child(
-                  S.documentList()
-                    .title('Reseñas de Clientes')
-                    .filter(
-                      '_type == "review" && (propertySlug == *[_id == $id][0].slug.current || propertyName == *[_id == $id][0].title)'
-                    )
-                    .params({ id: documentId })
-                    .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
-                ),
-            ])
-        )
     )
 
 export const structure: StructureResolver = (S) =>
