@@ -40,18 +40,22 @@ export async function POST(req: Request) {
 
     const createdLead = await writeClient.create(doc)
 
-    // 2. Obtener el correo configurado en Configuración Global de Sanity
+    // 2. Obtener el correo y logo configurados en Configuración Global de Sanity
     let recipientEmail = 'millanexperiences@gmail.com'
+    let logoUrl: string | undefined = undefined
     try {
-      const globalConfig = await writeClient.fetch('*[_type == "globalConfig"][0]{ email }')
+      const globalConfig = await writeClient.fetch('*[_type == "globalConfig"][0]{ email, "logoUrl": logo.asset->url }')
       if (globalConfig?.email) {
         recipientEmail = globalConfig.email
       }
+      if (globalConfig?.logoUrl) {
+        logoUrl = globalConfig.logoUrl
+      }
     } catch (fetchErr) {
-      console.warn('Could not fetch globalConfig email, using default:', fetchErr)
+      console.warn('Could not fetch globalConfig email/logo, using defaults:', fetchErr)
     }
 
-    // 3. Enviar notificación por correo
+    // 3. Enviar notificación por correo con Resend usando el logo de Sanity
     let emailResult = null
     try {
       emailResult = await sendLeadNotificationEmail(
@@ -66,10 +70,11 @@ export async function POST(req: Request) {
           message: doc.message,
           leadId: createdLead._id,
         },
-        recipientEmail
+        recipientEmail,
+        logoUrl
       )
     } catch (mailErr) {
-      console.error('Error sending lead notification email:', mailErr)
+      console.error('Error sending lead notification email via Resend:', mailErr)
       // No fallamos la respuesta para no perder el registro en Sanity
     }
 
