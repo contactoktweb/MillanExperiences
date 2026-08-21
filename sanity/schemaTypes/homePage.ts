@@ -139,7 +139,13 @@ const homePageContentFields = [
     fields: [
       defineField({ name: 'eyebrow', title: 'Subtítulo (Eyebrow)', type: 'string' }),
       defineField({ name: 'headline', title: 'Título Principal', type: 'string' }),
-      defineField({ name: 'sideImage', title: 'Imagen Lateral', type: 'image' }),
+      defineField({
+        name: 'sideImage',
+        title: 'Imagen Lateral por Defecto',
+        type: 'image',
+        options: { hotspot: true },
+        description: 'Imagen que se muestra si un testimonio no tiene foto propia asignada.'
+      }),
       defineField({
         name: 'list',
         title: 'Lista de Testimonios',
@@ -153,8 +159,35 @@ const homePageContentFields = [
               defineField({ name: 'context', type: 'string', title: 'Contexto / Nacionalidad / Opcional' }),
               defineField({ name: 'rating', type: 'number', title: 'Calificación (1-5)', initialValue: 5, validation: Rule => Rule.min(1).max(5) }),
               defineField({ name: 'date', type: 'string', title: 'Fecha (ej. "Hace 5 meses")' }),
+              defineField({
+                name: 'image',
+                type: 'image',
+                title: 'Foto / Imagen de la Experiencia (Editable)',
+                options: { hotspot: true },
+                description: 'Foto del cliente o de la experiencia para mostrar en el lateral.'
+              }),
+              defineField({
+                name: 'images',
+                type: 'array',
+                title: 'Galería de Fotos Adicionales (Opcional)',
+                of: [{ type: 'image', options: { hotspot: true } }]
+              }),
               defineField({ name: 'isGoogleReview', type: 'boolean', title: '¿Es un Google Review?', initialValue: true }),
-            ]
+            ],
+            preview: {
+              select: {
+                title: 'name',
+                subtitle: 'quote',
+                media: 'image',
+              },
+              prepare({ title, subtitle, media }) {
+                return {
+                  title: title || 'Testimonio sin nombre',
+                  subtitle: subtitle ? `“${subtitle.slice(0, 50)}...”` : '',
+                  media,
+                }
+              }
+            }
           }
         ]
       })

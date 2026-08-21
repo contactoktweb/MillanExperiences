@@ -19,14 +19,19 @@ export const globalConfigQuery = defineQuery(`
 
 export const approvedReviewsQuery = defineQuery(`
   *[_type == "review" && status == "approved" && defined(quote) && quote != ""] | order(_createdAt desc) {
+    _id,
     name,
     quote,
     rating,
     context,
     date,
     isGoogleReview,
+    "imageUrl": image.asset->url,
     images[]{
-      asset->{url}
+      ...,
+      "asset": {
+        "url": asset->url
+      }
     }
   }
 `)
@@ -49,7 +54,17 @@ export const homePageQuery = defineQuery(`
       },
       testimonialsSection {
         ...,
-        "sideImageUrl": sideImage.asset->url
+        "sideImageUrl": sideImage.asset->url,
+        list[]{
+          ...,
+          "imageUrl": image.asset->url,
+          images[]{
+            ...,
+            "asset": {
+              "url": asset->url
+            }
+          }
+        }
       }
     },
     contentEs {
@@ -68,7 +83,17 @@ export const homePageQuery = defineQuery(`
       },
       testimonialsSection {
         ...,
-        "sideImageUrl": sideImage.asset->url
+        "sideImageUrl": sideImage.asset->url,
+        list[]{
+          ...,
+          "imageUrl": image.asset->url,
+          images[]{
+            ...,
+            "asset": {
+              "url": asset->url
+            }
+          }
+        }
       }
     }
   }

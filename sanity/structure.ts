@@ -17,6 +17,7 @@ import {
   Star,
   MessageSquareHeart,
   Edit,
+  UserCheck,
 } from 'lucide-react'
 import type { StructureResolver } from 'sanity/structure'
 
@@ -65,7 +66,7 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Panel de Administración')
     .items([
-      // 1. CONFIGURACIÓN GLOBAL & HOME
+      // 1. CONFIGURACIÓN GLOBAL, HOME & CLIENTES
       S.listItem()
         .title('Configuración Global')
         .icon(Settings)
@@ -86,6 +87,49 @@ export const structure: StructureResolver = (S) =>
             .title('Página de Inicio')
             .schemaType('homePage')
             .documentId('homePage')
+        ),
+
+      S.listItem()
+        .title('Solicitudes de Clientes (Leads)')
+        .icon(UserCheck)
+        .child(
+          S.list()
+            .title('Solicitudes de Clientes')
+            .items([
+              S.listItem()
+                .title('Todas las Solicitudes')
+                .icon(Users)
+                .child(
+                  S.documentList()
+                    .title('Todas las Solicitudes')
+                    .filter('_type == "clientLead"')
+                    .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('🟢 Nuevas Solicitudes')
+                .child(
+                  S.documentList()
+                    .title('Nuevas Solicitudes')
+                    .filter('_type == "clientLead" && status == "new"')
+                    .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('🟡 En Proceso / Cotizando')
+                .child(
+                  S.documentList()
+                    .title('En Proceso de Cotización')
+                    .filter('_type == "clientLead" && status == "in_progress"')
+                    .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('✅ Clientes Confirmados')
+                .child(
+                  S.documentList()
+                    .title('Clientes Confirmados')
+                    .filter('_type == "clientLead" && status == "confirmed"')
+                    .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
+                ),
+            ])
         ),
 
       S.divider(),

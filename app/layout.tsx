@@ -93,7 +93,7 @@ export default async function RootLayout({
   const globalConfig = await client.fetch(globalConfigQuery)
   
   return (
-    <html lang="en" className={`${didot.variable} ${jost.variable} bg-background`}>
+    <html lang="en" className={`${didot.variable} ${jost.variable} bg-background scroll-smooth`}>
       <body className="font-sans antialiased">
         {children}
         <WhatsAppButton whatsappUrl={globalConfig?.whatsapp} />

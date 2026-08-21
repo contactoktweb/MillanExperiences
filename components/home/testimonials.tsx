@@ -5,7 +5,6 @@ import Image from "next/image"
 import { ArrowRight, MessageSquarePlus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { ReviewModal } from "@/components/review-modal"
 import { useSwipe } from "@/lib/use-swipe"
 
 interface TestimonialsData {
@@ -19,7 +18,8 @@ interface TestimonialsData {
     rating?: number;
     date?: string;
     isGoogleReview?: boolean;
-    images?: Array<{ asset: { url: string } }>;
+    imageUrl?: string;
+    images?: Array<{ asset?: { url?: string }; url?: string }>;
   }>;
 }
 
@@ -28,7 +28,6 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
   const testimonials = (data?.list || []).filter((item) => item?.quote && item.quote.trim() !== "")
   const [active, setActive] = useState(0)
   const [activeImage, setActiveImage] = useState(0)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const go = (i: number) => {
     if (testimonials.length) {
@@ -39,16 +38,30 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
   
   const current = testimonials[active]
 
+  // Resolve images for active testimonial (either from images gallery or single imageUrl)
+  const currentImages: string[] = (() => {
+    if (current?.images && current.images.length > 0) {
+      const urls = current.images
+        .map((img: any) => img?.asset?.url || img?.url || (typeof img === 'string' ? img : ''))
+        .filter(Boolean)
+      if (urls.length > 0) return urls
+    }
+    if (current?.imageUrl) {
+      return [current.imageUrl]
+    }
+    return []
+  })()
+
   // Image autoplay effect
   useEffect(() => {
-    if (!current?.images || current.images.length <= 1) return;
+    if (currentImages.length <= 1) return;
     
     const interval = setInterval(() => {
-      setActiveImage((prev) => (prev + 1) % current.images!.length)
+      setActiveImage((prev) => (prev + 1) % currentImages.length)
     }, 3500) // change image every 3.5s
     
     return () => clearInterval(interval)
-  }, [current])
+  }, [currentImages.length, active])
 
   // Swipe for testimonials content
   const testimonialSwipeHandlers = useSwipe({
@@ -59,15 +72,15 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
   // Swipe for image container
   const imageSwipeHandlers = useSwipe({
     onSwipeLeft: () => {
-      if (current?.images && current.images.length > 1) {
-        setActiveImage((prev) => (prev + 1) % current.images!.length)
+      if (currentImages.length > 1) {
+        setActiveImage((prev) => (prev + 1) % currentImages.length)
       } else {
         go(active + 1)
       }
     },
     onSwipeRight: () => {
-      if (current?.images && current.images.length > 1) {
-        setActiveImage((prev) => (prev - 1 + current.images!.length) % current.images!.length)
+      if (currentImages.length > 1) {
+        setActiveImage((prev) => (prev - 1 + currentImages.length) % currentImages.length)
       } else {
         go(active - 1)
       }
@@ -77,7 +90,7 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
   if (!testimonials.length) return null;
 
   return (
-    <section className="bg-[var(--color-deep-sea)] py-24 text-[var(--color-warm-white)] md:py-40">
+    <section id="testimonios" className="bg-[var(--color-deep-sea)] py-24 text-[var(--color-warm-white)] md:py-40 scroll-mt-20">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-12 px-6 md:px-10 lg:grid-cols-12 lg:gap-20">
         <div className="lg:col-span-7 touch-pan-y" {...testimonialSwipeHandlers}>
           <p className="eyebrow text-[var(--color-sand)]">{data?.eyebrow || "Guest Stories"}</p>
@@ -159,13 +172,15 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
               </div>
             </div>
             
-            <button
-              onClick={() => setIsModalOpen(true)}
+            <a
+              href="https://g.page/r/CdyjcKyPFCc1EAE/review"
+              target="_blank"
+              rel="noopener noreferrer"
               className="ml-auto md:ml-6 flex items-center gap-2 border border-[var(--color-sand)] px-5 py-2.5 font-sans text-[0.65rem] font-medium uppercase tracking-[0.15em] text-[var(--color-sand)] transition-colors hover:bg-[var(--color-sand)] hover:text-[var(--color-deep-sea)] cursor-pointer"
             >
               <MessageSquarePlus size={14} />
               {isEs ? "Dejar reseña" : "Leave a review"}
-            </button>
+            </a>
           </div>
         </div>
 
@@ -174,14 +189,14 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
             className="relative aspect-[4/5] w-full overflow-hidden touch-pan-y select-none"
             {...imageSwipeHandlers}
           >
-            {current?.images && current.images.length > 0 ? (
+            {currentImages.length > 0 ? (
               // Autoplaying Carousel for multiple images or just single image
               <>
-                {current.images.map((img, i) => (
+                {currentImages.map((imgUrl, i) => (
                   <Image
                     key={i}
-                    src={img?.asset?.url || "/placeholder.jpg"}
-                    alt={`Foto de ${current.name} - ${i + 1}`}
+                    src={imgUrl || "/placeholder.jpg"}
+                    alt={`Foto de ${current?.name || 'Cliente'} - ${i + 1}`}
                     fill
                     sizes="(max-width: 1024px) 100vw, 40vw"
                     className={cn(
@@ -191,9 +206,9 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
                   />
                 ))}
                 {/* Dots indicator if multiple images */}
-                {current.images.length > 1 && (
+                {currentImages.length > 1 && (
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
-                    {current.images.map((_, i) => (
+                    {currentImages.map((_, i) => (
                       <div 
                         key={i} 
                         className={cn(
@@ -219,12 +234,6 @@ export function Testimonials({ data, locale = "en" }: { data?: TestimonialsData,
           </div>
         </div>
       </div>
-
-      <ReviewModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        locale={locale}
-      />
 
       <style jsx>{`
         @keyframes fade-up {

@@ -29,12 +29,14 @@ export default async function HomePage() {
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en"
   const content = locale === "es" ? homePageData?.contentEs : homePageData?.contentEn
 
-  // Combina o usa directamente los reviews dinámicos
+  // Prioriza los testimonios configurados en Home de Sanity o las reseñas dinámicas
+  const homeTestimonials = (content?.testimonialsSection?.list || []).filter((item: any) => item?.quote?.trim())
+  const reviewsList = (approvedReviews || []).filter((item: any) => item?.quote?.trim())
+  const listToDisplay = homeTestimonials.length > 0 ? homeTestimonials : reviewsList
+
   const testimonialsData = {
     ...content?.testimonialsSection,
-    list: approvedReviews && approvedReviews.length > 0 
-      ? approvedReviews 
-      : content?.testimonialsSection?.list
+    list: listToDisplay
   }
 
   return (

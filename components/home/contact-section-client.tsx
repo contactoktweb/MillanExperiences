@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { ArrowRight, Check, MessageCircle } from "lucide-react"
+import { ArrowRight, Check, MessageCircle, Loader2 } from "lucide-react"
 import { contact } from "@/lib/site-data"
 import { cn } from "@/lib/utils"
 
@@ -93,6 +93,9 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
     message: "",
   })
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState("")
+
   const set = (key: keyof typeof form, value: any) => {
     setForm((f) => ({ ...f, [key]: value }))
     setErrors((e) => ({ ...e, [key]: "" }))
@@ -125,10 +128,31 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
     return Object.keys(next).length === 0
   }
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateStep2()) return
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setSubmitError("")
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || "Error al enviar la solicitud.")
+      }
+
+      setSubmitted(true)
+    } catch (err: any) {
+      console.error(err)
+      setSubmitError(locale === "es" ? "Hubo un problema al enviar la solicitud. Por favor intenta de nuevo o escríbenos por WhatsApp." : "There was a problem sending your request. Please try again or reach out via WhatsApp.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -308,20 +332,37 @@ export function ContactSectionClient({ whatsappUrl, locale = "en" }: { whatsappU
                       />
                     </div>
 
+                    {submitError && (
+                      <div className="sm:col-span-2 text-xs text-[#EA4335] bg-[#EA4335]/10 p-3 border border-[#EA4335]/20">
+                        {submitError}
+                      </div>
+                    )}
+
                     <div className="flex flex-wrap items-center gap-4 sm:col-span-2 mt-4">
                       <button
                         type="button"
+                        disabled={isSubmitting}
                         onClick={() => setStep(1)}
-                        className="font-sans text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-warm-white)]/70 underline-offset-4 hover:underline"
+                        className="font-sans text-[0.7rem] uppercase tracking-[0.2em] text-[var(--color-warm-white)]/70 underline-offset-4 hover:underline disabled:opacity-50"
                       >
                         {t.back}
                       </button>
                       <button
                         type="submit"
-                        className="group/submit inline-flex items-center gap-2.5 bg-[var(--color-sand)] px-7 py-3.5 font-sans text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[var(--color-deep-sea)] transition-colors hover:bg-[var(--color-warm-white)]"
+                        disabled={isSubmitting}
+                        className="group/submit inline-flex items-center gap-2.5 bg-[var(--color-sand)] px-7 py-3.5 font-sans text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[var(--color-deep-sea)] transition-colors hover:bg-[var(--color-warm-white)] disabled:opacity-75 cursor-pointer"
                       >
-                        {t.requestQuote}
-                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/submit:translate-x-1" strokeWidth={1.5} />
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            {locale === "es" ? "Enviando..." : "Sending..."}
+                          </>
+                        ) : (
+                          <>
+                            {t.requestQuote}
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/submit:translate-x-1" strokeWidth={1.5} />
+                          </>
+                        )}
                       </button>
                     </div>
                   </div>

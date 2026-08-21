@@ -53,10 +53,20 @@ export const review = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'image',
+      title: 'Foto Principal del Cliente / Experiencia (Editable)',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      description: 'Imagen principal para mostrar al lado del testimonio.',
+    }),
+    defineField({
       name: 'images',
-      title: 'Imágenes Adjuntas',
+      title: 'Galería de Imágenes Adicionales (Opcional)',
       type: 'array',
-      of: [{ type: 'image' }],
+      of: [{ type: 'image', options: { hotspot: true } }],
+      description: 'Carrusel de fotos para mostrar junto al testimonio.',
     }),
     defineField({
       name: 'status',
@@ -80,14 +90,16 @@ export const review = defineType({
       subtitle: 'propertyName',
       status: 'status',
       rating: 'rating',
+      media: 'image',
     },
-    prepare({ title, subtitle, status, rating }) {
+    prepare({ title, subtitle, status, rating, media }) {
       const stars = '⭐️'.repeat(rating || 0)
       const propText = subtitle ? ` [${subtitle}]` : ''
       const statusIcon = status === 'approved' ? '✅' : status === 'rejected' ? '❌' : '⏳'
       return {
         title: `${title} - ${stars}${propText}`,
         subtitle: `${statusIcon} ${status === 'approved' ? 'Aprobado' : status === 'rejected' ? 'Rechazado' : 'Pendiente'}`,
+        media,
       }
     }
   }
