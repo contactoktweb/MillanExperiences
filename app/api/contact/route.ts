@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from 'next-sanity'
 import { apiVersion, dataset, projectId } from '@/sanity/env'
+import { sendLeadNotificationEmail } from '@/lib/email'
 
 const writeClient = createClient({
   projectId,
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
       )
     }
 
+    // 1. Guardar el Lead en Sanity
     const doc = {
       _type: 'clientLead',
       firstName: firstName.trim(),
@@ -38,7 +40,45 @@ export async function POST(req: Request) {
 
     const createdLead = await writeClient.create(doc)
 
-    return NextResponse.json({ success: true, lead: createdLead })
+    // 2. Obtener el correo configurado en Configuración Global de Sanity
+    let recipientEmail = 'millanexperiences@gmail.com'
+    try {
+      const globalConfig = await writeClient.fetch('*[_type == "globalConfig"][0]{ email }')
+      if (globalConfig?.email) {
+        recipientEmail = globalConfig.email
+      }
+    } catch (fetchErr) {
+      console.warn('Could not fetch globalConfig email, using default:', fetchErr)
+    }
+
+    // 3. Enviar notificación por correo
+    let emailResult = null
+    try {
+      emailResult = await sendLeadNotificationEmail(
+        {
+          firstName: doc.firstName,
+          lastName: doc.lastName,
+          email: doc.email,
+          phone: doc.phone,
+          services: doc.services,
+          startDate: doc.startDate,
+          endDate: doc.endDate,
+          message: doc.message,
+          leadId: createdLead._id,
+        },
+        recipientEmail
+      )
+    } catch (mailErr) {
+      console.error('Error sending lead notification email:', mailErr)
+      // No fallamos la respuesta para no perder el registro en Sanity
+    }
+
+    return NextResponse.json({
+      success: true,
+      lead: createdLead,
+      emailSent: Boolean(emailResult?.success),
+      recipientEmail,
+    })
   } catch (error: any) {
     console.error('Error submitting contact lead to Sanity:', error)
     return NextResponse.json(
