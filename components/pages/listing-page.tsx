@@ -179,15 +179,14 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                   const itemHref = `/${content.slug}/${item.slug}`;
                   return (
                   <div key={idx} className="group flex flex-col overflow-hidden rounded-[min(var(--radius-lg),16px)] bg-[var(--color-warm-white)] shadow-sm transition-shadow hover:shadow-md">
-                    <Link href={itemHref} className="relative aspect-[4/3] w-full overflow-hidden block">
-                      {item.imageUrl && (
-                        <Image 
-                          src={item.imageUrl} 
-                          alt={item.title || ""} 
-                          fill
-                          className="object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-105"
-                        />
-                      )}
+                    <Link href={itemHref} className="relative aspect-[4/3] w-full overflow-hidden block bg-black/5">
+                      <Image 
+                        src={item.imageUrl || "/placeholder.jpg"} 
+                        alt={item.title || ""} 
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-[900ms] ease-[var(--ease-editorial)] group-hover:scale-105"
+                      />
                     </Link>
                     <div className="flex flex-col p-8">
                       <Link href={itemHref} className="inline-block hover:text-[var(--color-sand)] transition-colors">

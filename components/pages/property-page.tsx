@@ -225,10 +225,11 @@ export function PropertyPageComponent({ content, locale, initialReviews = [] }: 
                       {allImages.map((img, idx) => (
                         <div key={idx} className="relative flex-none w-full aspect-[4/3] md:aspect-[3/2] overflow-hidden snap-center select-none">
                           <Image 
-                            src={img} 
+                            src={img || "/placeholder.jpg"} 
                             alt={`${title} image ${idx + 1}`} 
                             fill 
                             priority={idx === 0}
+                            sizes="(max-width: 1024px) 100vw, 60vw"
                             className="object-cover" 
                           />
                         </div>
