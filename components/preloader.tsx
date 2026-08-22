@@ -67,6 +67,7 @@ export function Preloader() {
               alt="Millan Experiences"
               width={260}
               height={130}
+              style={{ height: "auto" }}
               className={cn(
                 "object-contain transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
                 progress > 0.05 ? "translate-y-0" : "translate-y-full",

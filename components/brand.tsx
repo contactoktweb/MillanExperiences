@@ -8,6 +8,7 @@ export function Monogram({ className, logoUrl }: { className?: string, logoUrl?:
       alt="Millan Experiences"
       width={40}
       height={40}
+      style={{ height: "auto" }}
       className={cn("object-contain", className)}
     />
   )
@@ -31,6 +32,7 @@ export function Wordmark({
         alt="Millan Experiences"
         width={160}
         height={60}
+        style={{ height: "auto" }}
         className={cn("object-contain", monogramClassName)}
       />
     </div>
