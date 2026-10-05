@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import { X, Plus, Minus, Check, ShoppingBag, Clock } from "lucide-react"
 import { useStore } from "@/lib/store-context"
-import { formatCOP } from "@/lib/store-data"
+import { PRIORITY_LABELS, formatCOP } from "@/lib/store-data"
 import { cn } from "@/lib/utils"
+import { ProductImage } from "./product-image"
 
 interface QuantityPreset {
   qty: number
@@ -13,34 +13,11 @@ interface QuantityPreset {
   detail?: string
 }
 
-function getPresetsForCategory(category: string): QuantityPreset[] {
-  if (category === "cervezas") {
-    return [
-      { qty: 1, label: "6 Cervezas", detail: "1 Six-Pack" },
-      { qty: 2, label: "12 Cervezas", detail: "2 Six-Packs" },
-      { qty: 4, label: "24 Cervezas", detail: "4 Six-Packs (Caja)" },
-    ]
-  }
-  if (category === "vinos") {
-    return [
-      { qty: 1, label: "1 Botella" },
-      { qty: 3, label: "3 Botellas", detail: "Mesa / Grupo" },
-      { qty: 6, label: "6 Botellas", detail: "Caja Completa" },
-    ]
-  }
-  if (category === "licores") {
-    return [
-      { qty: 1, label: "1 Botella" },
-      { qty: 2, label: "2 Botellas", detail: "Doble Servicio" },
-      { qty: 3, label: "3 Botellas", detail: "Jornada Completa" },
-    ]
-  }
-  return [
-    { qty: 1, label: "1 Unidad" },
-    { qty: 2, label: "2 Unidades" },
-    { qty: 4, label: "4 Unidades", detail: "Para Compartir" },
-  ]
-}
+const QUANTITY_PRESETS: QuantityPreset[] = [
+  { qty: 1, label: "1 Unidad" },
+  { qty: 2, label: "2 Unidades" },
+  { qty: 4, label: "4 Unidades", detail: "Para Compartir" },
+]
 
 export function ProductModal() {
   const { selectedProductForModal, setSelectedProductForModal, addToCart } = useStore()
@@ -95,11 +72,11 @@ export function ProductModal() {
       {/* Backdrop */}
       <div
         onClick={() => setSelectedProductForModal(null)}
-        className="fixed inset-0 bg-[var(--color-deep-sea)]/75 backdrop-blur-sm transition-opacity duration-300"
+        className="modal-backdrop-enter fixed inset-0 bg-[var(--color-deep-sea)]/75 backdrop-blur-sm"
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[var(--color-warm-white)] text-[var(--color-deep-sea)] shadow-2xl rounded-sm border border-[color:var(--color-border-light)] z-10 animate-in fade-in zoom-in-95 duration-200">
+      <div className="modal-panel-enter relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-[var(--color-warm-white)] text-[var(--color-deep-sea)] shadow-2xl rounded-sm border border-[color:var(--color-border-light)] z-10">
         {/* Close button */}
         <button
           onClick={() => setSelectedProductForModal(null)}
@@ -110,25 +87,24 @@ export function ProductModal() {
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Image */}
-          <div className="relative min-h-[200px] sm:min-h-[260px] md:min-h-[380px] bg-[var(--color-deep-sea)]/5 overflow-hidden">
-            <Image
+          {/* Image Container: Proporción 1:1 original, sin recortes */}
+          <div className="relative aspect-square w-full md:aspect-auto md:min-h-[440px] bg-white border-b md:border-b-0 md:border-r border-[color:var(--color-border-light)] overflow-hidden flex items-center justify-center p-6 sm:p-8">
+            <ProductImage
               src={product.image}
-              alt={`Imagen en alta resolución de ${product.name}`}
-              fill
+              alt={`Imagen de ${product.name}`}
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
               priority
+              className="p-3 sm:p-5 md:p-6"
             />
-            {product.badge && (
-              <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] border border-[var(--color-sand)]/40 font-sans text-[0.6rem] sm:text-[0.66rem] font-medium tracking-[0.18em] uppercase px-2.5 py-1">
-                {product.badge}
+            {product.priority && (
+              <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] border border-[var(--color-sand)]/40 font-sans text-[0.6rem] sm:text-[0.66rem] font-medium tracking-[0.18em] uppercase px-2.5 py-1 z-10">
+                {PRIORITY_LABELS[product.priority]}
               </span>
             )}
           </div>
 
           {/* Details & Selection */}
-          <div className="flex flex-col justify-between p-5 sm:p-7 md:p-8">
+          <div className="modal-content-enter flex flex-col justify-between p-5 sm:p-7 md:p-8">
             <div>
               <span className="font-sans text-[0.62rem] sm:text-[0.66rem] uppercase tracking-[0.2em] text-[var(--color-blue-gray)] font-medium">
                 {product.categoryLabel}
@@ -137,8 +113,18 @@ export function ProductModal() {
                 {product.name}
               </h2>
               <p className="mt-1 font-sans text-xs text-[var(--color-blue-gray)]">
-                {product.volumeOrServing}
+                {product.presentation}
               </p>
+              {product.destinations.length > 0 && (
+                <p className="mt-2 font-sans text-[0.7rem] text-[var(--color-dark-sand)] font-medium">
+                  Ideal para: {product.destinations.join(" · ")}
+                </p>
+              )}
+              {product.description && (
+                <p className="mt-3 font-sans text-xs sm:text-sm text-[var(--color-deep-sea)]/80 leading-relaxed">
+                  {product.description}
+                </p>
+              )}
 
               {/* Notice */}
               <div className="mt-4 flex items-start gap-2 bg-[var(--color-sand)]/15 border border-[var(--color-sand)]/40 p-2 sm:p-2.5 rounded-sm">
@@ -157,7 +143,7 @@ export function ProductModal() {
                 Opciones rápidas de cantidad:
               </span>
               <div className="grid grid-cols-3 gap-2">
-                {getPresetsForCategory(product.category).map((preset) => {
+                {QUANTITY_PRESETS.map((preset) => {
                   const isSelected = quantity === preset.qty
                   return (
                     <button
@@ -231,12 +217,6 @@ export function ProductModal() {
               </div>
             </div>
 
-            {/* Beer specific equivalence hint */}
-            {product.category === "cervezas" && (
-              <p className="font-sans text-[0.7rem] text-[var(--color-dark-sand)] font-medium">
-                Total a reservar: {quantity} six-pack{quantity > 1 ? "s" : ""} ({quantity * 6} cervezas en total)
-              </p>
-            )}
 
             {/* Subtotal line */}
             <div className="flex items-center justify-between font-sans text-sm border-t border-[color:var(--color-border-light)] pt-3">

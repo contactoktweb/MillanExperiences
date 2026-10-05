@@ -343,4 +343,37 @@ export const structure: StructureResolver = (S) =>
                 ),
             ])
         ),
+
+      S.divider(),
+
+      // 7. TIENDA (CAVA & BOUTIQUE)
+      S.listItem()
+        .title('Tienda (Cava & Boutique)')
+        .icon(Wine)
+        .child(
+          S.list()
+            .title('Tienda')
+            .items([
+              S.listItem()
+                .title('Productos activos')
+                .icon(Wine)
+                .child(
+                  S.documentList()
+                    .title('Productos activos')
+                    .filter('_type == "storeProduct" && status == "active"')
+                    .defaultOrdering([{ field: 'title', direction: 'asc' }])
+                ),
+              S.listItem()
+                .title('Borradores / por validar')
+                .icon(Star)
+                .child(
+                  S.documentList()
+                    .title('Borradores (ocultos al cliente)')
+                    .filter('_type == "storeProduct" && status != "active"')
+                    .defaultOrdering([{ field: 'title', direction: 'asc' }])
+                ),
+              S.divider(),
+              createPropertyListItem(S, 'storeCategory', 'Categorías', LayoutGrid),
+            ])
+        ),
     ])

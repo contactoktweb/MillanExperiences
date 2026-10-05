@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import Image from "next/image"
+import { ProductImage } from "./product-image"
 import { useRouter } from "next/navigation"
 import {
   X,
@@ -222,12 +222,12 @@ export function CartDrawer() {
               <div className="divide-y divide-[color:var(--color-border-light)] border-t border-b border-[color:var(--color-border-light)]">
                 {cart.map((item) => (
                   <div key={item.product.id} className="py-4 flex gap-4 items-center">
-                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-black/5">
-                      <Image
+                    <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-white border border-[color:var(--color-border-light)] p-1 flex items-center justify-center">
+                      <ProductImage
                         src={item.product.image}
                         alt={item.product.name}
-                        fill
-                        className="object-cover"
+                        sizes="64px"
+                        className="p-1"
                       />
                     </div>
 

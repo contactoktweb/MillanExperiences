@@ -14,3 +14,15 @@ node_modules
 .next/
 .DS_Store
 scratch/
+# Excel and spreadsheet price guides (protect internal margins and costs)
+*.xlsx
+*.xls
+*.csv
+guia.xlsx
+
+# Build info
+*.tsbuildinfo
+
+# Datos internos del importador de tienda (costos, proveedor)
+scripts/store-import/output/
+

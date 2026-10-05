@@ -1,358 +1,39 @@
-export type StoreCategory = "todos" | "cervezas" | "vinos" | "licores" | "comida" | "snacks"
+import type { StoreDestination, StorePriority } from "./store-constants"
 
+/** Producto tal como lo consume el front: solo campos públicos (nunca costos ni datos de proveedor). */
 export interface StoreProduct {
   id: string
   name: string
-  category: "cervezas" | "vinos" | "licores" | "comida" | "snacks"
-  categoryLabel: string
+  presentation: string
   priceCOP: number
-  volumeOrServing: string
-  description: string
-  image: string
-  badge?: string
-  inStock: boolean
-  featured?: boolean
+  categoryId: string
+  categoryLabel: string
+  /** Categoría principal (para "Cava premium" es el padre; en el resto, la misma categoría). */
+  groupId: string
+  description?: string
+  image?: string
+  priority?: StorePriority
+  destinations: StoreDestination[]
 }
 
-export const STORE_CATEGORIES: { id: StoreCategory; label: string; description: string }[] = [
-  {
-    id: "todos",
-    label: "Todo el Catálogo",
-    description: "Nuestra selección exclusiva de bebidas y delicias para tu estadía o navegación.",
-  },
-  {
-    id: "cervezas",
-    label: "Cervezas",
-    description: "Cervezas premium importadas y nacionales seleccionadas para acompañar la brisa del Caribe.",
-  },
-  {
-    id: "vinos",
-    label: "Vinos & Champagne",
-    description: "Grandes casas de Champagne, vinos blancos frescos y tintos de gran cuerpo con óptimo servicio de cava.",
-  },
-  {
-    id: "licores",
-    label: "Licores",
-    description: "Destilados ultra-premium: Tequilas de autor, whiskies añejos, rones caribeños y ginebras botánicas.",
-  },
-  {
-    id: "comida",
-    label: "Comida",
-    description: "Platos preparados por chefs, tablas ibéricas artesanales y preparaciones gourmet listas para servir.",
-  },
-  {
-    id: "snacks",
-    label: "Snacks",
-    description: "Bocados selectos, frutos secos confitados o trufados, papas artesanales y aperitivos refinados.",
-  },
-]
+export interface StoreCategoryOption {
+  id: string
+  label: string
+}
 
-export const STORE_PRODUCTS: StoreProduct[] = [
-  // --- CERVEZAS ---
-  {
-    id: "corona-pack-6",
-    name: "Corona Extra (Six Pack)",
-    category: "cervezas",
-    categoryLabel: "Cervezas",
-    priceCOP: 65000,
-    volumeOrServing: "Pack x6 botellas de 330ml",
-    description: "Cerveza clara tipo Pilsner de perfil refrescante con notas suaves a malta y lúpulo. Incluye limones frescos cortados para servicio.",
-    image: "https://images.unsplash.com/photo-1584225064785-c62a8b43d148?auto=format&fit=crop&w=800&q=80",
-    badge: "Más Solicitado",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "stella-artois-pack-6",
-    name: "Stella Artois Premium Lager (Six Pack)",
-    category: "cervezas",
-    categoryLabel: "Cervezas",
-    priceCOP: 72000,
-    volumeOrServing: "Pack x6 botellas de 330ml",
-    description: "Lager belga de tradición centenaria con equilibrio perfecto entre malta y suave amargor de lúpulo Saaz. Servida a temperatura perfecta.",
-    image: "https://images.unsplash.com/photo-1608270195589-98a442111d4d?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "club-colombia-dorada-pack-6",
-    name: "Club Colombia Dorada Reserva (Six Pack)",
-    category: "cervezas",
-    categoryLabel: "Cervezas",
-    priceCOP: 55000,
-    volumeOrServing: "Pack x6 latas o botellas 330ml",
-    description: "La cerveza premium insignia de Colombia. Color ámbar brillante, cuerpo aterciopelado y notas sutilmente tostadas.",
-    image: "https://images.unsplash.com/photo-1618183479302-1e0aa382c36b?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "heineken-pack-6",
-    name: "Heineken Pure Malt (Six Pack)",
-    category: "cervezas",
-    categoryLabel: "Cervezas",
-    priceCOP: 68000,
-    volumeOrServing: "Pack x6 botellas de 330ml",
-    description: "Lager premium 100% malta con su distintiva levadura tipo A y frescura cristalina, ideal para jornadas a bordo.",
-    image: "https://images.unsplash.com/photo-1538488881522-4321453a9927?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "modelo-especial-pack-6",
-    name: "Modelo Especial (Six Pack)",
-    category: "cervezas",
-    categoryLabel: "Cervezas",
-    priceCOP: 78000,
-    volumeOrServing: "Pack x6 botellas de 355ml",
-    description: "Cerveza tipo Pilsner estilo dorada y carácter pronunciado, espuma cremosa y final limpio y refrescante.",
-    image: "https://images.unsplash.com/photo-1566633806327-68e152aaf26d?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
+export interface StoreCategoryGroup extends StoreCategoryOption {
+  children: StoreCategoryOption[]
+}
 
-  // --- VINOS & CHAMPAGNE ---
-  {
-    id: "moet-chandon-imperial-brut",
-    name: "Moët & Chandon Brut Impérial",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 620000,
-    volumeOrServing: "Botella 750ml",
-    description: "El champagne icónico de la Maison Moët & Chandon. Notas vibrantes de manzana verde, cítricos, matices minerales y brioche.",
-    image: "https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?auto=format&fit=crop&w=800&q=80",
-    badge: "Icono de Lujo",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "veuve-clicquot-yellow-label",
-    name: "Veuve Clicquot Brut Yellow Label",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 690000,
-    volumeOrServing: "Botella 750ml",
-    description: "Estructura impecable dominada por Pinot Noir. Aromas a frutas blancas y amarillas, toques de vainilla y pan tostado.",
-    image: "https://images.unsplash.com/photo-1569919659476-f0852f6834b7?auto=format&fit=crop&w=800&q=80",
-    badge: "Recomendado Concierge",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "dom-perignon-vintage",
-    name: "Dom Pérignon Vintage Prestige",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 2100000,
-    volumeOrServing: "Botella 750ml",
-    description: "La cumbre del arte del champagne. Cosecha vintage con complejidad estratificada, efervescencia sedosa y elegancia atemporal.",
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",
-    badge: "Ultra Premium",
-    inStock: true,
-  },
-  {
-    id: "whispering-angel-rose",
-    name: "Château d'Esclans Whispering Angel Rosé",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 260000,
-    volumeOrServing: "Botella 750ml — Côtes de Provence",
-    description: "El rosé de la Costa Azul más aclamado del mundo. Tono pálido seductor, notas de fresa silvestre, melocotón y una acidez mineral fresca.",
-    image: "https://images.unsplash.com/photo-1558001373-7b93ee48ffa0?auto=format&fit=crop&w=800&q=80",
-    badge: "Ideal para Navegación",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "catena-zapata-malbec-argentino",
-    name: "Catena Zapata Malbec Argentino",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 480000,
-    volumeOrServing: "Botella 750ml — Mendoza",
-    description: "Malbec de viñedos de gran altura. Aromas a moras silvestres, violetas, especias dulces y taninos finamente pulidos.",
-    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "cloudy-bay-sauvignon-blanc",
-    name: "Cloudy Bay Sauvignon Blanc Marlborough",
-    category: "vinos",
-    categoryLabel: "Vinos & Champagne",
-    priceCOP: 310000,
-    volumeOrServing: "Botella 750ml — Nueva Zelanda",
-    description: "Referencia mundial en vino blanco. Aromas cítricos de pomelo, maracuyá y matices herbales vibrantes. Ideal con mariscos y ceviches.",
-    image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
+export interface StoreCatalog {
+  products: StoreProduct[]
+  groups: StoreCategoryGroup[]
+}
 
-  // --- LICORES ---
-  {
-    id: "tequila-don-julio-1942",
-    name: "Tequila Don Julio 1942 Añejo",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 1450000,
-    volumeOrServing: "Botella 750ml",
-    description: "Celebrado en los yates y clubes más exclusivos del mundo. Envejecido en barricas de roble americano, ofrece notas ricas de caramelo cálido, vainilla y agave tostado.",
-    image: "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=800&q=80",
-    badge: "Estrella de la Cava",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "clase-azul-reposado",
-    name: "Tequila Clase Azul Reposado",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 1650000,
-    volumeOrServing: "Licorera artesanal de cerámica 750ml",
-    description: "Obra de arte tanto en su icónica licorera pintada a mano como en su sabor aterciopelado con notas de toffee, avellana y canela.",
-    image: "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?auto=format&fit=crop&w=800&q=80",
-    badge: "Exclusivo",
-    inStock: true,
-  },
-  {
-    id: "whisky-buchanans-18",
-    name: "Buchanan's Special Reserve 18 Años",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 420000,
-    volumeOrServing: "Botella 750ml",
-    description: "Blended Scotch de cuerpo medio con un final largo e inigualable. Notas de ciruela pasa, frutos secos y un toque ahumado sutil.",
-    image: "https://images.unsplash.com/photo-1527281400683-1aae777175f8?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "ron-zacapa-23",
-    name: "Ron Zacapa Centenario 23 Solera Gran Reserva",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 360000,
-    volumeOrServing: "Botella 750ml",
-    description: "Añejado en las alturas de Guatemala bajo el sistema Solera. Complejo y dulce, con notas de miel de caña, cacao, café tostado y nueces.",
-    image: "https://images.unsplash.com/photo-1614313511387-1436a4480ebb?auto=format&fit=crop&w=800&q=80",
-    badge: "Caribeño de Selección",
-    inStock: true,
-  },
-  {
-    id: "gin-hendricks",
-    name: "Gin Hendrick's Original Botanical",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 295000,
-    volumeOrServing: "Botella 750ml",
-    description: "Destilado escocés infundido con rosas de Bulgaria y pepino holandés fresco. Servido con tónicas premium Fever-Tree y rodajas de pepino.",
-    image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "vodka-grey-goose",
-    name: "Vodka Grey Goose Original Francia",
-    category: "licores",
-    categoryLabel: "Licores",
-    priceCOP: 280000,
-    volumeOrServing: "Botella 750ml",
-    description: "Elaborado en la región francesa de Cognac con trigo de invierno de Picardía y agua purificada de manantial de Gensac-la-Pallue. Suavidad inigualable.",
-    image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-
-  // --- COMIDA ---
-  {
-    id: "tabla-iberica-quesos-gran-reserva",
-    name: "Tabla de Jamón Ibérico & Quesos Madurados",
-    category: "comida",
-    categoryLabel: "Comida",
-    priceCOP: 380000,
-    volumeOrServing: "Para 4 - 6 personas",
-    description: "Jamón ibérico de bellota 100%, lomo embuchado, queso manchego curado DOP, brie trufado, higos macerados, frutos secos y grisines artesanales.",
-    image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=80",
-    badge: "Gourmet a Bordo",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "ceviche-cartagenero-mariscos",
-    name: "Ceviche Mixto Caribeño al Maracuyá",
-    category: "comida",
-    categoryLabel: "Comida",
-    priceCOP: 240000,
-    volumeOrServing: "Platón familiar (4 porciones)",
-    description: "Langostinos frescos, corvina y calamar marinados en leche de tigre de maracuyá y jengibre, cebolla morada crujiente, maíz tostado y chips de plátano verde.",
-    image: "https://images.unsplash.com/photo-1535400255456-984241443b29?auto=format&fit=crop&w=800&q=80",
-    badge: "Especialidad Local",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "tartar-atun-rojo",
-    name: "Tartar de Atún Rojo con Aguacate & Sésamo",
-    category: "comida",
-    categoryLabel: "Comida",
-    priceCOP: 290000,
-    volumeOrServing: "Para 4 personas",
-    description: "Dados de atún rojo calidad sashimi aderezados con aceite de sésamo tostado, soja añeja, base de aguacate cremoso y wontons crocantes.",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "sliders-wagyu-trufados",
-    name: "Sliders de Carne Wagyu con Trufa (Pack x8)",
-    category: "comida",
-    categoryLabel: "Comida",
-    priceCOP: 310000,
-    volumeOrServing: "8 mini hamburguesas gourmet",
-    description: "Carne de Wagyu certificada, pan brioche horneado a mano, queso comté fundido, emulsión de trufa negra y cebolla caramelizada.",
-    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-
-  // --- SNACKS ---
-  {
-    id: "mix-frutos-secos-trufados",
-    name: "Frutos Secos Premium con Sal de Trufa",
-    category: "snacks",
-    categoryLabel: "Snacks",
-    priceCOP: 85000,
-    volumeOrServing: "Frasco gourmet 350g",
-    description: "Nueces pecanas, almendras tostadas, castañas de cajú y macadamias tostadas al punto exacto con sal marina trufada.",
-    image: "https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&w=800&q=80",
-    badge: "Snack de Barco",
-    inStock: true,
-    featured: true,
-  },
-  {
-    id: "papas-artesanales-marina",
-    name: "Papas Rústicas Artesanales con Flor de Sal",
-    category: "snacks",
-    categoryLabel: "Snacks",
-    priceCOP: 45000,
-    volumeOrServing: "Bolsa grande para compartir 250g",
-    description: "Papas nativas fritas en aceite de oliva virgen extra con flor de sal marina recolectada en las salinas de Galerazamba.",
-    image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "aceitunas-mediterraneas-hierbas",
-    name: "Mix de Aceitunas Gordal Marinadas",
-    category: "snacks",
-    categoryLabel: "Snacks",
-    priceCOP: 65000,
-    volumeOrServing: "Tarro 300g",
-    description: "Aceitunas gigantes tipo Gordal y Kalamata maceradas con piel de naranja amarga, romero fresco, tomillo silvestre y aceite de oliva virgen.",
-    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=80",
-    inStock: true,
-  },
-  {
-    id: "chocolates-suizos-artesanales",
-    name: "Caja de Bombones & Trufas de Cacao Colombiano",
-    category: "snacks",
-    categoryLabel: "Snacks",
-    priceCOP: 120000,
-    volumeOrServing: "Caja de 16 piezas surtidas",
-    description: "Cacao fino de aroma 70% de la Sierra Nevada con rellenos de maracuyá, café de origen y flor de sal caribeña.",
-    image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=800&q=80",
-    badge: "Dulce de Lujo",
-    inStock: true,
-  },
-]
+export const PRIORITY_LABELS: Record<StorePriority, string> = {
+  esencial: "Esencial",
+  recomendado: "Recomendado",
+}
 
 export function formatCOP(price: number): string {
   return new Intl.NumberFormat("es-CO", {

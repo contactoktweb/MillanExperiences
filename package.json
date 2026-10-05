@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "store:import": "tsx scripts/store-import/index.ts",
+    "store:images": "tsx scripts/store-import/import-images.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -28,12 +30,16 @@
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@sanity/client": "^8.9.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.5",
+    "exceljs": "^4.4.0",
     "postcss": "^8.5",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "5.7.3"
   }
 }

@@ -47,7 +47,7 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined)
 
-const CART_STORAGE_KEY = "millan_store_cart_v1"
+const CART_STORAGE_KEY = "millan_store_cart_v2"
 const ORDER_STORAGE_KEY = "millan_store_last_order_v1"
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {

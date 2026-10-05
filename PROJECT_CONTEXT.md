@@ -17,5 +17,5 @@ Plataforma web de lujo para **Millan Experiences**, una agencia exclusiva de via
 - `/about`: Sobre Millan Experiences
 - `/contact`: Formulario de contacto y concierge
 - `/admin`: Sanity Studio Studio embebido
-- `/tienda` (Oculta): Cava y boutique privada de licores, vinos, cervezas, comida y snacks con reserva previa de 8 horas, filtros horizontales optimizados y header clearance de 112px+.
+- `/tienda` (Oculta): Cava y boutique privada con reserva previa de 8 horas. El catálogo viene de Sanity (`storeProduct` / `storeCategory`, solo productos `status == "active"`), con filtros por categoría, subcategoría y destino. Se puebla con `pnpm store:import` desde `guia.xlsx` (ver `scripts/store-import/README.md`); los datos internos de proveedor/costos NO van a Sanity (dataset público) sino a `scripts/store-import/output/` (ignorado por git).
 - `/tienda/gracias` (Oculta): Confirmación de pedido con resumen, código de reserva, clearance de 128px+ contra el header fijo y contacto prioritario vía WhatsApp.

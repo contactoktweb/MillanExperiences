@@ -179,7 +179,40 @@
   }
 }
 
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-panel-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes modal-content-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-backdrop-enter {
+  animation: modal-backdrop-in 0.35s ease-out both;
+}
+
+.modal-panel-enter {
+  animation: modal-panel-in 0.5s var(--ease-editorial) both;
+}
+
+/* Contenido del modal: aparece escalonado justo después del panel. */
+.modal-content-enter {
+  animation: modal-content-in 0.5s var(--ease-editorial) 0.12s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .modal-backdrop-enter,
+  .modal-panel-enter,
+  .modal-content-enter {
+    animation: none !important;
+  }
   .reveal-text > span,
   .reveal-up,
   .reveal-clip {

@@ -7,8 +7,10 @@ import { eventPage } from './eventPage'
 import { review } from './review'
 import { clientLead } from './clientLead'
 import { individualProductSchemas } from './products'
+import { storeCategory } from './storeCategory'
+import { storeProduct } from './storeProduct'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [globalConfig, homePage, servicePage, listingPage, eventPage, review, clientLead, ...individualProductSchemas],
+  types: [globalConfig, homePage, servicePage, listingPage, eventPage, review, clientLead, ...individualProductSchemas, storeCategory, storeProduct],
 }
 

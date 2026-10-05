@@ -3,6 +3,8 @@ import { Preloader } from "@/components/preloader"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { StorePageClient } from "@/components/store/store-page-client"
+import { fetchStoreCatalog } from "@/lib/store-catalog"
+import type { StoreCatalog } from "@/lib/store-data"
 
 export const metadata: Metadata = {
   title: "Boutique & Cava Privada | Millan Experiences",
@@ -14,12 +16,22 @@ export const metadata: Metadata = {
   },
 }
 
-export default function TiendaPage() {
+export default async function TiendaPage() {
+  let catalog: StoreCatalog = { products: [], groups: [] }
+  let loadFailed = false
+
+  try {
+    catalog = await fetchStoreCatalog()
+  } catch (error) {
+    console.error("[tienda] No se pudo cargar el catálogo desde Sanity", error)
+    loadFailed = true
+  }
+
   return (
     <>
       <Preloader />
       <SiteHeader forceSolid />
-      <StorePageClient />
+      <StorePageClient catalog={catalog} loadFailed={loadFailed} />
       <SiteFooter />
     </>
   )

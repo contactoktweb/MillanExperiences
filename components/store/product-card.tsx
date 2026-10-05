@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { Plus, Eye, Check } from "lucide-react"
-import { StoreProduct, formatCOP } from "@/lib/store-data"
+import { StoreProduct, PRIORITY_LABELS, formatCOP } from "@/lib/store-data"
 import { useStore } from "@/lib/store-context"
 import { cn } from "@/lib/utils"
+import { ProductImage } from "./product-image"
 
 export function ProductCard({ product }: { product: StoreProduct }) {
   const { setSelectedProductForModal, addToCart } = useStore()
@@ -23,27 +23,26 @@ export function ProductCard({ product }: { product: StoreProduct }) {
       onClick={() => setSelectedProductForModal(product)}
       className="group relative flex flex-col cursor-pointer bg-[var(--color-warm-white)]/70 hover:bg-white transition-all duration-500 border border-[color:var(--color-border-light)] hover:border-[var(--color-sand)] hover:shadow-xl rounded-sm overflow-hidden"
     >
-      {/* Image Container */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--color-deep-sea)]/5">
-        <Image
+      {/* Image Container: 1:1 Aspect ratio matching original 1000x1000 packshots */}
+      <div className="relative aspect-square w-full overflow-hidden bg-white border-b border-[color:var(--color-border-light)]/70 flex items-center justify-center p-3 sm:p-4">
+        <ProductImage
           src={product.image}
           alt={`Fotografía de ${product.name}`}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 ease-[var(--ease-editorial)] group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="p-2 transition-transform duration-500 ease-[var(--ease-editorial)] group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-deep-sea)]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-deep-sea)]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
         {/* Badge */}
-        {product.badge && (
-          <span className="absolute top-3 left-3 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] border border-[var(--color-sand)]/40 font-sans text-[0.62rem] font-medium tracking-[0.18em] uppercase px-2.5 py-1 backdrop-blur-sm">
-            {product.badge}
+        {product.priority && (
+          <span className="absolute top-3 left-3 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] border border-[var(--color-sand)]/40 font-sans text-[0.62rem] font-medium tracking-[0.18em] uppercase px-2.5 py-1 backdrop-blur-sm z-10">
+            {PRIORITY_LABELS[product.priority]}
           </span>
         )}
 
         {/* Quick View Hover Indicator */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <span className="inline-flex items-center gap-1.5 bg-[var(--color-deep-sea)]/90 text-[var(--color-warm-white)] px-4 py-2 text-xs font-sans tracking-wider uppercase border border-[var(--color-sand)]">
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+          <span className="inline-flex items-center gap-1.5 bg-[var(--color-deep-sea)]/95 text-[var(--color-warm-white)] px-4 py-2 text-xs font-sans tracking-wider uppercase border border-[var(--color-sand)] shadow-md">
             <Eye className="w-3.5 h-3.5 text-[var(--color-sand)]" />
             Ver & Seleccionar
           </span>
@@ -60,7 +59,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             {product.name}
           </h3>
           <p className="mt-1 font-sans text-xs text-[var(--color-blue-gray)]">
-            {product.volumeOrServing}
+            {product.presentation}
           </p>
         </div>
 
