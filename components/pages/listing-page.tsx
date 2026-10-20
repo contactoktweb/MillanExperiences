@@ -193,9 +193,40 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
                         <h3 className="font-serif text-2xl text-[var(--color-text-dark)]">{item.title}</h3>
                       </Link>
                       <div className="mt-6 flex flex-col gap-2 font-sans text-sm font-light text-[var(--color-blue-gray)]">
-                        {item.dimensions && <p>{locale === "es" ? "Dimensiones:" : "Dimensions:"} {item.dimensions}</p>}
-                        {item.location && <p>{item.location}</p>}
-                        {item.capacity && <p>{locale === "es" ? "Capacidad:" : "Capacity:"} {item.capacity} pax</p>}
+                        {item.dimensions && (
+                          <p>
+                            {locale === "es" ? "Dimensiones:" : "Dimensions:"}{" "}
+                            {locale === "es"
+                              ? item.dimensions.replace(/\bfeet\b/gi, "pies").replace(/\bfoot\b/gi, "pie").replace(/\bft\b/gi, "pies")
+                              : item.dimensions.replace(/\bpies\b/gi, "feet").replace(/\bpie\b/gi, "foot")}
+                          </p>
+                        )}
+                        {item.location && (
+                          <p>
+                            {locale === "es"
+                              ? (item.location.toLowerCase().includes("historic center")
+                                  ? "Centro Histórico"
+                                  : item.location.toLowerCase().includes("rosario")
+                                  ? "Islas del Rosario"
+                                  : item.location.toLowerCase().includes("getsemani") || item.location.toLowerCase().includes("getsemaní")
+                                  ? "Getsemaní"
+                                  : item.location.toLowerCase().includes("baru") || item.location.toLowerCase().includes("barú")
+                                  ? "Barú"
+                                  : item.location.toLowerCase().includes("tierra bomba")
+                                  ? "Tierra Bomba"
+                                  : item.location.toLowerCase().includes("north zone")
+                                  ? "Zona Norte"
+                                  : item.location)
+                              : (item.location.toLowerCase().includes("centro hist")
+                                  ? "Historic Center"
+                                  : item.location.toLowerCase().includes("islas del rosario")
+                                  ? "Rosario Islands"
+                                  : item.location.toLowerCase().includes("zona norte")
+                                  ? "North Zone"
+                                  : item.location)}
+                          </p>
+                        )}
+                        {item.capacity && <p>{locale === "es" ? "Capacidad:" : "Capacity:"} {item.capacity} {locale === "es" ? "personas" : "guests"}</p>}
                         {item.rooms && <p>{locale === "es" ? "Habitaciones:" : "Rooms:"} {item.rooms}</p>}
                         {item.bathrooms && <p>{locale === "es" ? "Baños:" : "Bathrooms:"} {item.bathrooms}</p>}
                       </div>

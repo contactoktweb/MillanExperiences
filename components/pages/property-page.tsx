@@ -9,75 +9,115 @@ import { ReviewModal } from "@/components/review-modal"
 
 const translateLocation = (loc: string | undefined, locale: string) => {
   if (!loc) return ""
-  if (locale !== "es") return loc
   const lower = loc.toLowerCase().trim()
-  const map: Record<string, string> = {
-    "historic center": "Centro Histórico",
-    "getsemani": "Getsemaní",
-    "getsemaní": "Getsemaní",
-    "rosario islands": "Islas del Rosario",
-    "baru": "Barú",
-    "barú": "Barú",
-    "tierra bomba": "Tierra Bomba",
-    "manga": "Manga",
-    "bocagrande": "Bocagrande",
-    "north zone": "Zona Norte",
+  if (locale === "es") {
+    const map: Record<string, string> = {
+      "historic center": "Centro Histórico",
+      "getsemani": "Getsemaní",
+      "getsemaní": "Getsemaní",
+      "rosario islands": "Islas del Rosario",
+      "baru": "Barú",
+      "barú": "Barú",
+      "tierra bomba": "Tierra Bomba",
+      "manga": "Manga",
+      "bocagrande": "Bocagrande",
+      "north zone": "Zona Norte",
+    }
+    return map[lower] || loc
+  } else {
+    const map: Record<string, string> = {
+      "centro histórico": "Historic Center",
+      "centro historico": "Historic Center",
+      "islas del rosario": "Rosario Islands",
+      "zona norte": "North Zone",
+    }
+    return map[lower] || loc
   }
-  return map[lower] || loc
+}
+
+const translateDimensions = (dim: string | undefined, locale: string) => {
+  if (!dim) return ""
+  if (locale === "es") {
+    return dim
+      .replace(/\bfeet\b/gi, "pies")
+      .replace(/\bfoot\b/gi, "pie")
+      .replace(/\bft\b/gi, "pies")
+  }
+  return dim
+    .replace(/\bpies\b/gi, "feet")
+    .replace(/\bpie\b/gi, "foot")
+}
+
+const AMENITY_MAP: Record<string, { es: string; en: string }> = {
+  "2 pools": { es: "2 Piscinas", en: "2 Pools" },
+  "adult pool and kids pool": { es: "Piscina para adultos y piscina infantil", en: "Adult & Kids Pools" },
+  "air conditioning": { es: "Aire Acondicionado", en: "Air Conditioning" },
+  "bbq area": { es: "Zona de BBQ", en: "BBQ Area" },
+  "bbq grill": { es: "Parrilla BBQ", en: "BBQ Grill" },
+  "bluetooth": { es: "Sonido Bluetooth", en: "Bluetooth Sound System" },
+  "bluetooth sound system": { es: "Sonido Bluetooth de alta fidelidad", en: "Hi-Fi Bluetooth Sound System" },
+  "butler service": { es: "Servicio de mayordomo", en: "Butler Service" },
+  "colonial courtyard": { es: "Patio colonial privado", en: "Private Colonial Courtyard" },
+  "covered kiosk with a bar": { es: "Kiosco cubierto con bar", en: "Covered Kiosk with Bar" },
+  "crew": { es: "Tripulación profesional (Capitán y Marinero)", en: "Professional Crew (Captain & Sailor)" },
+  "cups": { es: "Vasos e implementos de bar", en: "Cups & Barware" },
+  "daily housekeeping": { es: "Limpieza diaria", en: "Daily Housekeeping" },
+  "day beds": { es: "Camas balinesas / Asoleadoras", en: "Day Beds / Sun Loungers" },
+  "dining tables in different areas": { es: "Comedores en distintas áreas", en: "Dining Tables in Various Areas" },
+  "dock access": { es: "Acceso privado a muelle", en: "Private Dock Access" },
+  "elevator": { es: "Ascensor", en: "Elevator" },
+  "four jacuzzis": { es: "Cuatro Jacuzzis", en: "Four Jacuzzis" },
+  "fuel": { es: "Combustible incluido", en: "Fuel Included" },
+  "gasoline": { es: "Combustible incluido", en: "Fuel Included" },
+  "gym": { es: "Gimnasio", en: "Gym" },
+  "housekeeping": { es: "Limpieza diaria", en: "Daily Housekeeping" },
+  "ice": { es: "Hielo y nevera marina", en: "Ice & Marine Cooler" },
+  "ice and cooler": { es: "Hielo y nevera portátil", en: "Ice & Portable Cooler" },
+  "island gym": { es: "Gimnasio de la isla", en: "Island Gym" },
+  "jacuzzi": { es: "Jacuzzi", en: "Jacuzzi" },
+  "kayak": { es: "Kayaks", en: "Kayaks" },
+  "massage room": { es: "Sala de masajes", en: "Massage Room" },
+  "mini spa area": { es: "Área de Mini Spa", en: "Mini Spa Area" },
+  "ocean view": { es: "Vista al mar", en: "Ocean View" },
+  "outdoor projector": { es: "Proyector al aire libre", en: "Outdoor Cinema Projector" },
+  "paddle boards": { es: "Tablas de paddle", en: "Paddle Boards" },
+  "paddleboard": { es: "Tabla de paddle", en: "Paddleboard" },
+  "pool": { es: "Piscina", en: "Swimming Pool" },
+  "private chef": { es: "Chef privado", en: "Private Chef" },
+  "private chef included": { es: "Chef privado incluido", en: "Private Chef Included" },
+  "private security": { es: "Seguridad privada", en: "Private Security" },
+  "rooftop bar": { es: "Bar en el Rooftop", en: "Rooftop Bar" },
+  "rooftop jacuzzi": { es: "Jacuzzi en el Rooftop", en: "Rooftop Jacuzzi" },
+  "rooftop pool": { es: "Piscina en la terraza (Rooftop)", en: "Rooftop Pool" },
+  "rooftop pool with a 200\" projector": { es: "Piscina en Rooftop con pantalla gigante", en: "Rooftop Pool with 200\" Screen" },
+  "sauna and steam room": { es: "Sauna y baño turco", en: "Sauna & Steam Room" },
+  "security 24/7": { es: "Seguridad 24/7", en: "24/7 Security" },
+  "snorkel gear": { es: "Equipo de snorkel", en: "Snorkeling Gear" },
+  "snorkeling equipment": { es: "Equipo de snorkel", en: "Snorkeling Equipment" },
+  "snorkels": { es: "Equipo de snorkel", en: "Snorkels" },
+  "sound system": { es: "Sistema de sonido", en: "Sound System" },
+  "spa": { es: "Área de Spa", en: "Spa Area" },
+  "staff": { es: "Personal de atención", en: "Dedicated Staff" },
+  "24/7 staff": { es: "Personal 24/7", en: "24/7 Dedicated Staff" },
+  "television": { es: "Smart TV", en: "Smart TV" },
+  "tennis court": { es: "Cancha de tenis", en: "Tennis Court" },
+  "terrace": { es: "Terraza panorámica", en: "Panoramic Terrace" },
+  "towels": { es: "Toallas de cortesía", en: "Complimentary Towels" },
+  "towels included": { es: "Toallas incluidas", en: "Towels Included" },
+  "tv": { es: "Smart TV", en: "Smart TV" },
+  "unique pool": { es: "Piscina de diseño exclusivo", en: "Unique Designer Pool" },
+  "wi-fi": { es: "Wi-Fi de alta velocidad", en: "High-Speed Wi-Fi" },
+  "wifi": { es: "Wi-Fi de alta velocidad", en: "High-Speed Wi-Fi" },
+  "wine cellar": { es: "Cava de vinos", en: "Wine Cellar" },
 }
 
 const translateAmenity = (amenity: string, locale: string) => {
-  if (locale !== "es") return amenity
   const lower = amenity.toLowerCase().trim()
-  const map: Record<string, string> = {
-    "rooftop pool": "Piscina en la terraza (Rooftop)",
-    "24/7 staff": "Personal 24/7",
-    "staff": "Personal de atención",
-    "bbq area": "Zona de BBQ",
-    "rooftop bar": "Bar en el Rooftop",
-    "mini spa area": "Área de Mini Spa",
-    "spa": "Área de Spa",
-    "sound system": "Sistema de Sonido",
-    "air conditioning": "Aire Acondicionado",
-    "private chef included": "Chef privado incluido",
-    "private chef": "Chef privado",
-    "jacuzzi": "Jacuzzi",
-    "wi-fi": "Wi-Fi",
-    "wifi": "Wi-Fi",
-    "ocean view": "Vista al mar",
-    "dock access": "Acceso a muelle",
-    "gym": "Gimnasio",
-    "security 24/7": "Seguridad 24/7",
-    "butler service": "Servicio de mayordomo",
-    "housekeeping": "Limpieza diaria",
-    "daily housekeeping": "Limpieza diaria",
-    "snorkel gear": "Equipo de snorkel",
-    "snorkeling equipment": "Equipo de snorkel",
-    "paddle boards": "Tablas de paddle",
-    "paddleboard": "Tabla de paddle",
-    "towels included": "Toallas incluidas",
-    "ice and cooler": "Hielo y nevera portátil",
-    "tennis court": "Cancha de tenis",
-    "covered kiosk with a bar": "Kiosco cubierto con bar",
-    "dining tables in different areas": "Comedores en distintas áreas",
-    "island gym": "Gimnasio de la isla",
-    "day beds": "Camas balinesas / Asoleadoras",
-    "pool": "Piscina",
-    "kayak": "Kayaks",
-    "tv": "Smart TV",
-    "television": "Smart TV",
-    "crew": "Tripulación profesional (Capitán y Marinero)",
-    "gasoline": "Combustible incluido",
-    "fuel": "Combustible incluido",
-    "ice": "Hielo y nevera",
-    "towels": "Toallas de cortesía",
-    "cups": "Vasos e implementos",
-    "snorkels": "Equipo de snorkel",
-    "bluetooth": "Sonido Bluetooth",
-    "bluetooth sound system": "Sonido Bluetooth de alta fidelidad",
-    "terrace": "Terraza panorámica",
+  const found = AMENITY_MAP[lower]
+  if (found) {
+    return locale === "es" ? found.es : found.en
   }
-  return map[lower] || amenity
+  return amenity
 }
 
 interface PropertyPageProps {
@@ -346,7 +386,7 @@ export function PropertyPageComponent({ content, locale, initialReviews = [] }: 
                 {activeTab === 'details' && (
                   <div className="flex flex-col gap-2.5">
                     {details?.dimensions && (
-                      <p><span className="font-medium text-[var(--color-text-dark)]">{locale === 'es' ? 'Eslora:' : 'Length / Dimensions:'}</span> {details.dimensions}</p>
+                      <p><span className="font-medium text-[var(--color-text-dark)]">{locale === 'es' ? 'Eslora / Dimensiones:' : 'Length / Dimensions:'}</span> {translateDimensions(details.dimensions, locale)}</p>
                     )}
                     {details?.location && (
                       <p><span className="font-medium text-[var(--color-text-dark)]">{locale === 'es' ? 'Ubicación:' : 'Location:'}</span> {translateLocation(details.location, locale)}</p>
@@ -468,9 +508,18 @@ export function PropertyPageComponent({ content, locale, initialReviews = [] }: 
               <div className="w-12 h-px bg-[var(--color-border)] mb-6" />
               <h2 className="display text-3xl md:text-4xl text-[var(--color-text-dark)] mb-4">{title}</h2>
               <p className="font-sans text-sm font-light text-[var(--color-blue-gray)] leading-relaxed">
-                {locale === 'es' 
-                  ? 'Respuestas a las preguntas más frecuentes sobre esta villa y nuestros servicios.'
-                  : 'Answers to the most common questions regarding this villa and our private services.'}
+                {(() => {
+                  const propertyType = categorySlug === "luxury-villas" 
+                    ? (locale === 'es' ? 'villa' : 'villa')
+                    : categorySlug === "private-islands"
+                    ? (locale === 'es' ? 'isla' : 'private island')
+                    : categorySlug === "yachts-catamarans"
+                    ? (locale === 'es' ? 'embarcación' : 'yacht')
+                    : (locale === 'es' ? 'lancha' : 'speedboat');
+                  return locale === 'es' 
+                    ? `Respuestas a las preguntas más frecuentes sobre esta ${propertyType} y nuestros servicios.`
+                    : `Answers to the most common questions regarding this ${propertyType} and our private services.`;
+                })()}
               </p>
             </div>
             

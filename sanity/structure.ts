@@ -17,6 +17,9 @@ import {
   Star,
   MessageSquareHeart,
   UserCheck,
+  ShoppingCart,
+  CheckCircle2,
+  Clock,
 } from 'lucide-react'
 import type { StructureResolver } from 'sanity/structure'
 
@@ -80,7 +83,8 @@ export const structure: StructureResolver = (S) =>
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
                 ),
               S.listItem()
-                .title('🟢 Nuevas Solicitudes')
+                .title('Nuevas Solicitudes')
+                .icon(UserCheck)
                 .child(
                   S.documentList()
                     .title('Nuevas Solicitudes')
@@ -88,7 +92,8 @@ export const structure: StructureResolver = (S) =>
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
                 ),
               S.listItem()
-                .title('🟡 En Proceso / Cotizando')
+                .title('En Proceso / Cotizando')
+                .icon(Clock)
                 .child(
                   S.documentList()
                     .title('En Proceso de Cotización')
@@ -96,12 +101,50 @@ export const structure: StructureResolver = (S) =>
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
                 ),
               S.listItem()
-                .title('✅ Clientes Confirmados')
+                .title('Clientes Confirmados')
+                .icon(CheckCircle2)
                 .child(
                   S.documentList()
                     .title('Clientes Confirmados')
                     .filter('_type == "clientLead" && status == "confirmed"')
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
+                ),
+            ])
+        ),
+
+      S.listItem()
+        .title('Pedidos de Tienda (Cava)')
+        .icon(ShoppingCart)
+        .child(
+          S.list()
+            .title('Pedidos de Tienda')
+            .items([
+              S.listItem()
+                .title('Todos los Pedidos')
+                .icon(ShoppingCart)
+                .child(
+                  S.documentList()
+                    .title('Todos los Pedidos')
+                    .filter('_type == "storeOrder"')
+                    .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('Solicitudes de Pago (Pendientes)')
+                .icon(Clock)
+                .child(
+                  S.documentList()
+                    .title('Solicitudes de Pago Pendientes')
+                    .filter('_type == "storeOrder" && status == "pending_payment"')
+                    .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('Pedidos Pagados y Aprobados')
+                .icon(CheckCircle2)
+                .child(
+                  S.documentList()
+                    .title('Pedidos Pagados y Aprobados')
+                    .filter('_type == "storeOrder" && status == "paid"')
+                    .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
                 ),
             ])
         ),
@@ -354,6 +397,52 @@ export const structure: StructureResolver = (S) =>
           S.list()
             .title('Tienda')
             .items([
+              S.listItem()
+                .title('Pedidos de Tienda')
+                .icon(ShoppingCart)
+                .child(
+                  S.list()
+                    .title('Pedidos de Tienda')
+                    .items([
+                      S.listItem()
+                        .title('Todos los Pedidos')
+                        .icon(ShoppingCart)
+                        .child(
+                          S.documentList()
+                            .title('Todos los Pedidos')
+                            .filter('_type == "storeOrder"')
+                            .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                        ),
+                      S.listItem()
+                        .title('Solicitudes de Pago (Pendientes)')
+                        .icon(Clock)
+                        .child(
+                          S.documentList()
+                            .title('Solicitudes de Pago Pendientes')
+                            .filter('_type == "storeOrder" && status == "pending_payment"')
+                            .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                        ),
+                      S.listItem()
+                        .title('Pedidos Pagados y Aprobados')
+                        .icon(CheckCircle2)
+                        .child(
+                          S.documentList()
+                            .title('Pedidos Pagados y Aprobados')
+                            .filter('_type == "storeOrder" && status == "paid"')
+                            .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                        ),
+                      S.listItem()
+                        .title('Pedidos Confirmados por Concierge')
+                        .icon(UserCheck)
+                        .child(
+                          S.documentList()
+                            .title('Pedidos Confirmados por Concierge')
+                            .filter('_type == "storeOrder" && status == "confirmed"')
+                            .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                        ),
+                    ])
+                ),
+              S.divider(),
               S.listItem()
                 .title('Productos activos')
                 .icon(Wine)

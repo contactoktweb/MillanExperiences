@@ -6,9 +6,9 @@ import { SiteFooter } from "@/components/site-footer"
 import { ThankYouClient } from "@/components/store/thank-you-client"
 
 export const metadata: Metadata = {
-  title: "Reserva Confirmada | Boutique Millan Experiences",
+  title: "¡Gracias por tu Compra! | Boutique Millan Experiences",
   description:
-    "Tu reserva de cava y productos gourmet ha sido registrada con éxito. Nuestro concierge se encargará de coordinar la entrega y logística.",
+    "Tu compra en nuestra cava y boutique náutica ha sido confirmada con éxito. Nuestro concierge se encargará de coordinar la entrega y logística.",
   robots: {
     index: false,
     follow: false,

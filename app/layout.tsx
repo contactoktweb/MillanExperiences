@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next"
+import Script from "next/script"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import localFont from "next/font/local"
@@ -93,11 +94,16 @@ export default async function RootLayout({
   const globalConfig = await client.fetch(globalConfigQuery)
   
   return (
-    <html lang="en" className={`${didot.variable} ${jost.variable} bg-background scroll-smooth`}>
+    <html lang="en" suppressHydrationWarning className={`${didot.variable} ${jost.variable} bg-background scroll-smooth`}>
       <body className="font-sans antialiased">
         {children}
         <WhatsAppButton whatsappUrl={globalConfig?.whatsapp} />
         {process.env.NODE_ENV === "production" && <Analytics />}
+        <Script
+          id="wompi-checkout-sdk"
+          src="https://checkout.wompi.co/widget.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   )

@@ -9,8 +9,21 @@ import { clientLead } from './clientLead'
 import { individualProductSchemas } from './products'
 import { storeCategory } from './storeCategory'
 import { storeProduct } from './storeProduct'
+import { storeOrder } from './storeOrder'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [globalConfig, homePage, servicePage, listingPage, eventPage, review, clientLead, ...individualProductSchemas, storeCategory, storeProduct],
+  types: [
+    globalConfig,
+    homePage,
+    servicePage,
+    listingPage,
+    eventPage,
+    review,
+    clientLead,
+    ...individualProductSchemas,
+    storeCategory,
+    storeProduct,
+    storeOrder,
+  ],
 }
 

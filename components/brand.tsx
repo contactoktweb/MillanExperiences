@@ -6,10 +6,10 @@ export function Monogram({ className, logoUrl }: { className?: string, logoUrl?:
     <Image 
       src={logoUrl || "/logo/logo-header.png"} 
       alt="Millan Experiences"
-      width={40}
-      height={40}
-      style={{ height: "auto" }}
-      className={cn("object-contain", className)}
+      width={120}
+      height={50}
+      style={{ width: "auto", height: "auto" }}
+      className={cn("h-7 sm:h-8 w-auto object-contain", className)}
     />
   )
 }
@@ -30,10 +30,10 @@ export function Wordmark({
       <Image 
         src={logoUrl || "/logo/logo-header.png"} 
         alt="Millan Experiences"
-        width={160}
-        height={60}
-        style={{ height: "auto" }}
-        className={cn("object-contain", monogramClassName)}
+        width={140}
+        height={50}
+        style={{ width: "auto", height: "auto" }}
+        className={cn("h-7 sm:h-8 md:h-9 w-auto object-contain transition-all duration-300", monogramClassName)}
       />
     </div>
   )

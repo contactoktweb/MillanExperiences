@@ -65,16 +65,17 @@ export function Preloader() {
             <Image
               src="/logo/logo-large.png"
               alt="Millan Experiences"
-              width={260}
-              height={130}
-              style={{ height: "auto" }}
+              width={200}
+              height={55}
+              priority
+              style={{ width: "auto", height: "auto" }}
               className={cn(
-                "object-contain transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
+                "h-8 sm:h-9 md:h-10 w-auto max-w-[170px] sm:max-w-[210px] object-contain transition-transform duration-[1100ms] ease-[var(--ease-editorial)]",
                 progress > 0.05 ? "translate-y-0" : "translate-y-full",
               )}
             />
           </div>
-          <div className="mt-8 h-px w-40 overflow-hidden bg-[color:var(--color-border-dark)]">
+          <div className="mt-6 h-px w-32 sm:w-36 overflow-hidden bg-[color:var(--color-border-dark)]">
             <div
               className="h-full bg-[var(--color-sand)]"
               style={{ width: `${progress * 100}%` }}

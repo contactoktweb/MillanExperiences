@@ -53,6 +53,20 @@ function buildGroups(rows: ProductRow[]): StoreCategoryGroup[] {
     }))
 }
 
+function normalizeUnitPresentation(presentation?: string): string {
+  if (!presentation) return "Unidad"
+  let clean = presentation.trim()
+  clean = clean.replace(/^pack\s*x?\d*\s*(botellas?|latas?|cajitas?|unidades?)?\s*/i, (match, unit) => {
+    if (unit) {
+      return unit.charAt(0).toUpperCase() + unit.slice(1).replace(/s$/, "") + " "
+    }
+    return ""
+  })
+  clean = clean.replace(/^bolsa\s*x\d+\s*unidades?\s*(\(~?\d+\s*kg\))?/i, "Unidad")
+  clean = clean.replace(/^bandeja\s*x\d+\s*/i, "Unidad ")
+  return clean.trim() || "Unidad"
+}
+
 export async function fetchStoreCatalog(): Promise<StoreCatalog> {
   const rows = await client.fetch<ProductRow[]>(PRODUCTS_QUERY, {}, { next: { revalidate: REVALIDATE_SECONDS } })
 
@@ -64,8 +78,9 @@ export async function fetchStoreCatalog(): Promise<StoreCatalog> {
   )
 
   const products: StoreProduct[] = sorted.map(
-    ({ groupLabel: _groupLabel, groupOrder: _groupOrder, categoryOrder: _categoryOrder, image, ...product }) => ({
+    ({ groupLabel: _groupLabel, groupOrder: _groupOrder, categoryOrder: _categoryOrder, image, presentation, ...product }) => ({
       ...product,
+      presentation: normalizeUnitPresentation(presentation),
       image: image ?? undefined,
     })
   )

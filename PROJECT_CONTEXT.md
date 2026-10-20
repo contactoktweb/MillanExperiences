@@ -9,7 +9,7 @@ Plataforma web de lujo para **Millan Experiences**, una agencia exclusiva de via
 - **Tipografías:** Didot (`--font-serif`) y Jost (`--font-sans`)
 - **CMS:** Sanity Studio v3 para gestión de contenidos globales, propiedades, servicios y testimonios
 - **Notificaciones / Correo:** Resend
-- **Integraciones:** WhatsApp oficial (+57 310 710 2651), Wompi (preparación pasarela)
+- **Integraciones:** WhatsApp oficial (+57 310 710 2651), Pasarela de pagos Wompi Bancolombia (Widget checkout, firma de integridad SHA-256, webhooks y verificación de transacciones)
 
 ## Rutas y Módulos
 - `/`: Inicio con Hero, Servicios Principales, Razones para Elegir Millan, Testimonios y Contacto

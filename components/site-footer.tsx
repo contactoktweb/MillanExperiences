@@ -156,7 +156,7 @@ export async function SiteFooter() {
               alt="Millan Experiences logo"
               width={160}
               height={80}
-              style={{ height: "auto" }}
+              style={{ width: "auto", height: "auto" }}
               className="object-contain"
             />
           </Link>

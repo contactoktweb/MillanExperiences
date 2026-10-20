@@ -1,5 +1,31 @@
 # Changelog AI
 
+## [2026-10-14] - Integración Completa de Pasarela de Pagos Wompi Colombia (Bancolombia)
+
+### Agregado
+- **Cálculo Seguro de Firma de Integridad (`lib/wompi.ts` y `/api/wompi/checkout-signature`)**:
+  - Implementación oficial de la fórmula criptográfica SHA-256 (`reference + amountInCents + currency + integritySecret`) requerida por Wompi para evitar manipulaciones de montos.
+  - Endpoint `/api/wompi/checkout-signature` que recibe la referencia y el valor en centavos, valida las claves y devuelve la firma sin exponer el secreto de integridad al cliente.
+  - Manejo adaptativo en caso de que las credenciales no se hayan configurado aún en `.env.local` (retorna advertencia y modo simulación sin romper la app).
+- **Consulta y Verificación de Transacciones en Tiempo Real (`/api/wompi/transaction`)**:
+  - Endpoint seguro del servidor que consulta `https://sandbox.wompi.co/v1/transactions/:id` o `https://production.wompi.co/v1/transactions/:id` usando la llave privada de Wompi.
+- **Webhook Oficial de Wompi (`/api/wompi/webhook`)**:
+  - Manejador de eventos `transaction.updated` con verificación de checksum mediante concatenación dinámica de `signature.properties`, timestamp y `WOMPI_EVENTS_SECRET`.
+  - Disparo de notificación automática por correo vía Resend (`sendStoreOrderPaidEmail` en `lib/email.ts`) ante pagos aprobados con desglose de ítems, código de orden y enlace de contacto.
+- **Cliente Frontend de Wompi (`lib/wompi-client.ts`)**:
+  - Carga dinámica del script oficial `https://checkout.wompi.co/widget.js`.
+  - Apertura del modal interactivo `new window.WidgetCheckout` con datos prellenados del cliente, monto en centavos, moneda COP y URL de redirección a `/tienda/gracias`.
+- **Integración en Carrito (`components/store/cart-drawer.tsx`)**:
+  - Banner explicativo de Wompi Bancolombia con insignias de métodos aceptados (Tarjetas Débito/Crédito, PSE, Nequi y Botón Bancolombia) y sello de cifrado 256-bit SSL.
+  - Botón de acción directo "Pagar con Wompi · {total}".
+  - Manejo visual de alertas cuando las claves de Wompi están pendientes en `.env.local` con opción de probar en modo demostración.
+- **Página de Confirmación Enriquecida (`components/store/thank-you-client.tsx`)**:
+  - Detección de parámetro de transacción `?id=...` retornado por Wompi.
+  - Tarjetas de estado dinámicas: **Aprobado** (verde esmeralda con ID de transacción Wompi y método utilizado), **Pendiente** (ámbar explicando verificación bancaria), **Declinado** (rosa con opción de reintentar) o **Demo**.
+  - Actualización automática del botón de WhatsApp con el código de orden, ID de transacción Wompi y estado de pago para el concierge náutico.
+- **Variables de Entorno (`.env.local` y `.env.example`)**:
+  - Estructuración documentada para `NEXT_PUBLIC_WOMPI_PUBLIC_KEY`, `WOMPI_INTEGRITY_SECRET`, `WOMPI_PRIVATE_KEY`, `WOMPI_EVENTS_SECRET` y `NEXT_PUBLIC_WOMPI_ENV`.
+
 ## [2026-09-18] - Implementación de Tienda Oculta (/tienda) y Confirmación (/tienda/gracias)
 
 ### Agregado

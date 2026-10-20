@@ -58,17 +58,23 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
             : (scrolled || forceSolid)
               ? "bg-[color:rgba(19,39,47,0.82)] backdrop-blur-md"
               : "bg-transparent",
-          scrolled ? "py-4" : "py-7",
+          scrolled ? "py-3 sm:py-3.5" : "py-4 sm:py-5 md:py-6",
         )}
       >
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-8 px-6 md:px-10">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 sm:px-6 md:px-10">
           <Link
             href="/"
             aria-label="Millan Experiences home"
-            className="text-[var(--color-warm-white)]"
+            className="text-[var(--color-warm-white)] flex items-center"
             onClick={() => setOpenMenu(null)}
           >
-            <Wordmark logoUrl={logoUrl} />
+            <Wordmark
+              logoUrl={logoUrl}
+              monogramClassName={cn(
+                "w-auto object-contain transition-all duration-300",
+                scrolled ? "h-6 sm:h-7 md:h-8" : "h-7 sm:h-8 md:h-9"
+              )}
+            />
           </Link>
 
           <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
@@ -87,24 +93,44 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
             ))}
           </nav>
 
-          <div className="flex items-center gap-5">
-            <div className="hidden items-center gap-2 font-sans text-[0.68rem] font-medium tracking-[0.14em] text-[var(--color-warm-white)]/80 sm:flex">
-              {(["EN", "ES"] as const).map((l, i) => (
-                <span key={l} className="flex items-center gap-2">
-                  {i === 1 && <span aria-hidden className="text-[var(--color-warm-white)]/30">/</span>}
-                  <button
-                    type="button"
-                    onClick={() => setLang(l)}
-                    aria-pressed={lang === l}
-                    className={cn(
-                      "transition-colors hover:text-[var(--color-sand)]",
-                      lang === l ? "text-[var(--color-sand)]" : "text-[var(--color-warm-white)]/60",
-                    )}
-                  >
-                    {l}
-                  </button>
-                </span>
-              ))}
+          <div className="flex items-center gap-2.5 sm:gap-4 md:gap-5">
+            {/* Minimalist Language Switcher: ES / EN */}
+            <div
+              role="group"
+              aria-label={loc === 'es' ? "Selector de idioma" : "Language selector"}
+              className="flex items-center font-sans text-xs tracking-[0.18em]"
+            >
+              <button
+                type="button"
+                onClick={() => setLang("ES")}
+                aria-pressed={lang === "ES"}
+                aria-label="Cambiar a Español"
+                className={cn(
+                  "px-1.5 py-1 uppercase transition-colors cursor-pointer",
+                  lang === "ES"
+                    ? "font-bold text-[var(--color-sand)]"
+                    : "font-medium text-[var(--color-warm-white)]/60 hover:text-[var(--color-warm-white)]"
+                )}
+              >
+                ES
+              </button>
+              <span className="text-[var(--color-warm-white)]/30 text-[0.72rem] select-none" aria-hidden="true">
+                /
+              </span>
+              <button
+                type="button"
+                onClick={() => setLang("EN")}
+                aria-pressed={lang === "EN"}
+                aria-label="Switch to English"
+                className={cn(
+                  "px-1.5 py-1 uppercase transition-colors cursor-pointer",
+                  lang === "EN"
+                    ? "font-bold text-[var(--color-sand)]"
+                    : "font-medium text-[var(--color-warm-white)]/60 hover:text-[var(--color-warm-white)]"
+                )}
+              >
+                EN
+              </button>
             </div>
 
             <div className="hidden lg:block">
@@ -117,7 +143,7 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
               type="button"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
-              className="flex items-center gap-2 text-[var(--color-warm-white)] lg:hidden"
+              className="flex items-center justify-center rounded-full p-2 text-[var(--color-warm-white)] transition-colors hover:text-[var(--color-sand)] active:bg-[var(--color-warm-white)]/10 lg:hidden"
             >
               <Menu className="h-6 w-6" strokeWidth={1.4} />
             </button>
@@ -209,9 +235,9 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
           mobileOpen ? "visible opacity-100" : "invisible opacity-0",
         )}
       >
-        <div className="flex items-center justify-between px-6 py-7 text-[var(--color-warm-white)]">
-          <Link href="/" onClick={() => setMobileOpen(false)} aria-label="Millan Experiences home">
-            <Monogram className="h-8 w-8 text-[var(--color-sand)]" logoUrl={logoUrl} />
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 text-[var(--color-warm-white)]">
+          <Link href="/" onClick={() => setMobileOpen(false)} aria-label="Millan Experiences home" className="flex items-center">
+            <Wordmark logoUrl={logoUrl} monogramClassName="h-7 sm:h-8 w-auto object-contain" />
           </Link>
           <button type="button" onClick={() => setMobileOpen(false)} aria-label="Close menu">
             <X className="h-7 w-7" strokeWidth={1.4} />
@@ -255,19 +281,42 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
         </nav>
 
         <div className="flex items-center justify-between gap-4 px-6 py-7">
-          <div className="flex items-center gap-2 font-sans text-xs tracking-[0.14em] text-[var(--color-warm-white)]/70">
-            {(["EN", "ES"] as const).map((l, i) => (
-              <span key={l} className="flex items-center gap-2">
-                {i === 1 && <span className="opacity-40">/</span>}
-                <button
-                  type="button"
-                  onClick={() => setLang(l)}
-                  className={cn(lang === l ? "text-[var(--color-sand)]" : "opacity-60")}
-                >
-                  {l}
-                </button>
-              </span>
-            ))}
+          <div
+            role="group"
+            aria-label={loc === 'es' ? "Selector de idioma" : "Language selector"}
+            className="flex items-center font-sans text-xs tracking-[0.18em]"
+          >
+            <button
+              type="button"
+              onClick={() => setLang("ES")}
+              aria-pressed={lang === "ES"}
+              aria-label="Cambiar a Español"
+              className={cn(
+                "px-2 py-1 uppercase transition-colors cursor-pointer",
+                lang === "ES"
+                  ? "font-bold text-[var(--color-sand)]"
+                  : "font-medium text-[var(--color-warm-white)]/60 hover:text-[var(--color-warm-white)]"
+              )}
+            >
+              ES
+            </button>
+            <span className="text-[var(--color-warm-white)]/30 text-[0.72rem] select-none" aria-hidden="true">
+              /
+            </span>
+            <button
+              type="button"
+              onClick={() => setLang("EN")}
+              aria-pressed={lang === "EN"}
+              aria-label="Switch to English"
+              className={cn(
+                "px-2 py-1 uppercase transition-colors cursor-pointer",
+                lang === "EN"
+                  ? "font-bold text-[var(--color-sand)]"
+                  : "font-medium text-[var(--color-warm-white)]/60 hover:text-[var(--color-warm-white)]"
+              )}
+            >
+              EN
+            </button>
           </div>
           <Cta href="/contact" tone="sand" className="flex-1 justify-center" withArrow={false}>
             {loc === 'es' ? 'Comenzar a Planear' : 'Start Planning'}

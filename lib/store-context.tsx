@@ -13,11 +13,12 @@ export interface StoreOrderCustomer {
   phone: string
   email: string
   deliveryDate: string
-  deliveryTime: string
+  deliveryTime?: string
   destination: string
-  reservationNumber?: string
   notes?: string
 }
+
+export type StoreOrderStatus = "pending_payment" | "confirmed" | "paid" | "declined" | "error"
 
 export interface StoreOrder {
   id: string
@@ -26,10 +27,15 @@ export interface StoreOrder {
   totalItems: number
   customer: StoreOrderCustomer
   createdAt: string
-  status: "confirmed"
+  status: StoreOrderStatus
+  paymentStatus?: "APPROVED" | "PENDING" | "DECLINED" | "ERROR" | "SIMULATED"
+  paymentMethod?: string
+  wompiTransactionId?: string
+  wompiReference?: string
 }
 
 interface StoreContextType {
+  locale: "es" | "en"
   cart: CartItem[]
   addToCart: (product: StoreProduct, quantity?: number) => void
   updateQuantity: (productId: string, quantity: number) => void
@@ -42,7 +48,16 @@ interface StoreContextType {
   selectedProductForModal: StoreProduct | null
   setSelectedProductForModal: (product: StoreProduct | null) => void
   currentOrder: StoreOrder | null
-  placeOrder: (customer: StoreOrderCustomer) => StoreOrder
+  placeOrder: (customer: StoreOrderCustomer, initialStatus?: StoreOrderStatus) => StoreOrder
+  updateOrderPayment: (
+    orderId: string,
+    details: {
+      status?: StoreOrderStatus
+      paymentStatus?: "APPROVED" | "PENDING" | "DECLINED" | "ERROR" | "SIMULATED"
+      paymentMethod?: string
+      wompiTransactionId?: string
+    }
+  ) => void
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined)
@@ -50,12 +65,31 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined)
 const CART_STORAGE_KEY = "millan_store_cart_v2"
 const ORDER_STORAGE_KEY = "millan_store_last_order_v1"
 
-export function StoreProvider({ children }: { children: React.ReactNode }) {
+export function StoreProvider({
+  children,
+  initialLocale = "es",
+}: {
+  children: React.ReactNode
+  initialLocale?: "es" | "en"
+}) {
+  const [locale, setLocale] = useState<"es" | "en">(initialLocale)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [selectedProductForModal, setSelectedProductForModal] = useState<StoreProduct | null>(null)
   const [currentOrder, setCurrentOrder] = useState<StoreOrder | null>(null)
   const [isInitialized, setIsInitialized] = useState(false)
+
+  useEffect(() => {
+    setLocale(initialLocale)
+  }, [initialLocale])
+
+  // Check cookie on client
+  useEffect(() => {
+    const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/)
+    if (match && (match[1] === "en" || match[1] === "es")) {
+      setLocale(match[1] as "es" | "en")
+    }
+  }, [])
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -125,7 +159,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     0
   )
 
-  const placeOrder = (customer: StoreOrderCustomer): StoreOrder => {
+  const placeOrder = (
+    customer: StoreOrderCustomer,
+    initialStatus: StoreOrderStatus = "confirmed"
+  ): StoreOrder => {
     const randomSuffix = Math.floor(1000 + Math.random() * 9000)
     const orderId = `MIL-RES-${randomSuffix}`
 
@@ -136,7 +173,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       totalItems,
       customer,
       createdAt: new Date().toISOString(),
-      status: "confirmed",
+      status: initialStatus,
     }
 
     setCurrentOrder(order)
@@ -150,9 +187,52 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return order
   }
 
+  const updateOrderPayment = (
+    orderId: string,
+    details: {
+      status?: StoreOrderStatus
+      paymentStatus?: "APPROVED" | "PENDING" | "DECLINED" | "ERROR" | "SIMULATED"
+      paymentMethod?: string
+      wompiTransactionId?: string
+    }
+  ) => {
+    setCurrentOrder((prev) => {
+      const target = prev && prev.id === orderId ? prev : null
+      let baseOrder = target
+      if (!baseOrder) {
+        try {
+          const saved = localStorage.getItem(ORDER_STORAGE_KEY)
+          if (saved) {
+            const parsed = JSON.parse(saved)
+            if (parsed.id === orderId) baseOrder = parsed
+          }
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
+      if (!baseOrder) return prev
+
+      const updated: StoreOrder = {
+        ...baseOrder,
+        ...details,
+        status: details.status || baseOrder.status,
+      }
+
+      try {
+        localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(updated))
+      } catch (e) {
+        console.error("Failed to update order in storage", e)
+      }
+
+      return updated
+    })
+  }
+
   return (
     <StoreContext.Provider
       value={{
+        locale,
         cart,
         addToCart,
         updateQuantity,
@@ -166,6 +246,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         setSelectedProductForModal,
         currentOrder,
         placeOrder,
+        updateOrderPayment,
       }}
     >
       {children}

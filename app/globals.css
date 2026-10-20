@@ -225,3 +225,18 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Wompi Checkout Modal & Backdrop Overrides */
+.waybox-backdrop {
+  z-index: 999999 !important;
+}
+
+.waybox-modal {
+  z-index: 1000000 !important;
+}
+
+iframe.waybox-iframe,
+iframe[src*="checkout.wompi.co"] {
+  z-index: 1000001 !important;
+}
+

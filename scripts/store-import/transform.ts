@@ -32,6 +32,38 @@ const ESTIMATED_PREFIX = "estimado"
 const VERIFY_KEYWORD = "verificar"
 const PUBLISHABLE_STATES = new Set(["precio online", "lista proveedor (pdf)"])
 
+const UNIT_PRESENTATIONS_MAP: Record<string, string> = {
+  "MILLAN-0002": "Botella 600 ml",
+  "MILLAN-0003": "Botella 600 ml",
+  "MILLAN-0005": "Coco frío (unidad)",
+  "MILLAN-0006": "Botella 400 ml",
+  "MILLAN-0007": "Botella 400 ml",
+  "MILLAN-0008": "Lata / botella personal",
+  "MILLAN-0009": "Lata 300 ml",
+  "MILLAN-0010": "Lata 300 ml",
+  "MILLAN-0011": "Botella personal 310 ml",
+  "MILLAN-0012": "Lata 310 ml",
+  "MILLAN-0013": "Lata 310 ml",
+  "MILLAN-0014": "Lata 250 ml",
+  "MILLAN-0015": "Botella 500 ml",
+  "MILLAN-0016": "Botella 625 ml",
+  "MILLAN-0018": "Caja 1 L",
+  "MILLAN-0019": "Lata 330 ml",
+  "MILLAN-0020": "Lata 330 ml",
+  "MILLAN-0021": "Lata 330 ml",
+  "MILLAN-0022": "Lata 330 ml",
+  "MILLAN-0023": "Botella 355 ml",
+  "MILLAN-0349": "Caja 1 L",
+  "MILLAN-0353": "Unidad artesanal",
+  "MILLAN-0367": "Unidad fresca",
+  "MILLAN-0368": "Bolsa familiar 300 g",
+  "MILLAN-0370": "Bolsa 128 g",
+  "MILLAN-0424": "Paquete 100 und",
+  "MILLAN-0426": "Unidad 105 ml",
+  "MILLAN-0438": "Paquete 500 g",
+  "MILLAN-0443": "Lata 320 g",
+}
+
 export function slugify(input: string): string {
   return input
     .normalize("NFD")
@@ -232,14 +264,20 @@ export function transformRows(
 
     const categoryRef = registerCategory(parsedCategory)
 
+    // Precios por unidad: si en el Excel venía pack (quantity > 1) se calcula por unidad para la tienda
+    const isMultiUnitPack = quantity > 1 && externalId !== "MILLAN-0035"
+    const publicQuantity = isMultiUnitPack ? 1 : quantity
+    const publicPrice = calcMillanPrice(publicQuantity, unitPrice, margin, rounding)
+    const publicPresentation = UNIT_PRESENTATIONS_MAP[externalId] || row.presentation
+
     result.products.push({
       _id: productDocId(externalId),
       _type: STORE_DOC_TYPES.product,
       externalId,
       title: row.title,
       slug: { _type: "slug", current: slug },
-      presentation: row.presentation,
-      price: millanPrice,
+      presentation: publicPresentation,
+      price: publicPrice,
       category: { _type: "reference", _ref: categoryRef },
       destinations: destinations.valid,
       ...(priority && { priority }),

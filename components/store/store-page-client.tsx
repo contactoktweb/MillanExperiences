@@ -13,6 +13,14 @@ import {
 import { StoreCatalog, formatCOP } from "@/lib/store-data"
 import { STORE_DESTINATIONS, type StoreDestination } from "@/lib/store-constants"
 import { useStore, StoreProvider } from "@/lib/store-context"
+import {
+  STORE_I18N,
+  translateCategory,
+  translateDestination,
+  translateProductName,
+  translatePresentation,
+  type Locale,
+} from "@/lib/store-i18n"
 import { ProductCard } from "./product-card"
 import { ProductModal } from "./product-modal"
 import { CartDrawer } from "./cart-drawer"
@@ -56,6 +64,7 @@ function FilterPill({ label, isActive, onClick, icon, size = "md" }: FilterPillP
 interface StoreContentProps {
   catalog: StoreCatalog
   loadFailed: boolean
+  locale?: Locale
 }
 
 function StoreContent({ catalog, loadFailed }: StoreContentProps) {
@@ -64,7 +73,10 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
   const [selectedDestination, setSelectedDestination] = useState<StoreDestination | typeof ALL>(ALL)
   const [searchQuery, setSearchQuery] = useState("")
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
-  const { setIsCartOpen, totalItems, totalAmount } = useStore()
+  const { setIsCartOpen, totalItems, totalAmount, locale } = useStore()
+
+  const currentLocale: Locale = locale || "es"
+  const t = STORE_I18N[currentLocale]
 
   const activeGroup = catalog.groups.find((group) => group.id === selectedGroup)
 
@@ -75,14 +87,20 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
       if (selectedSub !== ALL && product.categoryId !== selectedSub) return false
       if (selectedDestination !== ALL && !product.destinations.includes(selectedDestination)) return false
       if (!query) return true
+      const translatedName = translateProductName(product.name, currentLocale).toLowerCase()
+      const translatedCategory = translateCategory(product.categoryLabel, currentLocale).toLowerCase()
+      const translatedPres = translatePresentation(product.presentation, currentLocale).toLowerCase()
       return (
         product.name.toLowerCase().includes(query) ||
+        translatedName.includes(query) ||
         product.presentation.toLowerCase().includes(query) ||
+        translatedPres.includes(query) ||
         product.categoryLabel.toLowerCase().includes(query) ||
+        translatedCategory.includes(query) ||
         (product.description?.toLowerCase().includes(query) ?? false)
       )
     })
-  }, [catalog.products, selectedGroup, selectedSub, selectedDestination, searchQuery])
+  }, [catalog.products, selectedGroup, selectedSub, selectedDestination, searchQuery, currentLocale])
 
   const visibleProducts = filteredProducts.slice(0, visibleCount)
   const hasMore = filteredProducts.length > visibleCount
@@ -118,13 +136,13 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
           <div className="max-w-2xl">
             <span className="eyebrow text-[var(--color-sand)] flex items-center gap-1.5 text-[0.62rem] sm:text-[0.66rem]">
               <Sparkles className="w-3 h-3 text-[var(--color-sand)] shrink-0" />
-              Boutique Privada
+              {currentLocale === "en" ? "Private Boutique" : "Boutique Privada"}
             </span>
             <h1 className="mt-2 font-serif text-2xl sm:text-3xl md:text-5xl font-normal leading-tight text-[var(--color-warm-white)]">
-              Cava &amp; Selección a Bordo
+              {currentLocale === "en" ? "Cellar & Onboard Provisions" : "Cava & Selección a Bordo"}
             </h1>
             <p className="mt-2 font-sans text-xs sm:text-sm md:text-base font-light text-[var(--color-warm-white)]/80 leading-relaxed max-w-xl">
-              Licores ultra-premium, vinos y bocados selectos coordinados directamente a tu embarcación o villa.
+              {t.bannerSubtitle}
             </p>
           </div>
 
@@ -132,7 +150,11 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
           <div className="mt-3.5 sm:mt-5 inline-flex items-center gap-2 rounded-full border border-[var(--color-sand)]/50 bg-[var(--color-sand)]/10 px-3 py-1 sm:px-4 sm:py-1.5 backdrop-blur-sm">
             <Clock className="w-3.5 h-3.5 text-[var(--color-sand)] shrink-0" />
             <span className="font-sans text-[0.7rem] sm:text-xs text-[var(--color-warm-white)] font-light leading-none">
-              Reserva con <strong className="font-medium text-[var(--color-sand)]">mínimo 8 horas</strong> de anticipación
+              {currentLocale === "en" ? (
+                <>Reserve at least <strong className="font-medium text-[var(--color-sand)]">8 hours</strong> in advance</>
+              ) : (
+                <>Reserva con <strong className="font-medium text-[var(--color-sand)]">mínimo 8 horas</strong> de anticipación</>
+              )}
             </span>
           </div>
         </div>
@@ -144,14 +166,14 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
           {/* Controls: categorías, subcategorías, destino y búsqueda */}
           <div className="flex flex-col gap-3 pb-4 border-b border-[color:var(--color-border-light)]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-              {/* Category pills (desplazables con el dedo en móvil) */}
+              {/* Category pills */}
               <div
                 role="group"
-                aria-label="Filtrar por categoría"
+                aria-label={currentLocale === "en" ? "Filter by category" : "Filtrar por categoría"}
                 className="min-w-0 flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-1 scrollbar-none snap-x snap-mandatory"
               >
                 <FilterPill
-                  label="Todo el Catálogo"
+                  label={currentLocale === "en" ? "All Categories" : "Todo el Catálogo"}
                   icon={<Layers className="w-4 h-4" />}
                   isActive={selectedGroup === ALL}
                   onClick={() => changeGroup(ALL)}
@@ -159,7 +181,7 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
                 {catalog.groups.map((group) => (
                   <FilterPill
                     key={group.id}
-                    label={group.label}
+                    label={translateCategory(group.label, currentLocale)}
                     isActive={selectedGroup === group.id}
                     onClick={() => changeGroup(group.id)}
                   />
@@ -174,8 +196,8 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
                     type="search"
                     value={searchQuery}
                     onChange={(e) => changeSearch(e.target.value)}
-                    placeholder="Buscar..."
-                    aria-label="Buscar productos"
+                    placeholder={t.searchPlaceholder}
+                    aria-label={currentLocale === "en" ? "Search products" : "Buscar productos"}
                     className="w-full bg-white border border-[color:var(--color-border-light)] pl-8 pr-3 py-1.5 font-sans text-xs text-[var(--color-deep-sea)] placeholder:text-gray-400 focus:border-[var(--color-sand)] focus:outline-none rounded-full"
                   />
                 </div>
@@ -184,28 +206,28 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
                   <button
                     type="button"
                     onClick={() => setIsCartOpen(true)}
-                    className="hidden sm:inline-flex items-center gap-1.5 border border-[var(--color-deep-sea)] px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors whitespace-nowrap"
+                    className="hidden sm:inline-flex items-center gap-1.5 border border-[var(--color-deep-sea)] px-3.5 py-1.5 rounded-full text-xs font-sans uppercase tracking-wider text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors whitespace-nowrap cursor-pointer"
                   >
                     <ShoppingBag className="w-3.5 h-3.5 text-[var(--color-sand)]" />
-                    <span>Reserva ({totalItems})</span>
+                    <span>{currentLocale === "en" ? `Cart (${totalItems})` : `Reserva (${totalItems})`}</span>
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Subcategorías (solo cuando la categoría principal las tiene, ej. Cava premium) */}
+            {/* Subcategorías */}
             {activeGroup && activeGroup.children.length > 0 && (
               <div
                 role="group"
-                aria-label={`Subcategorías de ${activeGroup.label}`}
+                aria-label={currentLocale === "en" ? `Subcategories of ${translateCategory(activeGroup.label, currentLocale)}` : `Subcategorías de ${activeGroup.label}`}
                 className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none snap-x snap-mandatory animate-in fade-in duration-200"
               >
-                <FilterPill size="sm" label="Todas" isActive={selectedSub === ALL} onClick={() => changeSub(ALL)} />
+                <FilterPill size="sm" label={currentLocale === "en" ? "All" : "Todas"} isActive={selectedSub === ALL} onClick={() => changeSub(ALL)} />
                 {activeGroup.children.map((child) => (
                   <FilterPill
                     key={child.id}
                     size="sm"
-                    label={child.label}
+                    label={translateCategory(child.label, currentLocale)}
                     isActive={selectedSub === child.id}
                     onClick={() => changeSub(child.id)}
                   />
@@ -216,15 +238,15 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
             {/* Destino */}
             <div
               role="group"
-              aria-label="Filtrar por destino"
+              aria-label={currentLocale === "en" ? "Filter by destination" : "Filtrar por destino"}
               className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none snap-x"
             >
               <span className="shrink-0 font-sans text-[0.62rem] uppercase tracking-[0.18em] text-[var(--color-blue-gray)] pr-1">
-                Destino
+                {t.destinationFilter}
               </span>
               <FilterPill
                 size="sm"
-                label="Todos"
+                label={t.all}
                 isActive={selectedDestination === ALL}
                 onClick={() => changeDestination(ALL)}
               />
@@ -232,7 +254,7 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
                 <FilterPill
                   key={destination}
                   size="sm"
-                  label={destination}
+                  label={translateDestination(destination, currentLocale)}
                   isActive={selectedDestination === destination}
                   onClick={() => changeDestination(destination)}
                 />
@@ -245,33 +267,31 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
             <div role="alert" className="mt-10 text-center py-14 bg-white border border-[color:var(--color-border-light)] rounded-sm">
               <AlertTriangle className="mx-auto w-6 h-6 text-[var(--color-dark-sand)]" aria-hidden="true" />
               <p className="mt-3 font-serif text-xl sm:text-2xl text-[var(--color-deep-sea)]">
-                No pudimos cargar el catálogo en este momento
+                {t.loadErrorTitle}
               </p>
               <p className="mt-2 font-sans text-xs sm:text-sm text-[var(--color-blue-gray)]">
-                Intenta recargar la página o consulta con el concierge.
+                {t.loadErrorBody}
               </p>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="mt-10 text-center py-14 bg-white border border-[color:var(--color-border-light)] rounded-sm">
               <p className="font-serif text-xl sm:text-2xl text-[var(--color-deep-sea)]">
-                {catalog.products.length === 0
-                  ? "Nuestro catálogo se está actualizando"
-                  : "No encontramos productos en esta búsqueda"}
+                {t.noProductsFound}
               </p>
               {catalog.products.length > 0 && (
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="mt-4 border border-[var(--color-deep-sea)] px-4 py-1.5 font-sans text-xs uppercase tracking-wider text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors"
+                  className="mt-4 border border-[var(--color-deep-sea)] px-4 py-1.5 font-sans text-xs uppercase tracking-wider text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors cursor-pointer"
                 >
-                  Restablecer Filtros
+                  {t.clearFilters}
                 </button>
               )}
             </div>
           ) : (
             <>
               <p className="mt-4 font-sans text-xs text-[var(--color-blue-gray)]" aria-live="polite">
-                {filteredProducts.length} {filteredProducts.length === 1 ? "producto" : "productos"}
+                {t.productsCount(filteredProducts.length)}
               </p>
               <div className="mt-3 sm:mt-4 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {visibleProducts.map((product) => (
@@ -283,9 +303,9 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
                   <button
                     type="button"
                     onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
-                    className="border border-[var(--color-deep-sea)] px-6 py-2.5 font-sans text-xs uppercase tracking-[0.16em] text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors active:scale-[0.98]"
+                    className="border border-[var(--color-deep-sea)] px-6 py-2.5 font-sans text-xs uppercase tracking-[0.16em] text-[var(--color-deep-sea)] hover:bg-[var(--color-deep-sea)] hover:text-[var(--color-warm-white)] transition-colors active:scale-[0.98] cursor-pointer"
                   >
-                    Ver más productos
+                    {t.loadMore}
                   </button>
                 </div>
               )}
@@ -296,13 +316,15 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
           <section className="mt-12 sm:mt-20 border border-[color:var(--color-border-light)] bg-white p-5 sm:p-8 md:p-12 rounded-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-8">
             <div className="max-w-xl">
               <span className="font-sans text-[0.62rem] uppercase tracking-[0.2em] text-[var(--color-crystal-water)] font-semibold">
-                Servicio Bespoke
+                {currentLocale === "en" ? "Bespoke Service" : "Servicio Bespoke"}
               </span>
               <h2 className="mt-1.5 font-serif text-xl sm:text-2xl md:text-3xl text-[var(--color-deep-sea)] font-normal">
-                ¿Buscas una etiqueta o pedido exclusivo?
+                {currentLocale === "en" ? "Looking for an exclusive label or special pairing?" : "¿Buscas una etiqueta o pedido exclusivo?"}
               </h2>
               <p className="mt-2 font-sans text-xs sm:text-sm text-[var(--color-blue-gray)] leading-relaxed">
-                Añadas especiales, puros habanos o maridajes de autor para tu yate o villa coordinados con el concierge.
+                {currentLocale === "en"
+                  ? "Rare vintages, Cuban cigars, or private wine pairings for your yacht or villa orchestrated by your concierge."
+                  : "Añadas especiales, puros habanos o maridajes de autor para tu yate o villa coordinados con el concierge."}
               </p>
             </div>
 
@@ -312,7 +334,7 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
               rel="noopener noreferrer"
               className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2.5 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] px-5 py-3 sm:px-6 sm:py-3.5 font-sans text-xs uppercase tracking-[0.16em] font-medium border border-[var(--color-sand)] hover:bg-[var(--color-deep-sea)]/90 transition-colors text-center"
             >
-              Consultar con el Concierge
+              {currentLocale === "en" ? "Inquire with Concierge" : "Consultar con el Concierge"}
               <ChevronRight className="w-4 h-4 text-[var(--color-sand)]" />
             </a>
           </section>
@@ -321,11 +343,11 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
 
       {/* Floating Cart Button */}
       {totalItems > 0 && (
-        <aside aria-label="Acceso rápido a tu reserva" className="fixed bottom-5 left-4 sm:bottom-6 sm:left-6 z-[80]">
+        <aside aria-label={currentLocale === "en" ? "Quick cart access" : "Acceso rápido a tu reserva"} className="fixed bottom-5 left-4 sm:bottom-6 sm:left-6 z-[80]">
           <button
             type="button"
             onClick={() => setIsCartOpen(true)}
-            className="flex items-center gap-2.5 sm:gap-3 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] px-4 py-3 sm:px-5 sm:py-3.5 rounded-full shadow-2xl border border-[var(--color-sand)] hover:scale-105 transition-all duration-300"
+            className="flex items-center gap-2.5 sm:gap-3 bg-[var(--color-deep-sea)] text-[var(--color-warm-white)] px-4 py-3 sm:px-5 sm:py-3.5 rounded-full shadow-2xl border border-[var(--color-sand)] hover:scale-105 transition-all duration-300 cursor-pointer"
           >
             <div className="relative">
               <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--color-sand)]" />
@@ -335,7 +357,7 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
             </div>
             <div className="text-left font-sans">
               <span className="block text-[0.6rem] uppercase tracking-wider text-[var(--color-warm-white)]/70">
-                Tu Reserva
+                {t.floatingCart}
               </span>
               <span className="block text-xs font-semibold text-[var(--color-warm-white)]">
                 {formatCOP(totalAmount)}
@@ -354,7 +376,7 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
 
 export function StorePageClient(props: StoreContentProps) {
   return (
-    <StoreProvider>
+    <StoreProvider initialLocale={props.locale || "es"}>
       <StoreContent {...props} />
     </StoreProvider>
   )
