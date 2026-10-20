@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-  MILLAN EXPERIENCES — Brand palette.
+  MILLAN EXPERIENCES — Brand palette
   Centralized CSS variables so final brand values can be corrected from a
   single place without touching components (per brandbook guidance).
 */
