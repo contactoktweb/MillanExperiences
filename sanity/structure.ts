@@ -22,6 +22,7 @@ import {
   Clock,
 } from 'lucide-react'
 import type { StructureResolver } from 'sanity/structure'
+import { apiVersion } from './env'
 
 const createPropertyListItem = (
   S: any,
@@ -38,6 +39,8 @@ const createPropertyListItem = (
       S.documentTypeList(schemaType)
         .title(title)
     )
+
+const createDocList = (S: any) => S.documentList().apiVersion(apiVersion)
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -77,7 +80,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Todas las Solicitudes')
                 .icon(Users)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Todas las Solicitudes')
                     .filter('_type == "clientLead"')
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -86,7 +89,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Nuevas Solicitudes')
                 .icon(UserCheck)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Nuevas Solicitudes')
                     .filter('_type == "clientLead" && status == "new"')
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
@@ -95,7 +98,7 @@ export const structure: StructureResolver = (S) =>
                 .title('En Proceso / Cotizando')
                 .icon(Clock)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('En Proceso de Cotización')
                     .filter('_type == "clientLead" && status == "in_progress"')
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
@@ -104,7 +107,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Clientes Confirmados')
                 .icon(CheckCircle2)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Clientes Confirmados')
                     .filter('_type == "clientLead" && status == "confirmed"')
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
@@ -123,7 +126,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Todos los Pedidos')
                 .icon(ShoppingCart)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Todos los Pedidos')
                     .filter('_type == "storeOrder"')
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -132,7 +135,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Solicitudes de Pago (Pendientes)')
                 .icon(Clock)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Solicitudes de Pago Pendientes')
                     .filter('_type == "storeOrder" && status == "pending_payment"')
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -141,7 +144,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Pedidos Pagados y Aprobados')
                 .icon(CheckCircle2)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Pedidos Pagados y Aprobados')
                     .filter('_type == "storeOrder" && status == "paid"')
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -314,7 +317,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Todas las Reseñas (General)')
                 .icon(MessageSquareHeart)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Todas las Reseñas')
                     .filter('_type == "review"')
                     .defaultOrdering([{ field: '_createdAt', direction: 'desc' }])
@@ -327,7 +330,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('luxury-villas')
                     .title('Seleccione una Villa')
                     .child((villaId: string) =>
-                      S.documentList()
+                      createDocList(S)
                         .title('Reseñas de la Villa')
                         .filter(
                           '_type == "review" && (propertySlug == *[_id == $id][0].slug.current || propertyName == *[_id == $id][0].title)'
@@ -343,7 +346,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('private-islands')
                     .title('Seleccione una Isla')
                     .child((islandId: string) =>
-                      S.documentList()
+                      createDocList(S)
                         .title('Reseñas de la Isla')
                         .filter(
                           '_type == "review" && (propertySlug == *[_id == $id][0].slug.current || propertyName == *[_id == $id][0].title)'
@@ -359,7 +362,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('yachts-catamarans')
                     .title('Seleccione un Yate')
                     .child((yachtId: string) =>
-                      S.documentList()
+                      createDocList(S)
                         .title('Reseñas del Yate')
                         .filter(
                           '_type == "review" && (propertySlug == *[_id == $id][0].slug.current || propertyName == *[_id == $id][0].title)'
@@ -375,7 +378,7 @@ export const structure: StructureResolver = (S) =>
                   S.documentTypeList('speedboats')
                     .title('Seleccione una Lancha')
                     .child((boatId: string) =>
-                      S.documentList()
+                      createDocList(S)
                         .title('Reseñas de la Lancha')
                         .filter(
                           '_type == "review" && (propertySlug == *[_id == $id][0].slug.current || propertyName == *[_id == $id][0].title)'
@@ -408,7 +411,7 @@ export const structure: StructureResolver = (S) =>
                         .title('Todos los Pedidos')
                         .icon(ShoppingCart)
                         .child(
-                          S.documentList()
+                          createDocList(S)
                             .title('Todos los Pedidos')
                             .filter('_type == "storeOrder"')
                             .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -417,7 +420,7 @@ export const structure: StructureResolver = (S) =>
                         .title('Solicitudes de Pago (Pendientes)')
                         .icon(Clock)
                         .child(
-                          S.documentList()
+                          createDocList(S)
                             .title('Solicitudes de Pago Pendientes')
                             .filter('_type == "storeOrder" && status == "pending_payment"')
                             .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -426,7 +429,7 @@ export const structure: StructureResolver = (S) =>
                         .title('Pedidos Pagados y Aprobados')
                         .icon(CheckCircle2)
                         .child(
-                          S.documentList()
+                          createDocList(S)
                             .title('Pedidos Pagados y Aprobados')
                             .filter('_type == "storeOrder" && status == "paid"')
                             .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -435,7 +438,7 @@ export const structure: StructureResolver = (S) =>
                         .title('Pedidos Confirmados por Concierge')
                         .icon(UserCheck)
                         .child(
-                          S.documentList()
+                          createDocList(S)
                             .title('Pedidos Confirmados por Concierge')
                             .filter('_type == "storeOrder" && status == "confirmed"')
                             .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
@@ -447,7 +450,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Productos activos')
                 .icon(Wine)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Productos activos')
                     .filter('_type == "storeProduct" && status == "active"')
                     .defaultOrdering([{ field: 'title', direction: 'asc' }])
@@ -456,7 +459,7 @@ export const structure: StructureResolver = (S) =>
                 .title('Borradores / por validar')
                 .icon(Star)
                 .child(
-                  S.documentList()
+                  createDocList(S)
                     .title('Borradores (ocultos al cliente)')
                     .filter('_type == "storeProduct" && status != "active"')
                     .defaultOrdering([{ field: 'title', direction: 'asc' }])

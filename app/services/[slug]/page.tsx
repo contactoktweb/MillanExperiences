@@ -41,7 +41,7 @@ export async function generateMetadata(
 export default async function ServicePage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
   const data = await client.fetch(servicePageQuery, { slug })
@@ -143,7 +143,7 @@ export default async function ServicePage({
                     )}
                     {content.whatWeHandle.cta && (
                       <div className="pt-8">
-                        <Cta href={content.whatWeHandle.cta.href} variant="solid" tone="dark">{content.whatWeHandle.cta.label}</Cta>
+                        <Cta href={content.whatWeHandle.cta.href} variant="solid" tone="sea">{content.whatWeHandle.cta.label}</Cta>
                       </div>
                     )}
                   </div>
@@ -310,7 +310,7 @@ export default async function ServicePage({
               </div>
               {content.seoFaq.cta && (
                 <div className="mt-12">
-                  <Cta href={content.seoFaq.cta.href} variant="outline" tone="dark">{content.seoFaq.cta.label}</Cta>
+                  <Cta href={content.seoFaq.cta.href} variant="outline" tone="sea">{content.seoFaq.cta.label}</Cta>
                 </div>
               )}
             </div>

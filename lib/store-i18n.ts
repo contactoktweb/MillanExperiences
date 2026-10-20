@@ -3,27 +3,58 @@ import type { StoreDestination, StorePriority } from "./store-constants"
 export type Locale = "es" | "en"
 
 const CATEGORY_TRANSLATIONS: Record<string, { es: string; en: string }> = {
+  // Categorías principales de Sanity
+  "aseo personal": { es: "Aseo Personal", en: "Personal Care & Toiletries" },
+  "bebes y ninos": { es: "Bebés y Niños", en: "Babies & Kids" },
+  "bebés y niños": { es: "Bebés y Niños", en: "Babies & Kids" },
+  "cafe y desayuno": { es: "Café y Desayuno", en: "Coffee & Breakfast" },
+  "café y desayuno": { es: "Café y Desayuno", en: "Coffee & Breakfast" },
   "cava premium": { es: "Cava Premium", en: "Premium Cellar" },
+  "celebraciones y detalles": { es: "Celebraciones y Detalles", en: "Celebrations & Gifts" },
+  "cerveza, cava basica y mixers": { es: "Cerveza, Cava Básica y Mixers", en: "Beer, Basic Cellar & Mixers" },
+  "cerveza, cava básica y mixers": { es: "Cerveza, Cava Básica y Mixers", en: "Beer, Basic Cellar & Mixers" },
+  "cocina y despensa": { es: "Cocina y Despensa", en: "Kitchen & Pantry" },
+  "farmacia y bienestar": { es: "Farmacia y Bienestar", en: "Pharmacy & Wellness" },
+  "frutas y snacks": { es: "Frutas y Snacks", en: "Fruits & Snacks" },
+  "gourmet italiano": { es: "Gourmet Italiano", en: "Italian Gourmet" },
+  "hidratacion y bebidas": { es: "Hidratación y Bebidas", en: "Hydration & Beverages" },
+  "hidratación y bebidas": { es: "Hidratación y Bebidas", en: "Hydration & Beverages" },
+  "sol, playa y a bordo": { es: "Sol, Playa y a Bordo", en: "Sun, Beach & Onboard" },
+  "tabaco": { es: "Tabaco", en: "Tobacco & Cigars" },
+  "vinos y licores italianos": { es: "Vinos y Licores Italianos", en: "Italian Wines & Spirits" },
+
+  // Subcategorías de Cava Premium en Sanity
+  "aguardientes y licores nacionales": { es: "Aguardientes y Licores Nacionales", en: "Colombian Spirits & Aguardiente" },
+  "aperitivos, licores y cognac": { es: "Aperitivos, Licores y Cognac", en: "Aperitifs, Liqueurs & Cognac" },
+  "champagne, espumosos y vinos": { es: "Champagne, Espumosos y Vinos", en: "Champagne, Sparkling & Wines" },
+  "gin": { es: "Gin", en: "Gin" },
+  "ginebra": { es: "Ginebra", en: "Gin" },
+  "ron": { es: "Ron", en: "Rum" },
+  "tequila y mezcal": { es: "Tequila y Mezcal", en: "Tequila & Mezcal" },
+  "vodka": { es: "Vodka", en: "Vodka" },
+  "whisky y bourbon": { es: "Whisky y Bourbon", en: "Whiskey & Bourbon" },
+
+  // Variaciones y términos de catálogo
   "cava": { es: "Cava", en: "Cellar" },
   "champagne": { es: "Champagne", en: "Champagne" },
   "espumosos": { es: "Espumosos", en: "Sparkling Wines" },
   "vino tinto": { es: "Vino Tinto", en: "Red Wine" },
   "vino blanco": { es: "Vino Blanco", en: "White Wine" },
   "vino rosado": { es: "Vino Rosado", en: "Rosé Wine" },
-  "licores": { es: "Licores", en: "Spirits" },
+  "vinos": { es: "Vinos", en: "Wines" },
+  "licores": { es: "Licores", en: "Spirits & Liqueurs" },
   "licores y destilados": { es: "Licores y Destilados", en: "Spirits & Liquors" },
-  "ginebra": { es: "Ginebra", en: "Gin" },
-  "ron": { es: "Ron", en: "Rum" },
   "tequila": { es: "Tequila", en: "Tequila" },
   "mezcal": { es: "Mezcal", en: "Mezcal" },
-  "vodka": { es: "Vodka", en: "Vodka" },
   "whisky": { es: "Whisky", en: "Whiskey" },
+  "bourbon": { es: "Bourbon", en: "Bourbon" },
   "cervezas": { es: "Cervezas", en: "Beers" },
   "cerveza": { es: "Cerveza", en: "Beer" },
   "aguas y refrescos": { es: "Aguas y Refrescos", en: "Waters & Soft Drinks" },
   "aguas": { es: "Aguas", en: "Waters" },
   "refrescos": { es: "Refrescos", en: "Soft Drinks" },
   "gaseosas": { es: "Gaseosas", en: "Sodas" },
+  "tonicas": { es: "Tónicas", en: "Tonics" },
   "tónicas": { es: "Tónicas", en: "Tonics" },
   "snacks y complementos gourmet": { es: "Snacks y Gourmet", en: "Gourmet Snacks" },
   "snacks": { es: "Snacks", en: "Snacks" },
@@ -31,12 +62,29 @@ const CATEGORY_TRANSLATIONS: Record<string, { es: string; en: string }> = {
   "hielo y suministros": { es: "Hielo y Suministros", en: "Ice & Supplies" },
   "hielo": { es: "Hielo", en: "Ice" },
   "suministros": { es: "Suministros", en: "Supplies" },
+  "despensa": { es: "Despensa", en: "Pantry" },
+  "cocina": { es: "Cocina", en: "Kitchen" },
+  "farmacia": { es: "Farmacia", en: "Pharmacy" },
+  "bienestar": { es: "Bienestar", en: "Wellness" },
+  "cafe": { es: "Café", en: "Coffee" },
+  "café": { es: "Café", en: "Coffee" },
+  "desayuno": { es: "Desayuno", en: "Breakfast" },
+  "frutas": { es: "Frutas", en: "Fruits" },
+  "sol y playa": { es: "Sol y Playa", en: "Sun & Beach" },
+  "a bordo": { es: "A Bordo", en: "Onboard" },
+  "bebes": { es: "Bebés", en: "Babies" },
+  "bebés": { es: "Bebés", en: "Babies" },
+  "ninos": { es: "Niños", en: "Kids" },
+  "niños": { es: "Niños", en: "Kids" },
 }
 
 export function translateCategory(label: string, locale: Locale): string {
+  if (!label) return ""
   if (locale !== "en") return label
-  const lower = label.toLowerCase().trim()
-  return CATEGORY_TRANSLATIONS[lower]?.en || label
+  const clean = label.trim()
+  const lower = clean.toLowerCase()
+  const unaccented = lower.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  return CATEGORY_TRANSLATIONS[lower]?.en || CATEGORY_TRANSLATIONS[unaccented]?.en || label
 }
 
 export function translatePresentation(presentation: string, locale: Locale): string {
@@ -61,14 +109,40 @@ export function translatePriority(priority: StorePriority | undefined, locale: L
 }
 
 export function translateDestination(dest: StoreDestination | string, locale: Locale): string {
-  if (locale !== "en") return dest
-  const map: Record<string, string> = {
-    "Cartagena": "Cartagena",
-    "Islas del Rosario": "Rosario Islands",
-    "Barú": "Barú",
-    "Cholón": "Cholón",
+  if (!dest) return ""
+  if (locale !== "en") {
+    if (dest === "Casa/Villa") return "Casa / Villa"
+    return dest
   }
-  return map[dest] || dest
+  const clean = dest.trim()
+  const lower = clean.toLowerCase()
+  const unaccented = lower.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+
+  const map: Record<string, string> = {
+    "casa/villa": "House / Villa",
+    "casa / villa": "House / Villa",
+    "casa": "House",
+    "villa": "Villa",
+    "lancha": "Speedboat",
+    "yate": "Yacht",
+    "catamaran": "Catamaran",
+    "catamarán": "Catamaran",
+    "cartagena": "Cartagena",
+    "islas del rosario": "Rosario Islands",
+    "baru": "Barú",
+    "barú": "Barú",
+    "cholon": "Cholón",
+    "cholón": "Cholón",
+    "tierra bomba": "Tierra Bomba",
+    "tierrabomba": "Tierra Bomba",
+    "centro historico": "Historic Center",
+    "centro histórico": "Historic Center",
+    "zona norte": "North Zone",
+    "getsemani": "Getsemani",
+    "getsemaní": "Getsemani",
+  }
+
+  return map[lower] || map[unaccented] || clean
 }
 
 const PRODUCT_NAME_TRANSLATIONS: Record<string, string> = {

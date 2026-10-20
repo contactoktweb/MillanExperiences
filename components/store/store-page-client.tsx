@@ -90,6 +90,9 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
       const translatedName = translateProductName(product.name, currentLocale).toLowerCase()
       const translatedCategory = translateCategory(product.categoryLabel, currentLocale).toLowerCase()
       const translatedPres = translatePresentation(product.presentation, currentLocale).toLowerCase()
+      const translatedDestinations = product.destinations
+        .map((d) => translateDestination(d, currentLocale).toLowerCase())
+        .join(" ")
       return (
         product.name.toLowerCase().includes(query) ||
         translatedName.includes(query) ||
@@ -97,6 +100,8 @@ function StoreContent({ catalog, loadFailed }: StoreContentProps) {
         translatedPres.includes(query) ||
         product.categoryLabel.toLowerCase().includes(query) ||
         translatedCategory.includes(query) ||
+        product.destinations.some((d) => d.toLowerCase().includes(query)) ||
+        translatedDestinations.includes(query) ||
         (product.description?.toLowerCase().includes(query) ?? false)
       )
     })
