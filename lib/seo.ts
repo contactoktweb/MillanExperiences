@@ -8,7 +8,11 @@
 */
 import type { Metadata } from "next"
 import { cookies } from "next/headers"
+import { cache } from "react"
 import { contact } from "@/lib/site-data"
+import { client } from "@/sanity/lib/client"
+import { urlFor } from "@/sanity/lib/image"
+import { globalConfigQuery } from "@/sanity/lib/queries"
 
 export const SITE_URL = "https://www.millan-experiences.com"
 export const SITE_NAME = "Millan Experiences"
@@ -43,6 +47,7 @@ export function ogImageUrl(src?: string | null): string {
   if (!src) return DEFAULT_OG_IMAGE
   // Sanity CDN crops (centered) and re-encodes to a light JPG on the fly.
   if (src.includes("cdn.sanity.io/images/")) {
+    if (src.includes("fm=jpg")) return src // already sized (see getSiteShareImage)
     return `${src.split("?")[0]}?w=${OG_WIDTH}&h=${OG_HEIGHT}&fit=crop&fm=jpg&q=80`
   }
   if (src.startsWith("/og/")) return src
@@ -50,6 +55,22 @@ export function ogImageUrl(src?: string | null): string {
   if (name && LOCAL_OG_IMAGES.has(name)) return `/og/${name}.jpg`
   return src.startsWith("/") ? DEFAULT_OG_IMAGE : src
 }
+
+// Site-wide share image set in Sanity → Configuración Global. Cropped to
+// 1200×630 around the editor's hotspot; falls back to DEFAULT_OG_IMAGE.
+export const getSiteShareImage = cache(async (): Promise<{ url: string; alt?: string }> => {
+  try {
+    const config = await client.fetch(globalConfigQuery)
+    const image = config?.shareImage
+    if (image?.asset?._ref) {
+      const url = urlFor(image).width(OG_WIDTH).height(OG_HEIGHT).fit("crop").format("jpg").quality(80).url()
+      return { url, alt: image.alt || undefined }
+    }
+  } catch (error) {
+    console.error("[seo] Could not load share image", error)
+  }
+  return { url: DEFAULT_OG_IMAGE }
+})
 
 // The site picks its language from a cookie; `?lang=es` (handled in
 // proxy.ts) gives the Spanish version its own shareable, indexable URL.
@@ -77,7 +98,8 @@ type BuildMetadataInput = {
   noIndex?: boolean
 }
 
-export function buildMetadata({
+// Pages without their own image use the share image from Configuración Global.
+export async function buildMetadata({
   title,
   description,
   path,
@@ -89,15 +111,16 @@ export function buildMetadata({
   modifiedTime,
   keywords,
   noIndex,
-}: BuildMetadataInput): Metadata {
+}: BuildMetadataInput): Promise<Metadata> {
   const clean = cleanTitle(title)
   // Keep SERP titles short: drop the brand suffix when it would push past ~65 chars.
   const withBrand = `${clean} — ${SITE_NAME}`
   const fullTitle = !clean ? SITE_NAME : withBrand.length > 65 ? clean : withBrand
-  const ogImage = absoluteUrl(ogImageUrl(image))
+  const siteImage = image ? null : await getSiteShareImage()
+  const ogImage = absoluteUrl(ogImageUrl(image || siteImage?.url))
   const desc = description || undefined
   const url = localizedPath(path, locale)
-  const alt = imageAlt || clean || SITE_NAME
+  const alt = imageAlt || siteImage?.alt || clean || SITE_NAME
 
   return {
     title: { absolute: fullTitle },

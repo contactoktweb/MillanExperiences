@@ -4,6 +4,7 @@ export const globalConfigQuery = defineQuery(`
   *[_type == "globalConfig"][0]{
     "faviconUrl": favicon.asset->url,
     "logoUrl": logo.asset->url,
+    shareImage{ asset, hotspot, crop, alt },
     email,
     phone,
     whatsapp,

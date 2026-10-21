@@ -1,5 +1,10 @@
 # Changelog AI
 
+## [2026-10-21] - Imagen para compartir editable en Sanity
+
+### Agregado
+- Campo **Imagen para compartir (WhatsApp, redes)** en Configuración Global (`shareImage`, con punto de enfoque y texto alternativo). Es la imagen al compartir la home y la de respaldo de cualquier página sin imagen propia; se recorta a JPG 1200×630 respetando el punto de enfoque (`getSiteShareImage` en `lib/seo.ts`). Sin imagen cargada se usa `public/og/private-islands-hero.jpg`.
+
 ## [2026-10-21] - Vistas previas al compartir (WhatsApp/redes) y URLs en español
 
 ### Corregido

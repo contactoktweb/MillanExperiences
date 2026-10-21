@@ -16,7 +16,7 @@ import { buildMetadata, getLocale } from "@/lib/seo"
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale()
   const isEs = locale === "es"
-  const meta = buildMetadata({
+  const meta = await buildMetadata({
     title: isEs ? "Concierge de lujo en Cartagena" : "Luxury Concierge in Cartagena",
     description: isEs
       ? "Viajes de lujo en Cartagena y el Caribe colombiano: villas privadas, Islas del Rosario, yates, chef privado, bodas y eventos con concierge dedicado."

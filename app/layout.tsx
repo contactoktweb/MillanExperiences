@@ -8,7 +8,7 @@ import { WhatsAppButton } from "@/components/whatsapp-button"
 import { client } from "@/sanity/lib/client"
 import { globalConfigQuery } from "@/sanity/lib/queries"
 import { JsonLd } from "@/components/json-ld"
-import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL, getLocale, organizationJsonLd, websiteJsonLd } from "@/lib/seo"
+import { SITE_NAME, SITE_URL, absoluteUrl, getLocale, getSiteShareImage, organizationJsonLd, websiteJsonLd } from "@/lib/seo"
 
 // Didot — primary serif typeface
 const didot = localFont({
@@ -43,6 +43,8 @@ const jost = Jost({
 
 export async function generateMetadata(): Promise<Metadata> {
   const globalConfig = await client.fetch(globalConfigQuery)
+  const shareImage = await getSiteShareImage()
+  const shareImageUrl = absoluteUrl(shareImage.url)
   
   return {
     metadataBase: new URL(SITE_URL),
@@ -85,14 +87,14 @@ export async function generateMetadata(): Promise<Metadata> {
         "A private concierge and privileged gateway to Colombia. Villas, islands, yachts and bespoke travel, handled end to end.",
       siteName: SITE_NAME,
       locale: "en_US",
-      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630, type: "image/jpeg", alt: "Private island in the Colombian Caribbean near Cartagena" }],
+      images: [{ url: shareImageUrl, width: 1200, height: 630, type: "image/jpeg", alt: shareImage.alt || "Private island in the Colombian Caribbean near Cartagena" }],
     },
     twitter: {
       card: "summary_large_image",
       title: "Millan Experiences — Colombia, Designed for you",
       description:
         "A private concierge and privileged gateway to Colombia. Handled, end to end.",
-      images: [DEFAULT_OG_IMAGE],
+      images: [shareImageUrl],
     },
     formatDetection: { telephone: false },
     icons: globalConfig?.faviconUrl ? {

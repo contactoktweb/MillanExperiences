@@ -27,6 +27,22 @@ export const globalConfig = defineType({
       }
     }),
     defineField({
+      name: 'shareImage',
+      title: 'Imagen para compartir (WhatsApp, redes)',
+      type: 'image',
+      description:
+        'Imagen que aparece al enviar el enlace de la web (millan-experiences.com) por WhatsApp, Facebook, LinkedIn o X, y en las páginas que no tienen imagen propia. Horizontal, mínimo 1200 × 630 px, JPG o PNG. Se recorta automáticamente a 1200 × 630: usa el punto de enfoque para elegir qué parte se ve. Los artículos del blog, villas y servicios usan su propia imagen.',
+      options: { hotspot: true, accept: 'image/jpeg, image/png, image/webp' },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Texto alternativo',
+          type: 'string',
+          description: 'Describe la imagen (ej: Isla privada con muelle en las Islas del Rosario).',
+        }),
+      ],
+    }),
+    defineField({
       name: 'email',
       title: 'Correo de Notificaciones',
       type: 'string',
