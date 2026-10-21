@@ -19,12 +19,14 @@ export async function SiteFooter() {
       basedIn: "Based in",
       privacy: "Privacy Policy",
       terms: "Terms & Conditions",
+      blog: "Travel Guides",
     },
     es: {
       tagline: "Impecable. Desde el primer plan hasta el último detalle.",
       basedIn: "Basado en",
       privacy: "Política de Privacidad",
       terms: "Términos y Condiciones",
+      blog: "Guías de Viaje",
     }
   }
 
@@ -121,6 +123,10 @@ export async function SiteFooter() {
         <div className="mx-auto flex max-w-[1440px] flex-col items-center gap-8 px-6 py-8 md:flex-row md:justify-between md:px-10">
           <div className="flex flex-col gap-3 font-sans text-xs font-light text-[var(--color-warm-white)]/60 text-center md:text-left">
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-start items-center">
+              <Link href="/blog" className="hover:text-[var(--color-sand)] transition-colors">
+                {t.blog}
+              </Link>
+              <span className="hidden md:inline text-white/20">|</span>
               <Link href="/privacy-policy" className="hover:text-[var(--color-sand)] transition-colors">
                 {t.privacy}
               </Link>

@@ -6,18 +6,22 @@ import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactSection } from "@/components/home/contact-section"
 import { AccordionCustom, type AccordionItem } from "@/components/ui/accordion-custom"
+import { buildMetadata } from "@/lib/seo"
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies()
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en"
 
-  return {
-    title: locale === "es" ? "Sobre Nosotros | Millan Experiences" : "About Us | Millan Experiences",
+  return buildMetadata({
+    title: locale === "es" ? "Sobre Nosotros: Concierge de Lujo en Cartagena" : "About Us: Luxury Concierge in Cartagena",
     description:
       locale === "es"
-        ? "Conoce Millan Experiences, nuestra historia, filosofía y el equipo dedicado a diseñar experiencias impecables en Colombia."
-        : "Learn about Millan Experiences, our story, philosophy, and the dedicated team that crafts your seamless, elevated experiences in Colombia.",
-  }
+        ? "Millan Experiences: empresa familiar de viajes de lujo en Cartagena fundada por Sofía y Francisco Millan. Nuestra historia, filosofía y equipo."
+        : "Meet Millan Experiences, a family-founded luxury travel company in Cartagena, Colombia, created by Sofia and Francisco Millan.",
+    path: "/about",
+    locale: locale === "es" ? "es" : "en",
+    image: "/millan/about-hero.webp",
+  })
 }
 
 export default async function AboutPage() {
@@ -154,7 +158,7 @@ export default async function AboutPage() {
              <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-deep-sea)] via-[var(--color-deep-sea)]/40 to-transparent" />
           </div>
           <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 text-[var(--color-warm-white)]">
-             <h2 className="eyebrow text-[var(--color-sand)]">{isEs ? "SOBRE NOSOTROS" : "ABOUT US"}</h2>
+             <p className="eyebrow text-[var(--color-sand)]">{isEs ? "SOBRE NOSOTROS" : "ABOUT US"}</p>
              <h1 className="display mt-6 text-[clamp(3rem,6vw,6rem)]">{isEs ? "Nuestra historia" : "Our story"}</h1>
              <p className="mt-8 max-w-2xl font-sans text-lg font-light leading-relaxed text-[var(--color-warm-white)]/85">
                {isEs 

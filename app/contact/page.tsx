@@ -3,11 +3,20 @@ import { Preloader } from "@/components/preloader"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ContactSection } from "@/components/home/contact-section"
+import { JsonLd } from "@/components/json-ld"
+import { SITE_URL, absoluteUrl, buildMetadata, getLocale } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: "Contact Us | Millan Experiences",
-  description:
-    "Get in touch with Millan Experiences. Tell us about your vision for your next Colombian escape, and we will handle the rest.",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  return buildMetadata({
+    title: locale === "es" ? "Contacto: Planea tu Viaje a Cartagena" : "Contact Us: Plan Your Trip to Cartagena",
+    description:
+      locale === "es"
+        ? "Habla con nuestro concierge en Cartagena sobre villas, yates, islas privadas o eventos. Diseñamos cada detalle. WhatsApp +57 310 710 2651."
+        : "Speak with our Cartagena concierge about villas, yachts, private islands or events — we design every detail. WhatsApp +57 310 710 2651.",
+    path: "/contact",
+    locale,
+  })
 }
 
 export default function ContactPage() {
@@ -19,6 +28,14 @@ export default function ContactPage() {
         <ContactSection />
       </main>
       <SiteFooter />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          url: absoluteUrl("/contact"),
+          about: { "@id": `${SITE_URL}/#organization` },
+        }}
+      />
     </>
   )
 }

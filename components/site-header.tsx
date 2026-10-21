@@ -8,5 +8,13 @@ export async function SiteHeader({ forceSolid = false }: { forceSolid?: boolean 
   const cookieStore = await cookies()
   const locale = cookieStore.get("NEXT_LOCALE")?.value === "es" ? "ES" : "EN"
 
-  return <SiteHeaderClient forceSolid={forceSolid} logoUrl={globalConfig?.logoUrl} initialLang={locale} navItems={globalConfig?.mainNavigation || []} />
+  // The blog is not managed in the Sanity navigation yet: add it before "Contact".
+  const navItems = [...(globalConfig?.mainNavigation || [])]
+  if (!navItems.some((item: any) => item?.href === "/blog")) {
+    const blogItem = { _key: "blog", labelEn: "Blog", labelEs: "Blog", href: "/blog" }
+    const contactIndex = navItems.findIndex((item: any) => item?.href === "/contact")
+    navItems.splice(contactIndex === -1 ? navItems.length : contactIndex, 0, blogItem)
+  }
+
+  return <SiteHeaderClient forceSolid={forceSolid} logoUrl={globalConfig?.logoUrl} initialLang={locale} navItems={navItems} />
 }

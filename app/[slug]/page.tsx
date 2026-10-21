@@ -5,6 +5,8 @@ import { client } from "@/sanity/lib/client"
 import { pageBySlugQuery } from "@/sanity/lib/queries"
 import { ListingPageComponent } from "@/components/pages/listing-page"
 import { EventPageComponent } from "@/components/pages/event-page"
+import { JsonLd } from "@/components/json-ld"
+import { breadcrumbJsonLd, buildMetadata, faqJsonLd } from "@/lib/seo"
 
 // Note: In a real implementation you would fetch all listing and event slugs
 export async function generateStaticParams() {
@@ -35,15 +37,16 @@ export async function generateMetadata({
   const content = locale === "es" ? data.contentEs : data.contentEn
 
   if (!content) {
-    return {
-      title: "Page Not Found | Millan Experiences",
-    }
+    return { title: "Page Not Found", robots: { index: false } }
   }
 
-  return {
-    title: content.seo?.title || "Millan Experiences",
-    description: content.seo?.description || "Millan Experiences",
-  }
+  return buildMetadata({
+    title: content.seo?.title || content.hero?.title || content.hero?.headline || content.hubLeft?.title,
+    description: content.seo?.description || content.hero?.description || content.hero?.subHeadline,
+    path: `/${p.slug}`,
+    locale: locale === "es" ? "es" : "en",
+    image: content.hero?.backgroundImageUrl || content.hubLeft?.imageUrl,
+  })
 }
 
 export default async function DynamicSlugPage({
@@ -66,12 +69,35 @@ export default async function DynamicSlugPage({
     notFound()
   }
 
+  const pageName = content.hero?.title || content.hero?.headline || content.seo?.title || p.slug
+  const structuredData = (
+    <JsonLd
+      data={[
+        breadcrumbJsonLd([
+          { name: locale === "es" ? "Inicio" : "Home", path: "/" },
+          { name: pageName, path: `/${p.slug}` },
+        ]),
+        faqJsonLd(content.seoFaq?.questions),
+      ]}
+    />
+  )
+
   if (data._type === 'listingPage') {
-    return <ListingPageComponent content={data} locale={locale} />
+    return (
+      <>
+        <ListingPageComponent content={data} locale={locale} />
+        {structuredData}
+      </>
+    )
   }
 
   if (data._type === 'eventPage') {
-    return <EventPageComponent content={content} locale={locale} />
+    return (
+      <>
+        <EventPageComponent content={content} locale={locale} />
+        {structuredData}
+      </>
+    )
   }
 
   // Fallback if type is unknown

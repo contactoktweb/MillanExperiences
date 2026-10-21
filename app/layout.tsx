@@ -7,6 +7,8 @@ import { Jost } from "next/font/google"
 import { WhatsAppButton } from "@/components/whatsapp-button"
 import { client } from "@/sanity/lib/client"
 import { globalConfigQuery } from "@/sanity/lib/queries"
+import { JsonLd } from "@/components/json-ld"
+import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL, getLocale, organizationJsonLd, websiteJsonLd } from "@/lib/seo"
 
 // Didot — primary serif typeface
 const didot = localFont({
@@ -43,36 +45,56 @@ export async function generateMetadata(): Promise<Metadata> {
   const globalConfig = await client.fetch(globalConfigQuery)
   
   return {
-    metadataBase: new URL("https://www.millan-experiences.com"),
+    metadataBase: new URL(SITE_URL),
     title: {
-      default: "Millan Experiences",
+      default: SITE_NAME,
       template: "%s — Millan Experiences",
     },
     description:
-      "Private stays, hand-picked boats and customized travel across Colombia — guided by refined local knowledge and personal attention from the first call to the last sunset.",
+      "Luxury concierge and destination management in Cartagena, Colombia: private villas, Rosario Islands escapes, yacht charters, private chefs, weddings and events — handled end to end.",
+    applicationName: SITE_NAME,
+    authors: [{ name: SITE_NAME, url: SITE_URL }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    category: "travel",
     keywords: [
       "luxury travel Colombia",
       "luxury concierge Cartagena",
       "private villas Cartagena",
-      "private islands near Cartagena",
-      "yachts Cartagena",
-      "destination weddings Cartagena",
+      "Rosario Islands private island",
+      "yacht charter Cartagena",
+      "destination wedding Cartagena",
+      "bachelor party Cartagena",
+      "private chef Cartagena",
     ],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     openGraph: {
       type: "website",
       title: "Millan Experiences — Colombia, Designed for you",
       description:
         "A private concierge and privileged gateway to Colombia. Villas, islands, yachts and bespoke travel, handled end to end.",
-      siteName: "Millan Experiences",
+      siteName: SITE_NAME,
       locale: "en_US",
+      images: [{ url: DEFAULT_OG_IMAGE, alt: "Private island in the Colombian Caribbean near Cartagena" }],
     },
     twitter: {
       card: "summary_large_image",
       title: "Millan Experiences — Colombia, Designed for you",
       description:
         "A private concierge and privileged gateway to Colombia. Handled, end to end.",
+      images: [DEFAULT_OG_IMAGE],
     },
-    generator: "v0.app",
+    formatDetection: { telephone: false },
     icons: globalConfig?.faviconUrl ? {
       icon: globalConfig.faviconUrl,
       shortcut: globalConfig.faviconUrl,
@@ -92,11 +114,13 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const globalConfig = await client.fetch(globalConfigQuery)
+  const locale = await getLocale()
   
   return (
-    <html lang="en" suppressHydrationWarning className={`${didot.variable} ${jost.variable} bg-background scroll-smooth`}>
+    <html lang={locale} suppressHydrationWarning className={`${didot.variable} ${jost.variable} bg-background scroll-smooth`}>
       <body className="font-sans antialiased">
         {children}
+        <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
         <WhatsAppButton whatsappUrl={globalConfig?.whatsapp} />
         {process.env.NODE_ENV === "production" && <Analytics />}
         <Script

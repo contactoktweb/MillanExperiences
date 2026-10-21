@@ -11,6 +11,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { ContactSection } from "@/components/home/contact-section"
 import { Cta } from "@/components/cta"
 import { contact } from "@/lib/site-data"
+import { JsonLd } from "@/components/json-ld"
+import { SITE_URL, absoluteUrl, breadcrumbJsonLd, buildMetadata, faqJsonLd } from "@/lib/seo"
 
 export async function generateStaticParams() {
   const paths = await client.fetch(servicePathsQuery)
@@ -20,22 +22,24 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
-  // Await params per Next.js 15 guidelines if needed, but standard params works in most setups. 
-  // Let's ensure we await if required, though `generateMetadata` can take async params.
   const { slug } = await params;
   const data = await client.fetch(servicePageQuery, { slug })
   if (!data) return {}
 
   const cookieStore = await cookies()
-  const locale = cookieStore.get("NEXT_LOCALE")?.value || "en"
+  const locale = cookieStore.get("NEXT_LOCALE")?.value === "es" ? "es" : "en"
   const content = locale === "es" ? data.contentEs : data.contentEn
 
-  return {
-    title: content?.seo?.title || data.title,
-    description: content?.seo?.description,
-  }
+  return buildMetadata({
+    title: content?.seo?.title || content?.hero?.title,
+    description: content?.seo?.description || content?.hero?.description,
+    path: `/services/${slug}`,
+    locale,
+    image: content?.hero?.backgroundImageUrl,
+    imageAlt: content?.hero?.title,
+  })
 }
 
 export default async function ServicePage({
@@ -82,7 +86,7 @@ export default async function ServicePage({
             <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 md:px-10 text-[var(--color-warm-white)]">
                <div className="max-w-2xl">
                  {content.hero.eyebrow && (
-                   <h2 className="eyebrow text-[var(--color-sand)]">{content.hero.eyebrow}</h2>
+                   <p className="eyebrow text-[var(--color-sand)]">{content.hero.eyebrow}</p>
                  )}
                  <h1 className="display mt-6 text-[clamp(3rem,5vw,5rem)] leading-tight">{content.hero.title}</h1>
                  {content.hero.description && (
@@ -319,6 +323,31 @@ export default async function ServicePage({
       </main>
       
       <SiteFooter />
+      <JsonLd
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: content.hero?.title || slug,
+            description: content.seo?.description || content.hero?.description,
+            url: absoluteUrl(`/services/${slug}`),
+            image: content.hero?.backgroundImageUrl || undefined,
+                        provider: { "@id": `${SITE_URL}/#organization` },
+            areaServed: { "@type": "City", name: "Cartagena de Indias, Colombia" },
+          },
+          breadcrumbJsonLd([
+            { name: locale === "es" ? "Inicio" : "Home", path: "/" },
+            { name: content.hero?.title || slug, path: `/services/${slug}` },
+          ]),
+          faqJsonLd([
+            ...(content.faq?.questions || []).map((q: any) => ({
+              question: q.question,
+              answer: Array.isArray(q.answer) ? q.answer.join(" ") : q.answer,
+            })),
+            ...(content.seoFaq?.questions || []),
+          ]),
+        ]}
+      />
     </>
   )
 }

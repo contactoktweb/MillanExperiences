@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { ThankYouClient } from "@/components/store/thank-you-client"
 
 export const metadata: Metadata = {
-  title: "¡Gracias por tu Compra! | Boutique Millan Experiences",
+  title: "¡Gracias por tu Compra!",
   description:
     "Tu compra en nuestra cava y boutique náutica ha sido confirmada con éxito. Nuestro concierge se encargará de coordinar la entrega y logística.",
   robots: {

@@ -80,11 +80,19 @@ export function FaqAccordion({
                         <ChevronDown className="w-4 h-4" />
                       </div>
                     </button>
-                    {isOpen && (
-                      <div className="px-6 md:px-8 pb-6 pt-1 text-[var(--color-blue-gray)] font-sans text-sm md:text-base font-light leading-relaxed border-t border-[var(--color-border)]/40 animate-fadeIn">
-                        <p>{item.answer}</p>
+                    {/* Answer stays in the DOM when collapsed so crawlers can read it */}
+                    <div
+                      className={`grid transition-[grid-template-rows] duration-300 ease-[var(--ease-editorial)] ${
+                        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                      }`}
+                      aria-hidden={!isOpen}
+                    >
+                      <div className="overflow-hidden">
+                        <div className="px-6 md:px-8 pb-6 pt-4 text-[var(--color-blue-gray)] font-sans text-sm md:text-base font-light leading-relaxed border-t border-[var(--color-border)]/40">
+                          <p>{item.answer}</p>
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 )
               })}

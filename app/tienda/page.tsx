@@ -14,8 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title:
       locale === "es"
-        ? "Boutique & Cava Privada | Millan Experiences"
-        : "Private Boutique & Cellar | Millan Experiences",
+        ? "Boutique & Cava Privada"
+        : "Private Boutique & Cellar",
     description:
       locale === "es"
         ? "Selección exclusiva de licores ultra-premium, champagnes, vinos, cervezas y delicias gourmet para tu yate o villa privada en Cartagena y el Caribe Colombiano. Servicio de reserva con al menos 8 horas de anticipación."

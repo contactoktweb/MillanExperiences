@@ -1,5 +1,19 @@
 # Changelog AI
 
+## [2026-10-21] - Blog y mejoras SEO/GEO
+
+### Agregado
+- **Blog (`/blog`, `/blog/[slug]`)** con el diseño editorial del sitio: hero, artículo destacado, grilla, índice lateral, bloque "En resumen", FAQ, CTA y artículos relacionados. 5 guías bilingües: Islas del Rosario, mejor época para visitar Cartagena, alquiler de yates, despedidas de soltero(a) y bodas de destino.
+- Sección "The Journal" en la home y enlace "Blog" en header (añadido a la navegación de Sanity) y footer.
+- `robots.txt`, `sitemap.xml` (estático + Sanity + blog), `llms.txt` para motores de IA.
+- JSON-LD: TravelAgency + WebSite global; BlogPosting, Blog, BreadcrumbList, FAQPage, Service y ContactPage por página.
+
+### Modificado
+- `buildMetadata` en todas las páginas públicas: canonical, Open Graph/Twitter con imagen, títulos sin marca duplicada, `lang` del `<html>` según idioma.
+- `/concierge` canonicaliza a `/services/concierge` (contenido duplicado).
+- `FaqAccordion`: las respuestas permanecen en el HTML aunque estén cerradas (indexables).
+- `/tienda`: `X-Robots-Tag: noindex` además del meta, fuera del sitemap.
+
 ## [2026-10-14] - Integración Completa de Pasarela de Pagos Wompi Colombia (Bancolombia)
 
 ### Agregado

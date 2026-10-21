@@ -33,6 +33,16 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    // Private / non-public routes: never indexed, cached or snippeted.
+    const noIndex = [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet, noimageindex" }]
+    return [
+      { source: "/tienda", headers: noIndex },
+      { source: "/tienda/:path*", headers: noIndex },
+      { source: "/admin/:path*", headers: noIndex },
+      { source: "/api/:path*", headers: noIndex },
+    ]
+  },
   async redirects() {
     return [
       {
