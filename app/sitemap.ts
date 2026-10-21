@@ -56,5 +56,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("[sitemap] Could not load Sanity paths", error)
   }
 
-  return entries
+  // Each page has a Spanish version at ?lang=es (hreflang alternates).
+  return entries.map((entry) => ({
+    ...entry,
+    alternates: { languages: { en: entry.url, es: `${entry.url}?lang=es` } },
+  }))
 }

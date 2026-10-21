@@ -12,7 +12,20 @@ import { contact } from "@/lib/site-data"
 
 export const SITE_URL = "https://www.millan-experiences.com"
 export const SITE_NAME = "Millan Experiences"
-export const DEFAULT_OG_IMAGE = "/millan/private-islands-hero.webp"
+// Social previews (WhatsApp, Facebook, LinkedIn, X) need a light JPG/PNG:
+// WhatsApp drops images over ~300–600 KB and does not reliably read WebP.
+// Local hero images have pre-rendered 1200×630 JPG versions in /public/og.
+export const DEFAULT_OG_IMAGE = "/og/private-islands-hero.jpg"
+const OG_WIDTH = 1200
+const OG_HEIGHT = 630
+const LOCAL_OG_IMAGES = new Set([
+  "private-islands-hero",
+  "cartagena-street",
+  "about-hero",
+  "yachts-hero",
+  "wed-hero",
+  "bachelor-hero",
+])
 
 export type Locale = "en" | "es"
 
@@ -24,6 +37,24 @@ export async function getLocale(): Promise<Locale> {
 export function absoluteUrl(path = "/") {
   if (/^https?:\/\//.test(path)) return path
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`
+}
+
+export function ogImageUrl(src?: string | null): string {
+  if (!src) return DEFAULT_OG_IMAGE
+  // Sanity CDN crops (centered) and re-encodes to a light JPG on the fly.
+  if (src.includes("cdn.sanity.io/images/")) {
+    return `${src.split("?")[0]}?w=${OG_WIDTH}&h=${OG_HEIGHT}&fit=crop&fm=jpg&q=80`
+  }
+  if (src.startsWith("/og/")) return src
+  const name = src.match(/^\/millan\/([^/]+)\.(?:webp|png|jpe?g)$/)?.[1]
+  if (name && LOCAL_OG_IMAGES.has(name)) return `/og/${name}.jpg`
+  return src.startsWith("/") ? DEFAULT_OG_IMAGE : src
+}
+
+// The site picks its language from a cookie; `?lang=es` (handled in
+// proxy.ts) gives the Spanish version its own shareable, indexable URL.
+export function localizedPath(path: string, locale: Locale) {
+  return locale === "es" ? `${path}${path.includes("?") ? "&" : "?"}lang=es` : path
 }
 
 // Titles coming from Sanity often already carry the brand; the root layout
@@ -63,30 +94,35 @@ export function buildMetadata({
   // Keep SERP titles short: drop the brand suffix when it would push past ~65 chars.
   const withBrand = `${clean} — ${SITE_NAME}`
   const fullTitle = !clean ? SITE_NAME : withBrand.length > 65 ? clean : withBrand
-  const ogImage = image || DEFAULT_OG_IMAGE
+  const ogImage = absoluteUrl(ogImageUrl(image))
   const desc = description || undefined
+  const url = localizedPath(path, locale)
+  const alt = imageAlt || clean || SITE_NAME
 
   return {
     title: { absolute: fullTitle },
     description: desc,
     keywords,
-    alternates: { canonical: path },
+    alternates: {
+      canonical: url,
+      languages: { en: path, es: localizedPath(path, "es"), "x-default": path },
+    },
     openGraph: {
       type,
-      url: path,
+      url,
       siteName: SITE_NAME,
       title: fullTitle,
       description: desc,
       locale: locale === "es" ? "es_CO" : "en_US",
       alternateLocale: locale === "es" ? ["en_US"] : ["es_CO"],
-      images: [{ url: ogImage, alt: imageAlt || clean || SITE_NAME }],
+      images: [{ url: ogImage, secureUrl: ogImage, width: OG_WIDTH, height: OG_HEIGHT, type: "image/jpeg", alt }],
       ...(type === "article" ? { publishedTime, modifiedTime, authors: [SITE_NAME] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description: desc,
-      images: [ogImage],
+      images: [{ url: ogImage, alt }],
     },
     ...(noIndex ? { robots: { index: false, follow: false } } : {}),
   }

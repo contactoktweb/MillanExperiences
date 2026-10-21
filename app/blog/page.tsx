@@ -7,7 +7,7 @@ import { Cta } from "@/components/cta"
 import { JsonLd } from "@/components/json-ld"
 import { PostCard } from "@/components/blog/post-card"
 import { getAllPosts } from "@/lib/blog"
-import { SITE_NAME, SITE_URL, absoluteUrl, breadcrumbJsonLd, buildMetadata, getLocale } from "@/lib/seo"
+import { SITE_NAME, SITE_URL, absoluteUrl, breadcrumbJsonLd, buildMetadata, getLocale, localizedPath, ogImageUrl } from "@/lib/seo"
 
 const copy = {
   en: {
@@ -65,7 +65,7 @@ export default async function BlogIndexPage() {
     "@context": "https://schema.org",
     "@type": "Blog",
     "@id": `${SITE_URL}/blog#blog`,
-    url: absoluteUrl("/blog"),
+    url: absoluteUrl(localizedPath("/blog", locale)),
     name: `${SITE_NAME} — ${t.eyebrow}`,
     description: t.description,
     inLanguage: locale,
@@ -73,10 +73,10 @@ export default async function BlogIndexPage() {
     blogPost: posts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.content[locale].title,
-      url: absoluteUrl(`/blog/${post.slug}`),
+      url: absoluteUrl(localizedPath(`/blog/${post.slug}`, locale)),
       datePublished: post.publishedAt,
       dateModified: post.updatedAt,
-      image: absoluteUrl(post.image),
+      image: absoluteUrl(ogImageUrl(post.image)),
     })),
   }
 

@@ -11,12 +11,15 @@ import { FaqAccordion } from "@/components/faq-accordion"
 import { JsonLd } from "@/components/json-ld"
 import { BlogBody, InlineText } from "@/components/blog/rich-text"
 import { PostCard, PostMeta } from "@/components/blog/post-card"
+import { ShareLinks } from "@/components/blog/share-links"
 import { getAllPosts, getRelatedPosts, headingId, readingMinutes } from "@/lib/blog"
 import { blockPlainText } from "@/lib/blog/portable-text"
 import {
   SITE_NAME,
   SITE_URL,
   absoluteUrl,
+  localizedPath,
+  ogImageUrl,
   breadcrumbJsonLd,
   buildMetadata,
   faqJsonLd,
@@ -83,7 +86,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const locale = await getLocale()
   const t = ui[locale]
   const c = post.content[locale]
-  const url = absoluteUrl(`/blog/${post.slug}`)
+  const url = absoluteUrl(localizedPath(`/blog/${post.slug}`, locale))
   const toc = c.body
     .filter((b) => b._type === "block" && b.style === "h2" && !b.listItem)
     .map((b) => ({ id: headingId(blockPlainText(b)), text: blockPlainText(b) }))
@@ -97,7 +100,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     url,
     headline: c.title,
     description: c.description,
-    image: [absoluteUrl(post.image)],
+    image: [absoluteUrl(ogImageUrl(post.image)), absoluteUrl(post.image)],
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     inLanguage: locale,
@@ -198,8 +201,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </section>
 
                 <BlogBody value={c.body} />
+                <ShareLinks url={url} title={c.title} locale={locale} />
 
-                <div className="mt-14 flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-10 lg:hidden">
+                <div className="mt-8 flex flex-wrap gap-3 lg:hidden">
                   {post.related.map((r) => (
                     <Link
                       key={r.href}

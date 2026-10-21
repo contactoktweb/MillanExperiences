@@ -1,5 +1,14 @@
 # Changelog AI
 
+## [2026-10-21] - Vistas previas al compartir (WhatsApp/redes) y URLs en español
+
+### Corregido
+- WhatsApp mostraba el logo en lugar de la foto: las imágenes OG eran WebP/PNG pesadas (hasta 2,5 MB). Ahora todas las páginas entregan un JPG 1200×630 ligero (~70–140 KB) con ancho, alto y tipo declarados: las de Sanity se transforman en el CDN (`ogImageUrl` en `lib/seo.ts`) y las locales están pregeneradas en `public/og/`.
+
+### Agregado
+- `?lang=es` (`proxy.ts`): cada página tiene su versión en español en una URL propia, para compartir enlaces en español y para que Google indexe el español. Canonical por idioma + `hreflang` (en, es, x-default) en las páginas y en el sitemap.
+- Botones para compartir (WhatsApp, Facebook, LinkedIn, X) al final de cada artículo, con la URL en el idioma que se está leyendo.
+
 ## [2026-10-21] - Blog administrable desde Sanity
 
 ### Agregado

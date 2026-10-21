@@ -20,7 +20,15 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
   const setLang = (newLang: "EN" | "ES") => {
     setLangState(newLang)
     document.cookie = `NEXT_LOCALE=${newLang.toLowerCase()}; path=/; max-age=31536000`
-    router.refresh()
+    // A shared "?lang=" link would override the cookie: keep the URL in sync.
+    const url = new URL(window.location.href)
+    if (url.searchParams.has("lang")) {
+      if (newLang === "ES") url.searchParams.set("lang", "es")
+      else url.searchParams.delete("lang")
+      router.replace(`${url.pathname}${url.search}${url.hash}`)
+    } else {
+      router.refresh()
+    }
   }
 
   const loc = lang.toLowerCase() as "en" | "es"

@@ -16,6 +16,7 @@ export async function GET() {
 
 Contact: ${contact.phone} (phone and WhatsApp) · ${contact.email} · ${u("/contact")}
 Location: Cartagena de Indias, Bolívar, Colombia
+Languages: every page is available in English (default URL) and Spanish (same URL with ?lang=es).
 
 ## Services
 - [Concierge](${u("/services/concierge")}): reservations, transfers, access and on-trip support handled by one dedicated team
