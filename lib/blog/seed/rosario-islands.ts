@@ -1,6 +1,6 @@
-import type { BlogPost } from "../types"
+import type { SeedPost } from "../types"
 
-export const rosarioIslands: BlogPost = {
+export const rosarioIslands: SeedPost = {
   slug: "rosario-islands-private-island-guide",
   image: "/millan/private-islands-hero.webp",
   publishedAt: "2026-10-21",

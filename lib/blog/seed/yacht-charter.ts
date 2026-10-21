@@ -1,6 +1,6 @@
-import type { BlogPost } from "../types"
+import type { SeedPost } from "../types"
 
-export const yachtCharter: BlogPost = {
+export const yachtCharter: SeedPost = {
   slug: "cartagena-yacht-charter-guide",
   image: "/millan/yachts-hero.webp",
   publishedAt: "2026-10-21",

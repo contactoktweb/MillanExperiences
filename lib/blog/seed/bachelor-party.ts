@@ -1,6 +1,6 @@
-import type { BlogPost } from "../types"
+import type { SeedPost } from "../types"
 
-export const bachelorParty: BlogPost = {
+export const bachelorParty: SeedPost = {
   slug: "cartagena-bachelor-bachelorette-party-guide",
   image: "/millan/bachelor-hero.webp",
   publishedAt: "2026-10-21",

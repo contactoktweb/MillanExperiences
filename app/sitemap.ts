@@ -20,7 +20,7 @@ const sitemapQuery = `{
 // The private store (/tienda) is intentionally excluded.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const url = (path: string) => `${SITE_URL}${path}`
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
 
   const entries: MetadataRoute.Sitemap = [
     { url: url("/"), changeFrequency: "weekly", priority: 1 },

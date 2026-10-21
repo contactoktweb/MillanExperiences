@@ -20,6 +20,9 @@ import {
   ShoppingCart,
   CheckCircle2,
   Clock,
+  BookOpen,
+  Tag,
+  CalendarClock,
 } from 'lucide-react'
 import type { StructureResolver } from 'sanity/structure'
 import { apiVersion } from './env'
@@ -148,6 +151,71 @@ export const structure: StructureResolver = (S) =>
                     .title('Pedidos Pagados y Aprobados')
                     .filter('_type == "storeOrder" && status == "paid"')
                     .defaultOrdering([{ field: 'createdAt', direction: 'desc' }, { field: '_createdAt', direction: 'desc' }])
+                ),
+            ])
+        ),
+
+      S.divider(),
+
+      // BLOG (ARTÍCULOS Y CATEGORÍAS)
+      S.listItem()
+        .title('Blog')
+        .icon(BookOpen)
+        .child(
+          S.list()
+            .title('Blog')
+            .items([
+              S.listItem()
+                .title('Todos los artículos')
+                .icon(BookOpen)
+                .child(
+                  S.documentTypeList('blogPost')
+                    .title('Todos los artículos')
+                    .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('Artículos por categoría')
+                .icon(Tag)
+                .child(
+                  S.documentTypeList('blogCategory')
+                    .title('Seleccione una categoría')
+                    .child((categoryId: string) =>
+                      createDocList(S)
+                        .title('Artículos de la categoría')
+                        .schemaType('blogPost')
+                        .filter('_type == "blogPost" && category._ref == $categoryId')
+                        .params({ categoryId })
+                        .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
+                    )
+                ),
+              S.listItem()
+                .title('Destacados')
+                .icon(Star)
+                .child(
+                  createDocList(S)
+                    .title('Artículos destacados')
+                    .schemaType('blogPost')
+                    .filter('_type == "blogPost" && featured == true')
+                    .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
+                ),
+              S.listItem()
+                .title('Programados (fecha futura)')
+                .icon(CalendarClock)
+                .child(
+                  createDocList(S)
+                    .title('Programados')
+                    .schemaType('blogPost')
+                    .filter('_type == "blogPost" && publishedAt > now()')
+                    .defaultOrdering([{ field: 'publishedAt', direction: 'asc' }])
+                ),
+              S.divider(),
+              S.listItem()
+                .title('Categorías')
+                .icon(Tag)
+                .child(
+                  S.documentTypeList('blogCategory')
+                    .title('Categorías del blog')
+                    .defaultOrdering([{ field: 'order', direction: 'asc' }])
                 ),
             ])
         ),

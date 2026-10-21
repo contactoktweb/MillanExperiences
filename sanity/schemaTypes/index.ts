@@ -10,6 +10,7 @@ import { individualProductSchemas } from './products'
 import { storeCategory } from './storeCategory'
 import { storeProduct } from './storeProduct'
 import { storeOrder } from './storeOrder'
+import { blogBody, blogCallout, blogCategory, blogPost, blogPostContent } from './blog'
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -24,6 +25,11 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     storeCategory,
     storeProduct,
     storeOrder,
+    blogCallout,
+    blogBody,
+    blogPostContent,
+    blogCategory,
+    blogPost,
   ],
 }
 

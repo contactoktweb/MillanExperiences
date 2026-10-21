@@ -1,5 +1,15 @@
 # Changelog AI
 
+## [2026-10-21] - Blog administrable desde Sanity
+
+### Agregado
+- Esquemas `blogPost`, `blogCategory`, `blogPostContent`, `blogBody` (Portable Text con H2/H3, listas, citas, enlaces, imágenes con alt/pie y recuadros destacados) y `blogCallout`.
+- Sección **Blog** en el Studio: todos los artículos, por categoría, destacados, programados y categorías.
+- `pnpm blog:import` (`scripts/blog-import.ts`): sube categorías, imágenes y los 5 artículos EN/ES. Dry-run por defecto, `--apply` para escribir, `--overwrite` para reemplazar artículos existentes.
+
+### Modificado
+- La web lee el blog desde Sanity (`blogPostsQuery`); si no hay artículos publicados usa los artículos semilla de `lib/blog/seed/`. Si falta el español, se muestra el inglés.
+
 ## [2026-10-21] - Blog y mejoras SEO/GEO
 
 ### Agregado

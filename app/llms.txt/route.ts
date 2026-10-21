@@ -4,10 +4,10 @@ import { SITE_URL } from "@/lib/seo"
 
 // llms.txt (https://llmstxt.org): a plain-text map of the site for AI
 // answer engines, so they can describe and cite Millan Experiences accurately.
-export const dynamic = "force-static"
+export const revalidate = 3600
 
-export function GET() {
-  const posts = getAllPosts()
+export async function GET() {
+  const posts = await getAllPosts()
   const u = (path: string) => `${SITE_URL}${path}`
 
   const body = `# Millan Experiences
@@ -36,7 +36,7 @@ Location: Cartagena de Indias, Bolívar, Colombia
 - [Birthdays & Celebrations](${u("/birthdays-and-celebrations")})
 
 ## Guides (blog)
-${posts.map((p) => `- [${p.content.en.title}](${u(`/blog/${p.slug}`)}): ${p.content.en.description}`).join("\n")}
+${posts.map((p) => `- [${p.content.en.title}](${u(`/blog/${p.slug}`)}): ${p.content.en.metaDescription || p.content.en.description}`).join("\n")}
 
 ## About
 - [About Millan Experiences](${u("/about")})

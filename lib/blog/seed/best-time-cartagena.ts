@@ -1,6 +1,6 @@
-import type { BlogPost } from "../types"
+import type { SeedPost } from "../types"
 
-export const bestTimeCartagena: BlogPost = {
+export const bestTimeCartagena: SeedPost = {
   slug: "best-time-to-visit-cartagena",
   image: "/millan/cartagena-street.png",
   publishedAt: "2026-10-21",

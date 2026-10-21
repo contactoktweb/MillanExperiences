@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "store:import": "tsx scripts/store-import/index.ts",
-    "store:images": "tsx scripts/store-import/import-images.ts"
+    "store:images": "tsx scripts/store-import/import-images.ts",
+    "blog:import": "tsx scripts/blog-import.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

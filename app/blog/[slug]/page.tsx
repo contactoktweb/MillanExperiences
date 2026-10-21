@@ -11,7 +11,8 @@ import { FaqAccordion } from "@/components/faq-accordion"
 import { JsonLd } from "@/components/json-ld"
 import { BlogBody, InlineText } from "@/components/blog/rich-text"
 import { PostCard, PostMeta } from "@/components/blog/post-card"
-import { getAllPosts, getPostBySlug, getRelatedPosts, readingMinutes } from "@/lib/blog"
+import { getAllPosts, getRelatedPosts, headingId, readingMinutes } from "@/lib/blog"
+import { blockPlainText } from "@/lib/blog/portable-text"
 import {
   SITE_NAME,
   SITE_URL,
@@ -49,19 +50,19 @@ const ui = {
   },
 }
 
-export function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }))
+export async function generateStaticParams() {
+  return (await getAllPosts()).map((post) => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const post = getPostBySlug(slug)
+  const post = (await getAllPosts()).find((p) => p.slug === slug)
   if (!post) return {}
   const locale = await getLocale()
   const c = post.content[locale]
   return buildMetadata({
     title: c.metaTitle || c.title,
-    description: c.metaDescription,
+    description: c.metaDescription || c.description,
     path: `/blog/${post.slug}`,
     locale,
     image: post.image,
@@ -75,15 +76,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = getPostBySlug(slug)
+  const allPosts = await getAllPosts()
+  const post = allPosts.find((p) => p.slug === slug)
   if (!post) notFound()
 
   const locale = await getLocale()
   const t = ui[locale]
   const c = post.content[locale]
   const url = absoluteUrl(`/blog/${post.slug}`)
-  const toc = c.body.filter((b): b is Extract<typeof b, { type: "h2" }> => b.type === "h2")
-  const related = getRelatedPosts(post.slug)
+  const toc = c.body
+    .filter((b) => b._type === "block" && b.style === "h2" && !b.listItem)
+    .map((b) => ({ id: headingId(blockPlainText(b)), text: blockPlainText(b) }))
+  const related = getRelatedPosts(allPosts, post.slug)
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -193,7 +197,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </ul>
                 </section>
 
-                <BlogBody blocks={c.body} />
+                <BlogBody value={c.body} />
 
                 <div className="mt-14 flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-10 lg:hidden">
                   {post.related.map((r) => (

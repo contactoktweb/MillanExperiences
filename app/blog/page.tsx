@@ -58,7 +58,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function BlogIndexPage() {
   const locale = await getLocale()
   const t = copy[locale]
-  const [featured, ...rest] = getAllPosts()
+  const posts = await getAllPosts()
+  const [featured, ...rest] = posts
 
   const blogJsonLd = {
     "@context": "https://schema.org",
@@ -69,7 +70,7 @@ export default async function BlogIndexPage() {
     description: t.description,
     inLanguage: locale,
     publisher: { "@id": `${SITE_URL}/#organization` },
-    blogPost: getAllPosts().map((post) => ({
+    blogPost: posts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.content[locale].title,
       url: absoluteUrl(`/blog/${post.slug}`),

@@ -18,9 +18,9 @@ const copy = {
   },
 }
 
-export function JournalPreview({ locale }: { locale: Locale }) {
+export async function JournalPreview({ locale }: { locale: Locale }) {
   const t = copy[locale]
-  const posts = getAllPosts().slice(0, 3)
+  const posts = (await getAllPosts()).slice(0, 3)
   if (posts.length === 0) return null
 
   return (

@@ -405,3 +405,40 @@ export const propertyReviewsQuery = defineQuery(`
     }
   }
 `)
+
+const blogContentProjection = `{
+  title,
+  description,
+  takeaways,
+  body[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url,
+      "dimensions": asset->metadata.dimensions,
+      "lqip": asset->metadata.lqip
+    }
+  },
+  faqs[]{ question, answer },
+  cta,
+  seo
+}`
+
+// Published posts only (publishedAt in the past allows scheduling).
+export const blogPostsQuery = defineQuery(`
+  *[_type == "blogPost" && defined(slug.current) && publishedAt <= now()] | order(publishedAt desc){
+    "slug": slug.current,
+    publishedAt,
+    updatedAt,
+    _updatedAt,
+    featured,
+    keywords,
+    "image": mainImage.asset->url,
+    "imageAltEn": mainImage.altEn,
+    "imageAltEs": mainImage.altEs,
+    "category": category->{ titleEn, titleEs, "slug": slug.current },
+    relatedLinks[]{ href, labelEn, labelEs },
+    contentEn ${blogContentProjection},
+    contentEs ${blogContentProjection}
+  }
+`)
