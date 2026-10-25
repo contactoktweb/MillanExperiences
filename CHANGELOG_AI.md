@@ -1,5 +1,11 @@
 # Changelog AI
 
+## [2026-10-25] - 5 artículos nuevos: villas, barrios, restaurantes y vida nocturna
+
+### Agregado
+- Artículos semilla EN/ES en `lib/blog/seed/`: preguntas frecuentes al alquilar villa (visitas, staff/chef, fiestas, wifi, cercanía a discotecas, seguridad, persona adicional, anticipación), hotel vs. villa, dónde alojarse (barrios), los 22 restaurantes y los 14 rooftops/bares/discotecas de la guía de Millan (`venues.ts` genera una ficha por lugar con código de vestimenta e Instagram).
+- Categorías nuevas: "Villas y estadías" y "Gastronomía y vida nocturna". Se suben con `pnpm blog:import --apply` (omite los 5 artículos que ya existen en Sanity).
+
 ## [2026-10-21] - Imagen para compartir editable en Sanity
 
 ### Agregado
