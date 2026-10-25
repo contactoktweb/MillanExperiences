@@ -1,5 +1,19 @@
 # Changelog AI
 
+## [2026-10-25] - Auditoría SEO/GEO EN/ES de todo el sitio
+
+### Corregido
+- `/yachts-catamarans/cuña` respondía 404: los slugs con caracteres no ASCII se decodifican (y se codifican en sitemap, breadcrumbs y llms.txt).
+- `/privacy-policy` y `/terms-and-conditions` (enlazadas en el footer) respondían 404: nuevas páginas bilingües (`components/legal-page.tsx`). Política alineada a la Ley 1581 de 2012; pendiente revisión legal.
+- `/villas-and-islands` (redirige a `/luxury-villas`) salía en el sitemap como duplicado: `REDIRECTED_SLUGS` lo excluye.
+- H1 faltante en `/contact` y en las páginas hub (`/yachts-and-boats`).
+- Meta descriptions: `fitDescription` completa las de menos de 110 caracteres (en el idioma de la página) y recorta las de más de 160 sin cortar palabras.
+- Menú principal: los enlaces ya no se parten en dos líneas en español (1024–1440 px); el botón "Comenzar a planear" se muestra desde 1280 px.
+
+### Agregado (GEO)
+- JSON-LD `VacationRental` en villas e islas (capacidad, habitaciones, baños, amenidades) y `Service` en yates y lanchas; `ItemList` en los catálogos; breadcrumbs con nombre de categoría legible; `knowsAbout` en la organización.
+- `llms.txt`: inventario real de Sanity (villas, islas, yates y lanchas con capacidad) y lista de guías en español.
+
 ## [2026-10-25] - 5 artículos nuevos: villas, barrios, restaurantes y vida nocturna
 
 ### Agregado

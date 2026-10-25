@@ -6,7 +6,7 @@ import { pageBySlugQuery } from "@/sanity/lib/queries"
 import { ListingPageComponent } from "@/components/pages/listing-page"
 import { EventPageComponent } from "@/components/pages/event-page"
 import { JsonLd } from "@/components/json-ld"
-import { breadcrumbJsonLd, buildMetadata, faqJsonLd } from "@/lib/seo"
+import { breadcrumbJsonLd, buildMetadata, faqJsonLd, itemListJsonLd } from "@/lib/seo"
 
 // Note: In a real implementation you would fetch all listing and event slugs
 export async function generateStaticParams() {
@@ -78,6 +78,12 @@ export default async function DynamicSlugPage({
           { name: pageName, path: `/${p.slug}` },
         ]),
         faqJsonLd(content.seoFaq?.questions),
+        itemListJsonLd(
+          pageName,
+          (data.properties || [])
+            .filter((prop: any) => prop?.slug && prop?.title)
+            .map((prop: any) => ({ name: prop.title, path: `/${p.slug}/${prop.slug}`, image: prop.imageUrl })),
+        ),
       ]}
     />
   )

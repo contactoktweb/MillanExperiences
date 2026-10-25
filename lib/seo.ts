@@ -98,6 +98,22 @@ type BuildMetadataInput = {
   noIndex?: boolean
 }
 
+// Search results show ~120–160 characters: pad descriptions that are too
+// short (often one-liners from Sanity) and trim long ones on a word boundary.
+const DESCRIPTION_SUFFIX: Record<Locale, string> = {
+  en: "Tailor-made by Millan Experiences, your private concierge in Cartagena, Colombia.",
+  es: "A tu medida con Millan Experiences, tu concierge privado en Cartagena, Colombia.",
+}
+
+export function fitDescription(description: string | null | undefined, locale: Locale): string | undefined {
+  let text = (description || "").replace(/\s+/g, " ").trim()
+  if (!text) return undefined
+  if (text.length < 110) text = `${text.replace(/[.\s]*$/, ".")} ${DESCRIPTION_SUFFIX[locale]}`
+  if (text.length <= 160) return text
+  const cut = text.slice(0, 157)
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:—–-]$/, "")}…`
+}
+
 // Pages without their own image use the share image from Configuración Global.
 export async function buildMetadata({
   title,
@@ -118,7 +134,7 @@ export async function buildMetadata({
   const fullTitle = !clean ? SITE_NAME : withBrand.length > 65 ? clean : withBrand
   const siteImage = image ? null : await getSiteShareImage()
   const ogImage = absoluteUrl(ogImageUrl(image || siteImage?.url))
-  const desc = description || undefined
+  const desc = fitDescription(description, locale)
   const url = localizedPath(path, locale)
   const alt = imageAlt || siteImage?.alt || clean || SITE_NAME
 
@@ -179,6 +195,16 @@ export const organizationJsonLd = {
     { "@type": "Country", name: "Colombia" },
   ],
   knowsLanguage: ["en", "es"],
+  knowsAbout: [
+    "Luxury travel in Colombia",
+    "Private villa rentals in Cartagena",
+    "Private islands in the Rosario Islands",
+    "Yacht, catamaran and speedboat charters in Cartagena",
+    "Private chefs",
+    "Destination weddings in Cartagena",
+    "Bachelor and bachelorette parties in Cartagena",
+    "Corporate group travel in Colombia",
+  ],
   founder: [
     { "@type": "Person", name: "Sofia Millan" },
     { "@type": "Person", name: "Francisco Millan" },
@@ -211,7 +237,7 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: absoluteUrl(encodePath(item.path)),
     })),
   }
 }
@@ -226,6 +252,98 @@ export function faqJsonLd(questions?: { question?: string; answer?: string }[] |
       "@type": "Question",
       name: q.question,
       acceptedAnswer: { "@type": "Answer", text: q.answer },
+    })),
+  }
+}
+
+// Sanity listing pages that next.config.mjs redirects elsewhere: they must
+// stay out of the sitemap (a redirecting URL is a duplicate for Google).
+export const REDIRECTED_SLUGS = new Set(["villas-and-islands", "boats-and-yachts", "groups-and-events"])
+
+// Encodes non-ASCII characters (e.g. "cuña") so URLs in sitemaps and
+// structured data are valid.
+export function encodePath(path: string) {
+  return encodeURI(decodeURI(path))
+}
+
+const STAY_CATEGORIES = new Set(["luxury-villas", "private-islands"])
+const BOAT_SERVICE: Record<string, Record<Locale, string>> = {
+  "yachts-catamarans": { en: "Private yacht and catamaran charter", es: "Alquiler privado de yate y catamarán" },
+  speedboats: { en: "Private speedboat charter", es: "Alquiler privado de lancha" },
+}
+
+// Villas and islands → VacationRental; boats → Service. Gives search and AI
+// engines the facts travellers ask about (capacity, bedrooms, amenities).
+export function propertyJsonLd(category: string, data: any, locale: Locale, path: string, description?: string) {
+  const url = absoluteUrl(encodePath(localizedPath(path, locale)))
+  const images = [data.mainImageUrl, ...(data.gallery || []).map((g: any) => g?.asset?.url)].filter(Boolean).slice(0, 8)
+  const details = data.details || {}
+  const amenities = (data.amenities || []).filter((a: unknown) => typeof a === "string")
+  if (STAY_CATEGORIES.has(category)) {
+    const isIsland = category === "private-islands"
+    return {
+      "@context": "https://schema.org",
+      "@type": "VacationRental",
+      name: data.title,
+      url,
+      description,
+      image: images,
+      brand: { "@id": `${SITE_URL}/#organization` },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: isIsland ? "Islas del Rosario, Cartagena de Indias" : "Cartagena de Indias",
+        addressRegion: "Bolívar",
+        addressCountry: "CO",
+        ...(details.location && !isIsland ? { streetAddress: details.location } : {}),
+      },
+      containsPlace: {
+        "@type": "Accommodation",
+        additionalType: isIsland ? "Private island" : "Villa",
+        ...(details.capacity ? { occupancy: { "@type": "QuantitativeValue", maxValue: details.capacity } } : {}),
+        ...(details.rooms ? { numberOfBedrooms: details.rooms } : {}),
+        ...(details.bathrooms ? { numberOfBathroomsTotal: details.bathrooms } : {}),
+        amenityFeature: amenities.map((name: string) => ({ "@type": "LocationFeatureSpecification", name, value: true })),
+      },
+    }
+  }
+  const service = BOAT_SERVICE[category]
+  if (!service) return null
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: data.title,
+    serviceType: service[locale],
+    url,
+    description,
+    image: images,
+    provider: { "@id": `${SITE_URL}/#organization` },
+    areaServed: [
+      { "@type": "City", name: "Cartagena de Indias" },
+      { "@type": "Place", name: "Rosario Islands (Islas del Rosario)" },
+    ],
+    additionalProperty: [
+      details.capacity && { "@type": "PropertyValue", name: locale === "es" ? "Capacidad (personas)" : "Capacity (guests)", value: details.capacity },
+      details.dimensions && { "@type": "PropertyValue", name: locale === "es" ? "Eslora" : "Length", value: details.dimensions },
+      details.rooms && { "@type": "PropertyValue", name: locale === "es" ? "Cabinas" : "Cabins", value: details.rooms },
+      details.bathrooms && { "@type": "PropertyValue", name: locale === "es" ? "Baños" : "Bathrooms", value: details.bathrooms },
+      ...amenities.map((a: string) => ({ "@type": "PropertyValue", name: locale === "es" ? "Incluye" : "Includes", value: a })),
+    ].filter(Boolean),
+  }
+}
+
+export function itemListJsonLd(name: string, items: { name: string; path: string; image?: string }[]) {
+  if (items.length === 0) return null
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: absoluteUrl(encodePath(item.path)),
+      ...(item.image ? { image: item.image } : {}),
     })),
   }
 }

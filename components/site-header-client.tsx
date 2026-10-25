@@ -85,13 +85,13 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
             />
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-4 lg:flex xl:gap-6 2xl:gap-8" aria-label="Primary">
             {navItems.map((item) => (
               <div key={item.labelEn} onMouseEnter={() => setOpenMenu(item.children ? item.labelEn : null)}>
                 <Link
                   href={item.href}
                   className={cn(
-                    "link-underline font-sans text-[0.74rem] font-medium uppercase tracking-[0.16em] text-[var(--color-warm-white)]/90 transition-colors hover:text-[var(--color-sand)]",
+                    "link-underline whitespace-nowrap font-sans text-[0.68rem] font-medium uppercase tracking-[0.12em] xl:text-[0.74rem] xl:tracking-[0.16em] text-[var(--color-warm-white)]/90 transition-colors hover:text-[var(--color-sand)]",
                     openMenu === item.labelEn && "text-[var(--color-sand)]",
                   )}
                 >
@@ -141,8 +141,8 @@ export function SiteHeaderClient({ forceSolid = false, logoUrl, initialLang = "E
               </button>
             </div>
 
-            <div className="hidden lg:block">
-              <Cta href="/contact" tone="sand" className="px-5 py-3 text-[0.66rem]" withArrow={false}>
+            <div className="hidden xl:block">
+              <Cta href="/contact" tone="sand" className="whitespace-nowrap px-5 py-3 text-[0.66rem]" withArrow={false}>
                 {loc === 'es' ? 'Comenzar a Planear' : 'Start Planning'}
               </Cta>
             </div>

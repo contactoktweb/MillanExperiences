@@ -1,6 +1,31 @@
 import { getAllPosts } from "@/lib/blog"
 import { contact } from "@/lib/site-data"
-import { SITE_URL } from "@/lib/seo"
+import { SITE_URL, encodePath } from "@/lib/seo"
+import { client } from "@/sanity/lib/client"
+
+type InventoryItem = { title: string; slug: string; details?: { capacity?: number; rooms?: number; location?: string; dimensions?: string } }
+
+const inventoryQuery = `{
+  "villas": *[_type == "luxury-villas" && defined(slug.current)] | order(title asc){ title, "slug": slug.current, details },
+  "islands": *[_type == "private-islands" && defined(slug.current)] | order(title asc){ title, "slug": slug.current, details },
+  "yachts": *[_type == "yachts-catamarans" && defined(slug.current)] | order(title asc){ title, "slug": slug.current, details },
+  "speedboats": *[_type == "speedboats" && defined(slug.current)] | order(title asc){ title, "slug": slug.current, details }
+}`
+
+function inventoryLines(items: InventoryItem[] | undefined, category: string, u: (path: string) => string) {
+  return (items || [])
+    .map((item) => {
+      const d = item.details || {}
+      const facts = [
+        d.capacity && `up to ${d.capacity} guests`,
+        d.rooms && `${d.rooms} ${category.includes("villas") || category.includes("islands") ? "bedrooms" : "cabins"}`,
+        d.dimensions,
+        d.location,
+      ].filter(Boolean)
+      return `- [${item.title}](${u(`/${category}/${item.slug}`)})${facts.length ? `: ${facts.join(", ")}` : ""}`
+    })
+    .join("\n")
+}
 
 // llms.txt (https://llmstxt.org): a plain-text map of the site for AI
 // answer engines, so they can describe and cite Millan Experiences accurately.
@@ -8,7 +33,8 @@ export const revalidate = 3600
 
 export async function GET() {
   const posts = await getAllPosts()
-  const u = (path: string) => `${SITE_URL}${path}`
+  const u = (path: string) => `${SITE_URL}${encodePath(path)}`
+  const inventory = await client.fetch(inventoryQuery).catch(() => null)
 
   const body = `# Millan Experiences
 
@@ -36,11 +62,27 @@ Languages: every page is available in English (default URL) and Spanish (same UR
 - [Corporate Groups](${u("/corporate-groups")}): retreats, incentives and team experiences
 - [Birthdays & Celebrations](${u("/birthdays-and-celebrations")})
 
-## Guides (blog)
+## Private villas (Walled City and Getsemaní, Cartagena)
+${inventoryLines(inventory?.villas, "luxury-villas", u)}
+
+## Private islands (Rosario Islands)
+${inventoryLines(inventory?.islands, "private-islands", u)}
+
+## Yachts and catamarans (crewed charters from Cartagena)
+${inventoryLines(inventory?.yachts, "yachts-catamarans", u)}
+
+## Speedboats (crewed charters from Cartagena)
+${inventoryLines(inventory?.speedboats, "speedboats", u)}
+
+## Guides (blog, English)
 ${posts.map((p) => `- [${p.content.en.title}](${u(`/blog/${p.slug}`)}): ${p.content.en.metaDescription || p.content.en.description}`).join("\n")}
+
+## Guías (blog, español)
+${posts.map((p) => `- [${p.content.es.title}](${u(`/blog/${p.slug}`)}?lang=es): ${p.content.es.metaDescription || p.content.es.description}`).join("\n")}
 
 ## About
 - [About Millan Experiences](${u("/about")})
+- [Privacy Policy](${u("/privacy-policy")}) · [Terms & Conditions](${u("/terms-and-conditions")})
 `
 
   return new Response(body, {

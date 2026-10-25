@@ -19,12 +19,14 @@ export async function generateMetadata(): Promise<Metadata> {
   })
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const isEs = (await getLocale()) === "es"
   return (
     <>
       <Preloader />
       <SiteHeader forceSolid />
       <main id="main" className="pt-20 lg:pt-28 bg-[var(--color-blue-gray)]">
+        <h1 className="sr-only">{isEs ? "Contacta a Millan Experiences: concierge privado en Cartagena" : "Contact Millan Experiences: private concierge in Cartagena"}</h1>
         <ContactSection />
       </main>
       <SiteFooter />

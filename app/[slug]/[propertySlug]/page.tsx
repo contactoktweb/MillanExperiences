@@ -5,7 +5,31 @@ import { client } from "@/sanity/lib/client"
 import { propertyBySlugQuery, propertyReviewsQuery } from "@/sanity/lib/queries"
 import { PropertyPageComponent } from "@/components/pages/property-page"
 import { JsonLd } from "@/components/json-ld"
-import { breadcrumbJsonLd, buildMetadata, faqJsonLd } from "@/lib/seo"
+import { breadcrumbJsonLd, buildMetadata, faqJsonLd, propertyJsonLd } from "@/lib/seo"
+import { navItems } from "@/lib/site-data"
+
+// Slugs can contain non-ASCII characters (e.g. "cuña"): Next passes them
+// percent-encoded, so decode (and normalize) before querying Sanity.
+function decodeSlug(value: string) {
+  try {
+    return decodeURIComponent(value).normalize("NFC")
+  } catch {
+    return value
+  }
+}
+
+// Human-readable category name for breadcrumbs, from the main navigation.
+function categoryLabel(slug: string, locale: "en" | "es") {
+  const child = navItems.flatMap((item) => item.children || []).find((c) => c.href === `/${slug}`)
+  return child?.label[locale] || slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function propertyDescription(data: any, locale: "en" | "es") {
+  return (
+    (locale === "es" ? data.descriptionEs || data.descriptionEn : data.descriptionEn || data.descriptionEs) ||
+    (locale === "es" ? "Propiedad de lujo por Millan Experiences en Cartagena." : "Luxury property by Millan Experiences in Cartagena.")
+  )
+}
 
 export async function generateMetadata({
   params,
@@ -13,20 +37,18 @@ export async function generateMetadata({
   params: Promise<{ slug: string; propertySlug: string }>
 }): Promise<Metadata> {
   const p = await params
-  const data = await client.fetch(propertyBySlugQuery, { slug: p.propertySlug, categorySlug: p.slug })
-  
+  const propertySlug = decodeSlug(p.propertySlug)
+  const data = await client.fetch(propertyBySlugQuery, { slug: propertySlug, categorySlug: p.slug })
+
   if (!data) return {}
 
   const cookieStore = await cookies()
   const locale = cookieStore.get("NEXT_LOCALE")?.value === "es" ? "es" : "en"
-  const rawDescription =
-    (locale === "es" ? data.descriptionEs || data.descriptionEn : data.descriptionEn || data.descriptionEs) ||
-    (locale === "es" ? "Propiedad de lujo por Millan Experiences en Cartagena." : "Luxury property by Millan Experiences in Cartagena.")
 
   return buildMetadata({
     title: data.title,
-    description: truncate(rawDescription, 158),
-    path: `/${p.slug}/${p.propertySlug}`,
+    description: truncate(propertyDescription(data, locale), 158),
+    path: `/${p.slug}/${propertySlug}`,
     locale,
     image: data.mainImageUrl,
     imageAlt: data.title,
@@ -48,9 +70,10 @@ export default async function PropertyDynamicPage({
   params: Promise<{ slug: string; propertySlug: string }>
 }) {
   const p = await params
+  const propertySlug = decodeSlug(p.propertySlug)
   const [data, reviews] = await Promise.all([
-    client.fetch(propertyBySlugQuery, { slug: p.propertySlug, categorySlug: p.slug }),
-    client.fetch(propertyReviewsQuery, { slug: p.propertySlug })
+    client.fetch(propertyBySlugQuery, { slug: propertySlug, categorySlug: p.slug }),
+    client.fetch(propertyReviewsQuery, { slug: propertySlug })
   ])
 
   if (!data) {
@@ -59,6 +82,8 @@ export default async function PropertyDynamicPage({
 
   const cookieStore = await cookies()
   const locale = cookieStore.get("NEXT_LOCALE")?.value || "en"
+  const loc = locale === "es" ? "es" : "en"
+  const path = `/${p.slug}/${propertySlug}`
 
   return (
     <>
@@ -68,15 +93,16 @@ export default async function PropertyDynamicPage({
       <SiteFooter />
       <JsonLd
         data={[
+          propertyJsonLd(p.slug, data, loc, path, truncate(propertyDescription(data, loc), 300)),
           breadcrumbJsonLd([
-            { name: locale === "es" ? "Inicio" : "Home", path: "/" },
-            { name: p.slug.replace(/-/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase()), path: `/${p.slug}` },
-            { name: data.title, path: `/${p.slug}/${p.propertySlug}` },
+            { name: loc === "es" ? "Inicio" : "Home", path: "/" },
+            { name: categoryLabel(p.slug, loc), path: `/${p.slug}` },
+            { name: data.title, path },
           ]),
           faqJsonLd(
             (data.faqs || []).map((f: any) => ({
-              question: locale === "es" ? f.questionEs || f.questionEn : f.questionEn || f.questionEs,
-              answer: locale === "es" ? f.answerEs || f.answerEn : f.answerEn || f.answerEs,
+              question: loc === "es" ? f.questionEs || f.questionEn : f.questionEn || f.questionEs,
+              answer: loc === "es" ? f.answerEs || f.answerEn : f.answerEn || f.answerEs,
             })),
           ),
         ]}
@@ -84,4 +110,3 @@ export default async function PropertyDynamicPage({
     </>
   )
 }
-

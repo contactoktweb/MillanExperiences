@@ -29,6 +29,10 @@ export function ListingPageComponent({ content, locale }: ListingPageProps) {
         <SiteHeader />
         
         <main id="main" className="flex flex-col md:flex-row min-h-screen">
+          {/* The hub has two visual halves; the page still needs one H1. */}
+          <h1 className="sr-only">
+            {localizedContent?.seo?.title || [hubLeft?.title, hubRight?.title].filter(Boolean).join(" & ")}
+          </h1>
           {/* LEFT HALF */}
           <Link href={hubLeft?.href || "#"} className="relative group w-full md:w-1/2 min-h-[50vh] md:min-h-screen overflow-hidden flex items-center justify-center">
             <div className="absolute inset-0 z-0 bg-[var(--color-deep-sea)]">
