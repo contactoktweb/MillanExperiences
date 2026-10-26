@@ -1,3 +1,5 @@
+import { LEGACY_REDIRECTS } from "./lib/redirects.mjs"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -44,28 +46,7 @@ const nextConfig = {
     ]
   },
   async redirects() {
-    return [
-      {
-        source: "/villas-and-islands",
-        destination: "/luxury-villas",
-        permanent: true,
-      },
-      {
-        source: "/boats-and-yachts",
-        destination: "/speedboats",
-        permanent: true,
-      },
-      {
-        source: "/groups-and-events",
-        destination: "/bachelor-bachelorette-parties",
-        permanent: true,
-      },
-      {
-        source: "/services",
-        destination: "/services/concierge",
-        permanent: true,
-      },
-    ]
+    return LEGACY_REDIRECTS.map((r) => ({ ...r, permanent: true }))
   },
 }
 

@@ -1,5 +1,10 @@
 # Changelog AI
 
+## [2026-10-26] - Enlaces internos sin redirecciones
+
+### Modificado
+- `lib/redirects.mjs`: lista única de URLs antiguas → nuevas, usada por `next.config.mjs`, el sitemap y `resolveHref()`. Los enlaces que vienen de Sanity (menú, home, CTAs) que apuntaban a `/villas-and-islands`, `/boats-and-yachts`, `/groups-and-events` o `/services` ahora enlazan directo al destino final.
+
 ## [2026-10-25] - Auditoría SEO/GEO EN/ES de todo el sitio
 
 ### Corregido

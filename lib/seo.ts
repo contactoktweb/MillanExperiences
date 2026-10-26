@@ -13,6 +13,7 @@ import { contact } from "@/lib/site-data"
 import { client } from "@/sanity/lib/client"
 import { urlFor } from "@/sanity/lib/image"
 import { globalConfigQuery } from "@/sanity/lib/queries"
+import { LEGACY_REDIRECTS } from "@/lib/redirects.mjs"
 
 export const SITE_URL = "https://www.millan-experiences.com"
 export const SITE_NAME = "Millan Experiences"
@@ -256,9 +257,9 @@ export function faqJsonLd(questions?: { question?: string; answer?: string }[] |
   }
 }
 
-// Sanity listing pages that next.config.mjs redirects elsewhere: they must
-// stay out of the sitemap (a redirecting URL is a duplicate for Google).
-export const REDIRECTED_SLUGS = new Set(["villas-and-islands", "boats-and-yachts", "groups-and-events"])
+// Listing pages that next.config.mjs redirects elsewhere (lib/redirects.mjs):
+// they must stay out of the sitemap (a redirecting URL is a duplicate for Google).
+export const REDIRECTED_SLUGS = new Set(LEGACY_REDIRECTS.map((r) => r.source.slice(1)))
 
 // Encodes non-ASCII characters (e.g. "cuña") so URLs in sitemaps and
 // structured data are valid.

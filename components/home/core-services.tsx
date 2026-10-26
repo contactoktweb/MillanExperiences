@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react"
 
 import { Reveal } from "@/components/reveal"
 import { cn } from "@/lib/utils"
+import { resolveHref } from "@/lib/redirects.mjs"
 
 function ServiceCard({
   service,
@@ -32,7 +33,7 @@ function ServiceCard({
 
   return (
     <Link
-      href={service.href}
+      href={resolveHref(service.href) || "/"}
       className={cn("group flex h-full flex-col", surface)}
     >
       <div className={imageClasses}>

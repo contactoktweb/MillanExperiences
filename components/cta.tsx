@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { resolveHref } from "@/lib/redirects.mjs"
 
 type Variant = "solid" | "outline" | "ghost"
 type Tone = "sand" | "sea" | "light"
@@ -49,7 +50,7 @@ export function Cta({
 }) {
   const isGhost = variant === "ghost"
   return (
-    <Link href={href} className={cn(base, styles[`${variant}-${tone}`], className)}>
+    <Link href={resolveHref(href) || href} className={cn(base, styles[`${variant}-${tone}`], className)}>
       {!isGhost && (
         <span
           aria-hidden

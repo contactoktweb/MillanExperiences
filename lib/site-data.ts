@@ -105,7 +105,7 @@ export const coreServices = [
     title: "Luxury Villas & Private Islands",
     description:
       "Fully staffed, architecturally striking properties across the Colombian coast, vetted for total privacy.",
-    href: "/villas-and-islands",
+    href: "/luxury-villas",
     cta: "Explore our villas",
     image: "/fotos/Playa.webp",
     imageAlt: "Infinity pool of a private villa overlooking the Caribbean near Cartagena.",
@@ -115,7 +115,7 @@ export const coreServices = [
     title: "Boats & Yachts",
     description:
       "A hand-picked fleet of speedboats, yachts and catamarans, with crew, itinerary and every detail arranged.",
-    href: "/boats-and-yachts",
+    href: "/speedboats",
     cta: "Discover our fleet",
     image: "/fotos/whatsapp-image.webp",
     imageAlt: "A guest relaxing on the bow of a Millan Experiences yacht by the mangroves.",
@@ -135,7 +135,7 @@ export const coreServices = [
     title: "Events & Celebrations",
     description:
       "Weddings, milestones and corporate gatherings, produced with precision and a distinctly Colombian warmth.",
-    href: "/groups-and-events",
+    href: "/bachelor-bachelorette-parties",
     cta: "Plan your event",
     image: "/fotos/concierge-ai.webp",
     imageAlt: "An elegant celebration on a Caribbean beach at golden hour.",
